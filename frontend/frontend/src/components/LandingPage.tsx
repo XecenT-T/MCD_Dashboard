@@ -1,0 +1,257 @@
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+const LandingPage: React.FC = () => {
+    const { user, logout } = useAuth();
+
+    return (
+        <div className="bg-background-light dark:bg-background-dark text-text-main dark:text-white min-h-screen flex flex-col overflow-x-hidden font-display">
+            {/* Navbar */}
+            <header className="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-surface-light dark:bg-surface-dark shadow-sm">
+                <div className="px-4 md:px-10 py-3 flex items-center justify-between mx-auto max-w-7xl">
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center justify-center text-primary size-8">
+                            <span className="material-symbols-outlined text-3xl">account_balance</span>
+                        </div>
+                        <h2 className="text-text-main dark:text-white text-lg font-bold leading-tight tracking-tight">MCD Digital Portal</h2>
+                    </div>
+                    <div className="hidden md:flex items-center gap-8">
+                        <nav className="flex items-center gap-6">
+                            <a className="text-text-main dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Home</a>
+                            <a className="text-text-main dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Departments</a>
+                            <a className="text-text-main dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Notifications</a>
+                            <a className="text-text-main dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Contact Us</a>
+                        </nav>
+                        <div className="flex items-center gap-4">
+                            {user ? (
+                                <div className="flex items-center gap-4">
+                                    <span className="text-sm font-semibold text-text-main dark:text-white">Welcome, {user.name}</span>
+                                    <button onClick={logout} className="flex items-center justify-center rounded-lg h-10 px-6 border border-slate-200 dark:border-slate-700 text-text-main dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold text-sm transition-colors">
+                                        Logout
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    <Link to="/login" className="hidden sm:flex items-center justify-center rounded-lg h-10 px-6 text-text-main dark:text-slate-200 hover:text-primary font-bold text-sm transition-colors">
+                                        Login
+                                    </Link>
+                                    <Link to="/register" className="flex items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary hover:bg-primary-dark text-white text-sm font-bold transition-all shadow-sm">
+                                        <span className="truncate">Register</span>
+                                    </Link>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                    {/* Mobile Menu Icon */}
+                    <button className="md:hidden text-text-main dark:text-white">
+                        <span className="material-symbols-outlined">menu</span>
+                    </button>
+                </div>
+            </header>
+
+            <main className="flex-grow flex flex-col items-center w-full">
+                {/* Action Panel (Announcement) */}
+                <div className="w-full max-w-7xl px-4 md:px-10 mt-6">
+                    <div className="w-full rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/20 p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
+                        <div className="flex items-start md:items-center gap-3">
+                            <div className="bg-primary/10 p-2 rounded-full text-primary shrink-0">
+                                <span className="material-symbols-outlined">campaign</span>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <p className="text-text-main dark:text-white text-sm font-bold uppercase tracking-wide text-primary">Latest Announcement</p>
+                                <p className="text-slate-600 dark:text-slate-300 text-base">Updated DA rates effective from July 2024 are now available for review.</p>
+                            </div>
+                        </div>
+                        <a className="group flex items-center gap-2 text-sm font-bold text-primary hover:text-primary-dark dark:text-blue-400 dark:hover:text-blue-300 transition-colors whitespace-nowrap" href="#">
+                            Read Details
+                            <span className="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                {/* Hero Section */}
+                <div className="w-full max-w-7xl px-4 md:px-10 py-10 md:py-16">
+                    <div className="@container">
+                        <div className="flex flex-col-reverse lg:flex-row gap-10 items-center">
+                            <div className="flex flex-col gap-6 lg:w-1/2 items-start text-left">
+                                <div className="flex flex-col gap-4">
+                                    <h1 className="text-text-main dark:text-white text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
+                                        Unified. <span className="text-primary">Efficient.</span> Transparent.
+                                    </h1>
+                                    <h2 className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed max-w-xl">
+                                        The single digital gateway for all MCD officials and workers to manage attendance, payroll, and administrative services efficiently.
+                                    </h2>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                                    <Link to="/login" className="flex items-center justify-center rounded-lg h-12 px-8 bg-primary hover:bg-primary-dark text-white text-base font-bold shadow-md transition-all w-full sm:w-auto">
+                                        Access Portal
+                                    </Link>
+                                    <button onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="flex items-center justify-center rounded-lg h-12 px-8 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 text-text-main dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-base font-bold shadow-sm transition-all w-full sm:w-auto">
+                                        Learn More
+                                    </button>
+                                </div>
+                                <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mt-2">
+                                    <span className="material-symbols-outlined text-[18px]">verified_user</span>
+                                    <span>Powered by Secure Government Infrastructure</span>
+                                </div>
+                            </div>
+                            <div className="w-full lg:w-1/2 h-full">
+                                <div className="w-full aspect-video lg:aspect-[4/3] bg-slate-200 dark:bg-slate-800 rounded-2xl overflow-hidden shadow-xl relative group">
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                                    <div
+                                        className="w-full h-full bg-center bg-cover transition-transform duration-700 group-hover:scale-105"
+                                        style={{
+                                            backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuBKQyA08UwPMRUcbeEfprL7HQDzy-Qn9tMAi5AhdiVGxWux_dArY4Js04VJGW2PgA1q5vt2R6pHzLLbSFmpsZQ5LBdvC8FyFVS6x2cXu-zcsZFLfFNtiiahOE20gZZGt2quyjrcXpJ0ENnSRIVcJee6VEgMEH8rtvjRWNwWKr0MieteoXQGOzRBjrYuHC01B-8dmU2TgtdH35VUBC0YVNX5bS1zmmqAu-fCw-CzOas12Ux0unJbsQesXSUnf2etPiYoxstN8Jbj0PE")`
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Features Section */}
+                <div id="features" className="w-full bg-surface-light dark:bg-surface-dark border-y border-slate-200 dark:border-slate-800">
+                    <div className="max-w-7xl mx-auto px-4 md:px-10 py-16">
+                        <div className="flex flex-col gap-10">
+                            <div className="flex flex-col gap-3 text-center md:text-left">
+                                <h2 className="text-text-main dark:text-white text-3xl md:text-4xl font-bold tracking-tight">Core Services</h2>
+                                <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl">Access essential modules designed to streamline your daily administrative tasks efficiently and transparently.</p>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {/* Card 1: Attendance */}
+                                <div className="group flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-background-light dark:bg-background-dark p-6 hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+                                    <div className="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                        <span className="material-symbols-outlined text-2xl">location_on</span>
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <h3 className="text-text-main dark:text-white text-lg font-bold">Smart Attendance</h3>
+                                        <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Geo-fenced marking and real-time tracking for accuracy.</p>
+                                    </div>
+                                    <a className="mt-auto flex items-center gap-1 text-primary text-sm font-semibold group-hover:translate-x-1 transition-transform" href="#">
+                                        Access Module <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                    </a>
+                                </div>
+
+                                {/* Card 2: Payroll */}
+                                <div className="group flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-background-light dark:bg-background-dark p-6 hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+                                    <div className="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                        <span className="material-symbols-outlined text-2xl">payments</span>
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <h3 className="text-text-main dark:text-white text-lg font-bold">Seamless Payroll</h3>
+                                        <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">View slips, form-16, and manage tax declarations instantly.</p>
+                                    </div>
+                                    <a className="mt-auto flex items-center gap-1 text-primary text-sm font-semibold group-hover:translate-x-1 transition-transform" href="#">
+                                        Access Module <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                    </a>
+                                </div>
+
+                                {/* Card 3: Transfers */}
+                                <div className="group flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-background-light dark:bg-background-dark p-6 hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+                                    <div className="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                        <span className="material-symbols-outlined text-2xl">swap_horiz</span>
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <h3 className="text-text-main dark:text-white text-lg font-bold">Transparent Transfers</h3>
+                                        <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Policy-driven transfer requests and real-time status updates.</p>
+                                    </div>
+                                    <a className="mt-auto flex items-center gap-1 text-primary text-sm font-semibold group-hover:translate-x-1 transition-transform" href="#">
+                                        Access Module <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                    </a>
+                                </div>
+
+                                {/* Card 4: Grievance */}
+                                <div className="group flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-background-light dark:bg-background-dark p-6 hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+                                    <div className="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                        <span className="material-symbols-outlined text-2xl">support_agent</span>
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <h3 className="text-text-main dark:text-white text-lg font-bold">Grievance Redressal</h3>
+                                        <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Direct channel for resolving workplace issues and tracking complaints.</p>
+                                    </div>
+                                    <a className="mt-auto flex items-center gap-1 text-primary text-sm font-semibold group-hover:translate-x-1 transition-transform" href="#">
+                                        Access Module <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Stats Section */}
+                <div className="w-full max-w-7xl px-4 md:px-10 py-16">
+                    <div className="flex flex-col gap-6">
+                        <h2 className="text-text-main dark:text-white text-2xl font-bold">Impact at a Glance</h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                            <div className="flex flex-col gap-3 rounded-xl p-8 bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-4 opacity-5 text-text-main dark:text-white">
+                                    <span className="material-symbols-outlined text-8xl">groups</span>
+                                </div>
+                                <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold uppercase tracking-wider">Active Workforce Onboarded</p>
+                                <p className="text-text-main dark:text-white text-4xl font-black">120,000+</p>
+                            </div>
+                            <div className="flex flex-col gap-3 rounded-xl p-8 bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-4 opacity-5 text-text-main dark:text-white">
+                                    <span className="material-symbols-outlined text-8xl">description</span>
+                                </div>
+                                <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold uppercase tracking-wider">Monthly Claims Processed</p>
+                                <p className="text-text-main dark:text-white text-4xl font-black">45,000</p>
+                            </div>
+                            <div className="flex flex-col gap-3 rounded-xl p-8 bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-4 opacity-5 text-text-main dark:text-white">
+                                    <span className="material-symbols-outlined text-8xl">check_circle</span>
+                                </div>
+                                <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold uppercase tracking-wider">Grievances Resolved</p>
+                                <p className="text-text-main dark:text-white text-4xl font-black">92%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            {/* Footer */}
+            <footer className="w-full bg-surface-light dark:bg-surface-dark border-t border-slate-200 dark:border-slate-800 mt-auto">
+                <div className="max-w-7xl mx-auto px-4 md:px-10 py-12">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                        <div className="col-span-1 md:col-span-2 flex flex-col gap-4">
+                            <div className="flex items-center gap-2 text-primary">
+                                <span className="material-symbols-outlined text-3xl">account_balance</span>
+                                <span className="text-text-main dark:text-white font-bold text-xl">MCD Digital Portal</span>
+                            </div>
+                            <p className="text-slate-600 dark:text-slate-400 text-sm max-w-sm">
+                                Building a transparent and efficient ecosystem for the Municipal Corporation Department workforce.
+                            </p>
+                        </div>
+                        <div className="flex flex-col gap-3">
+                            <h4 className="text-text-main dark:text-white font-bold mb-1">Quick Links</h4>
+                            <a className="text-slate-600 dark:text-slate-400 hover:text-primary text-sm" href="#">About Us</a>
+                            <a className="text-slate-600 dark:text-slate-400 hover:text-primary text-sm" href="#">Help Desk</a>
+                            <a className="text-slate-600 dark:text-slate-400 hover:text-primary text-sm" href="#">User Manuals</a>
+                            <a className="text-slate-600 dark:text-slate-400 hover:text-primary text-sm" href="#">Contact Support</a>
+                        </div>
+                        <div className="flex flex-col gap-3">
+                            <h4 className="text-text-main dark:text-white font-bold mb-1">Legal</h4>
+                            <a className="text-slate-600 dark:text-slate-400 hover:text-primary text-sm" href="#">Privacy Policy</a>
+                            <a className="text-slate-600 dark:text-slate-400 hover:text-primary text-sm" href="#">Terms of Service</a>
+                            <a className="text-slate-600 dark:text-slate-400 hover:text-primary text-sm" href="#">Accessibility Statement</a>
+                        </div>
+                    </div>
+                    <div className="border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <p className="text-slate-500 dark:text-slate-500 text-sm text-center md:text-left">
+                            © 2024 Municipal Corporation Department. All rights reserved.
+                        </p>
+                        <div className="flex gap-4">
+                            <a className="text-slate-400 hover:text-primary" href="#"><span className="material-symbols-outlined">public</span></a>
+                            <a className="text-slate-400 hover:text-primary" href="#"><span className="material-symbols-outlined">mail</span></a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    );
+};
+
+export default LandingPage;
