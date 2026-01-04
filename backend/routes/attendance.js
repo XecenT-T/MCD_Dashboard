@@ -6,6 +6,8 @@ const Attendance = require('../models/Attendance');
 // Mark Attendance
 router.post('/mark', auth, async (req, res) => {
     try {
+        const { location } = req.body;
+
         // Check if already marked for today
         const startOfDay = new Date();
         startOfDay.setHours(0, 0, 0, 0);
@@ -24,6 +26,8 @@ router.post('/mark', auth, async (req, res) => {
 
         const newAttendance = new Attendance({
             user: req.user.id,
+            checkInTime: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+            location: location || { lat: 0, lng: 0, address: 'Office Location' },
             status: 'Present',
             method: 'Face'
         });

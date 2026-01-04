@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 
 interface User {
     id: string;
@@ -19,6 +19,7 @@ interface AuthContextType {
     logout: () => void;
     error: string | null;
     clearError: () => void;
+    reloadUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -31,23 +32,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Configure axios defaults
     if (token) {
-        axios.defaults.headers.common['x-auth-token'] = token;
+        api.defaults.headers.common['x-auth-token'] = token;
     } else {
-        delete axios.defaults.headers.common['x-auth-token'];
+        delete api.defaults.headers.common['x-auth-token'];
     }
 
     const loadUser = async () => {
         if (localStorage.getItem('token')) {
-            axios.defaults.headers.common['x-auth-token'] = localStorage.getItem('token');
+            api.defaults.headers.common['x-auth-token'] = localStorage.getItem('token');
         }
         try {
-            const res = await axios.get('http://localhost:5000/api/auth/user');
+            const res = await api.get('/api/auth/user');
             setUser(res.data);
         } catch (err) {
             localStorage.removeItem('token');
             setToken(null);
             setUser(null);
-            delete axios.defaults.headers.common['x-auth-token'];
+            delete api.defaults.headers.common['x-auth-token'];
         }
     };
 
@@ -59,7 +60,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(true);
         setError(null);
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/login', formData);
+            const res = await api.post('/api/auth/login', formData);
             localStorage.setItem('token', res.data.token);
             setToken(res.data.token);
             setUser(res.data.user);
@@ -78,7 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(true);
         setError(null);
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/register', formData);
+            const res = await api.post('/api/auth/register', formData);
             localStorage.setItem('token', res.data.token);
             setToken(res.data.token);
             setUser(res.data.user);
@@ -97,13 +98,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.removeItem('token');
         setToken(null);
         setUser(null);
-        delete axios.defaults.headers.common['x-auth-token'];
+        delete api.defaults.headers.common['x-auth-token'];
     };
 
     const clearError = () => setError(null);
 
     return (
-        <AuthContext.Provider value={{ user, token, loading, login, register, logout, error, clearError }}>
+        <AuthContext.Provider value={{ user, token, loading, login, register, logout, error, clearError, reloadUser: loadUser }}>
             {children}
         </AuthContext.Provider>
     );

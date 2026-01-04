@@ -10,6 +10,15 @@ const attendanceSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    checkInTime: {
+        type: String,
+        default: () => new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+    },
+    location: {
+        lat: { type: Number },
+        lng: { type: Number },
+        address: { type: String, default: 'Office Location' }
+    },
     status: {
         type: String,
         enum: ['Present', 'Absent', 'Late'],

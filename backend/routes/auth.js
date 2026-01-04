@@ -51,7 +51,7 @@ router.post('/register', async (req, res) => {
 
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 360000 }, (err, token) => {
             if (err) throw err;
-            res.json({ token, user: { id: user.id, name: user.name, username: user.username, role: user.role } });
+            res.json({ token, user: { id: user.id, name: user.name, username: user.username, role: user.role, isFaceRegistered: user.isFaceRegistered, faceDescriptor: user.faceDescriptor } });
         });
 
     } catch (err) {
@@ -86,7 +86,7 @@ router.post('/login', async (req, res) => {
 
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 360000 }, (err, token) => {
             if (err) throw err;
-            res.json({ token, user: { id: user.id, name: user.name, username: user.username, role: user.role } });
+            res.json({ token, user: { id: user.id, name: user.name, username: user.username, role: user.role, isFaceRegistered: user.isFaceRegistered, faceDescriptor: user.faceDescriptor } });
         });
 
     } catch (err) {

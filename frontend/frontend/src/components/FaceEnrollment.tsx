@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as faceapi from 'face-api.js';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api from '../api/axios';
 
 interface FaceEnrollmentProps {
     onSuccess: () => void;
@@ -18,7 +18,8 @@ const FaceEnrollment: React.FC<FaceEnrollmentProps> = ({ onSuccess, onClose }) =
 
     useEffect(() => {
         const loadModels = async () => {
-            const MODEL_URL = '/models';
+            // Use CDN for better reliability
+            const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
             try {
                 await Promise.all([
                     faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
@@ -106,7 +107,7 @@ const FaceEnrollment: React.FC<FaceEnrollmentProps> = ({ onSuccess, onClose }) =
                     }
                 };
 
-                await axios.post('http://localhost:5000/api/auth/enroll-face', { faceDescriptor: descriptor }, config);
+                await api.post('/api/auth/enroll-face', { faceDescriptor: descriptor }, config);
                 setStatus('Enrollment Successful!');
                 setTimeout(onSuccess, 1500);
             } catch (err) {

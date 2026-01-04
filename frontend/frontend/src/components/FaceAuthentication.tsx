@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as faceapi from 'face-api.js';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api from '../api/axios';
 
 interface FaceAuthenticationProps {
     onSuccess: () => void;
@@ -22,7 +22,8 @@ const FaceAuthentication: React.FC<FaceAuthenticationProps> = ({ onSuccess, onCl
         }
 
         const loadModels = async () => {
-            const MODEL_URL = '/models';
+            // Use CDN for better reliability
+            const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
             try {
                 await Promise.all([
                     faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
@@ -95,7 +96,7 @@ const FaceAuthentication: React.FC<FaceAuthenticationProps> = ({ onSuccess, onCl
                                 'x-auth-token': token
                             }
                         };
-                        await axios.post('http://localhost:5000/api/attendance/mark', {}, config);
+                        await api.post('/api/attendance/mark', {}, config);
                         setStatus('Attendance Marked Successfully!');
                         setTimeout(onSuccess, 1500);
                     } catch (err: any) {
