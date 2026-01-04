@@ -17,10 +17,10 @@ const createTestUsers = async () => {
                 role: 'worker'
             },
             {
-                name: 'Official Test',
-                username: 'official_test',
+                name: 'Supervisor Test',
+                username: 'supervisor_test',
                 password: 'password123',
-                role: 'official'
+                role: 'supervisor'
             }
         ];
 

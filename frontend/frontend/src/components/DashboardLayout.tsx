@@ -8,7 +8,7 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
     const { t, language, toggleLanguage } = useLanguage();
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const isOfficial = user?.role === 'official';
+    const isSupervisor = user?.role === 'supervisor';
 
     const handleLogout = () => {
         logout();
@@ -30,7 +30,7 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                         </div>
                         <div>
                             <h1 className="font-bold text-lg leading-tight text-primary">MCD Portal</h1>
-                            <p className="text-xs text-text-muted">Official Worker Portal</p>
+                            <p className="text-xs text-text-muted">MCD Supervisor Portal</p>
                         </div>
                     </div>
 
@@ -74,7 +74,7 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                             <span className="material-symbols-outlined">menu</span>
                         </button>
                         <h2 className="text-xl font-bold text-gray-800 dark:text-white hidden sm:block">
-                            {title || (isOfficial ? t('dashboard_title_official') : t('dashboard_title_worker'))}
+                            {title || (isSupervisor ? t('dashboard_title_supervisor') : t('dashboard_title_worker'))}
                         </h2>
                     </div>
 

@@ -5,7 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 const Payroll = () => {
     const { user } = useAuth();
     const { t } = useLanguage();
-    const isOfficial = user?.role === 'official';
+    const isSupervisor = user?.role === 'supervisor';
 
     // Mock data for the logged-in worker's payslip
     const workerPayslip = {
@@ -43,18 +43,18 @@ const Payroll = () => {
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-                                {isOfficial ? 'Payroll Overview' : 'My Payslip'}
+                                {isSupervisor ? 'Payroll Overview' : 'My Payslip'}
                             </h1>
                             <p className="text-gray-500 dark:text-gray-400 mt-1">
-                                {isOfficial ? 'Manage disbursements, track processing status, and view history.' : 'View your salary details and download payslips.'}
+                                {isSupervisor ? 'Manage disbursements, track processing status, and view history.' : 'View your salary details and download payslips.'}
                             </p>
                         </div>
                         <div className="flex gap-3">
                             <button className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-medium text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 transition-colors">
                                 <span className="material-symbols-outlined text-lg">download</span>
-                                {isOfficial ? 'Export Report' : 'Download Payslip'}
+                                {isSupervisor ? 'Export Report' : 'Download Payslip'}
                             </button>
-                            {isOfficial && (
+                            {isSupervisor && (
                                 <button className="px-4 py-2 rounded-lg bg-primary text-white font-medium text-sm shadow hover:bg-blue-700 flex items-center gap-2 transition-colors">
                                     <span className="material-symbols-outlined text-lg">add</span>
                                     Create New Batch
@@ -65,7 +65,7 @@ const Payroll = () => {
                 </div>
 
                 {/* Worker View - Personal Payslip */}
-                {!isOfficial ? (
+                {!isSupervisor ? (
                     <div className="flex flex-col lg:flex-row gap-6">
                         {/* Main Payslip Card */}
                         <div className="flex-1 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
@@ -234,7 +234,7 @@ const Payroll = () => {
                 ) : (
                     /* Official View - Full Table (existing code) */
                     <>
-                        {/* Stats Grid for Officials */}
+                        {/* Stats Grid for Supervisors */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col gap-2">
                                 <div className="flex justify-between items-start">
@@ -261,7 +261,7 @@ const Payroll = () => {
                             </div>
                         </div>
 
-                        {/* Table for Officials */}
+                        {/* Table for Supervisors */}
                         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
                             <div className="p-5 border-b border-gray-200 dark:border-gray-700">
                                 <h3 className="font-bold text-gray-900 dark:text-white text-lg">Payroll Master List</h3>

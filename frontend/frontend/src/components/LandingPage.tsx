@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import mcdWorkersImage from '../assets/mcd-workers.jpg';
 
 const LandingPage: React.FC = () => {
     const { user, logout } = useAuth();
@@ -19,10 +20,8 @@ const LandingPage: React.FC = () => {
                     </div>
                     <div className="hidden md:flex items-center gap-8">
                         <nav className="flex items-center gap-6">
-                            <a className="text-text-main dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Home</a>
                             <a className="text-text-main dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Departments</a>
                             <a className="text-text-main dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Notifications</a>
-                            <a className="text-text-main dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Contact Us</a>
                         </nav>
                         <div className="flex items-center gap-4">
                             {user ? (
@@ -33,14 +32,9 @@ const LandingPage: React.FC = () => {
                                     </button>
                                 </div>
                             ) : (
-                                <>
-                                    <Link to="/login" className="hidden sm:flex items-center justify-center rounded-lg h-10 px-6 text-text-main dark:text-slate-200 hover:text-primary font-bold text-sm transition-colors">
-                                        Login
-                                    </Link>
-                                    <Link to="/register" className="flex items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary hover:bg-primary-dark text-white text-sm font-bold transition-all shadow-sm">
-                                        <span className="truncate">Register</span>
-                                    </Link>
-                                </>
+                                <Link to="/login" className="flex items-center justify-center rounded-lg h-10 px-6 bg-primary hover:bg-primary-dark text-white text-sm font-bold transition-all shadow-sm">
+                                    Login / Register
+                                </Link>
                             )}
                         </div>
                     </div>
@@ -81,7 +75,7 @@ const LandingPage: React.FC = () => {
                                         Unified. <span className="text-primary">Efficient.</span> Transparent.
                                     </h1>
                                     <h2 className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed max-w-xl">
-                                        The single digital gateway for all MCD officials and workers to manage attendance, payroll, and administrative services efficiently.
+                                        The single digital gateway for all MCD supervisors and workers to manage attendance, payroll, and administrative services efficiently.
                                     </h2>
                                 </div>
                                 <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
@@ -103,7 +97,7 @@ const LandingPage: React.FC = () => {
                                     <div
                                         className="w-full h-full bg-center bg-cover transition-transform duration-700 group-hover:scale-105"
                                         style={{
-                                            backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuBKQyA08UwPMRUcbeEfprL7HQDzy-Qn9tMAi5AhdiVGxWux_dArY4Js04VJGW2PgA1q5vt2R6pHzLLbSFmpsZQ5LBdvC8FyFVS6x2cXu-zcsZFLfFNtiiahOE20gZZGt2quyjrcXpJ0ENnSRIVcJee6VEgMEH8rtvjRWNwWKr0MieteoXQGOzRBjrYuHC01B-8dmU2TgtdH35VUBC0YVNX5bS1zmmqAu-fCw-CzOas12Ux0unJbsQesXSUnf2etPiYoxstN8Jbj0PE")`
+                                            backgroundImage: `url("${mcdWorkersImage}")`
                                         }}
                                     />
                                 </div>
@@ -115,6 +109,68 @@ const LandingPage: React.FC = () => {
                 {/* Features Section */}
                 <div id="features" className="w-full bg-surface-light dark:bg-surface-dark border-y border-slate-200 dark:border-slate-800">
                     <div className="max-w-7xl mx-auto px-4 md:px-10 py-16">
+                        {/* Who is this for? Section */}
+                        <div className="flex flex-col gap-10 mb-20">
+                            <div className="flex flex-col gap-3 text-center md:text-left">
+                                <h2 className="text-text-main dark:text-white text-3xl md:text-4xl font-bold tracking-tight">Who is this for?</h2>
+                                <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl">Tailored experiences for every role in the Municipal Corporation.</p>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {/* Card 1: Employees */}
+                                <div className="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-background-light dark:bg-background-dark p-6 hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+                                    <div className="flex items-center gap-4">
+                                        <div className="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                                            <span className="material-symbols-outlined text-2xl">badge</span>
+                                        </div>
+                                        <h3 className="text-text-main dark:text-white text-xl font-bold">Employees</h3>
+                                    </div>
+                                    <ul className="flex flex-col gap-3 mt-2">
+                                        {['Attendance', 'Leave', 'Payslips', 'Grievances'].map((item, i) => (
+                                            <li key={i} className="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-sm font-medium">
+                                                <span className="material-symbols-outlined text-primary text-[20px]">check_circle</span>
+                                                {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                {/* Card 2: Supervisors */}
+                                <div className="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-background-light dark:bg-background-dark p-6 hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+                                    <div className="flex items-center gap-4">
+                                        <div className="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                                            <span className="material-symbols-outlined text-2xl">supervisor_account</span>
+                                        </div>
+                                        <h3 className="text-text-main dark:text-white text-xl font-bold">Supervisors</h3>
+                                    </div>
+                                    <ul className="flex flex-col gap-3 mt-2">
+                                        {['Team attendance', 'Approvals', 'Performance inputs'].map((item, i) => (
+                                            <li key={i} className="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-sm font-medium">
+                                                <span className="material-symbols-outlined text-primary text-[20px]">check_circle</span>
+                                                {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                {/* Card 3: Administrators */}
+                                <div className="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-background-light dark:bg-background-dark p-6 hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+                                    <div className="flex items-center gap-4">
+                                        <div className="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                                            <span className="material-symbols-outlined text-2xl">admin_panel_settings</span>
+                                        </div>
+                                        <h3 className="text-text-main dark:text-white text-xl font-bold">Administrators</h3>
+                                    </div>
+                                    <ul className="flex flex-col gap-3 mt-2">
+                                        {['Policy rules', 'Transfers', 'Dashboards'].map((item, i) => (
+                                            <li key={i} className="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-sm font-medium">
+                                                <span className="material-symbols-outlined text-primary text-[20px]">check_circle</span>
+                                                {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                         <div className="flex flex-col gap-10">
                             <div className="flex flex-col gap-3 text-center md:text-left">
                                 <h2 className="text-text-main dark:text-white text-3xl md:text-4xl font-bold tracking-tight">Core Services</h2>
@@ -241,7 +297,7 @@ const LandingPage: React.FC = () => {
                     </div>
                     <div className="border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                         <p className="text-slate-500 dark:text-slate-500 text-sm text-center md:text-left">
-                            © 2024 Municipal Corporation Department. All rights reserved.
+                            © 2026 Municipal Corporation Department. All rights reserved.
                         </p>
                         <div className="flex gap-4">
                             <a className="text-slate-400 hover:text-primary" href="#"><span className="material-symbols-outlined">public</span></a>

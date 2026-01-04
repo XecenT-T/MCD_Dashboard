@@ -12,7 +12,7 @@ const Dashboard = () => {
     const { user, reloadUser } = useAuth();
     const { t } = useLanguage();
     const navigate = useNavigate();
-    const isOfficial = user?.role === 'official';
+    const isSupervisor = user?.role === 'supervisor';
 
     const [showEnrollment, setShowEnrollment] = useState(false);
     const [showAuth, setShowAuth] = useState(false);
@@ -60,14 +60,14 @@ const Dashboard = () => {
         { label: 'Pending Actions', value: '2 Items', sub: 'View details', icon: 'pending_actions', color: 'text-red-600', bg: 'bg-red-100' }
     ];
 
-    const officialStats = [
+    const supervisorStats = [
         { label: t('team_attendance'), value: '92%', sub: '45/49 Present', icon: 'groups', color: 'text-green-600', bg: 'bg-green-100', progress: 92 },
         { label: 'Pending Approvals', value: '7 Requests', sub: 'Leave & Transfers', icon: 'assignment_turned_in', color: 'text-orange-600', bg: 'bg-orange-100' },
         { label: 'Dept. Budget', value: '₹ 4.5L', sub: 'Remaining Q3', icon: 'account_balance_wallet', color: 'text-purple-600', bg: 'bg-purple-100' },
         { label: 'Open Grievances', value: '12', sub: '3 High Priority', icon: 'report_problem', color: 'text-red-600', bg: 'bg-red-100' }
     ];
 
-    const stats = isOfficial ? officialStats : workerStats;
+    const stats = isSupervisor ? supervisorStats : workerStats;
 
     return (
         <DashboardLayout>
@@ -126,21 +126,21 @@ const Dashboard = () => {
                         <div className="flex items-center justify-between mb-6">
                             <div>
                                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                                    {isOfficial ? t('team_attendance') : t('attendance_overview')}
+                                    {isSupervisor ? t('team_attendance') : t('attendance_overview')}
                                 </h3>
                                 <p className="text-sm text-text-muted">Monthly presence visualizer</p>
                             </div>
                             <button className="text-sm font-medium text-primary">{t('view_report')}</button>
                         </div>
                         <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg p-2">
-                            <AttendanceChart isOfficial={isOfficial} />
+                            <AttendanceChart isSupervisor={isSupervisor} />
                         </div>
                     </div>
 
                     <div className="bg-white dark:bg-surface-dark p-6 rounded-2xl border border-gray-100 dark:border-border-dark shadow-sm">
                         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">{t('quick_actions')}</h3>
                         <div className="grid grid-cols-2 gap-4">
-                            {isOfficial ? (
+                            {isSupervisor ? (
                                 <>
                                     <QuickAction icon="how_to_reg" label={t('approve_leave')} color="text-green-600" bg="bg-green-50" onClick={() => handleWIP('Approve Leave')} />
                                     <QuickAction icon="transfer_within_a_station" label={t('transfers')} color="text-blue-600" bg="bg-blue-50" onClick={() => handleWIP('Transfers')} />
@@ -169,7 +169,7 @@ const Dashboard = () => {
                     <div className="lg:col-span-2 bg-white dark:bg-surface-dark rounded-2xl border border-border-light dark:border-border-dark shadow-sm overflow-hidden">
                         <div className="p-6 border-b border-border-light dark:border-border-dark flex items-center justify-between">
                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                                {isOfficial ? t('recent_transfers') : t('recent_payroll')}
+                                {isSupervisor ? t('recent_transfers') : t('recent_payroll')}
                             </h3>
                             <button className="text-sm font-bold text-primary hover:underline">{t('view_all')}</button>
                         </div>
@@ -177,16 +177,16 @@ const Dashboard = () => {
                             <table className="w-full text-left text-sm">
                                 <thead className="bg-gray-50 dark:bg-gray-800/50 text-gray-500 font-medium">
                                     <tr>
-                                        <th className="px-6 py-4">{isOfficial ? 'Employee' : 'Month'}</th>
-                                        <th className="px-6 py-4">{isOfficial ? 'Request Date' : 'Date Paid'}</th>
-                                        <th className="px-6 py-4 text-center">{isOfficial ? 'Department' : 'Net Pay'}</th>
+                                        <th className="px-6 py-4">{isSupervisor ? 'Employee' : 'Month'}</th>
+                                        <th className="px-6 py-4">{isSupervisor ? 'Request Date' : 'Date Paid'}</th>
+                                        <th className="px-6 py-4 text-center">{isSupervisor ? 'Department' : 'Net Pay'}</th>
                                         <th className="px-6 py-4 text-center">Status</th>
                                         <th className="px-6 py-4 text-right">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                                    {isOfficial ? (
-                                        <OfficialRow name="Amit Sharma" date="Oct 24, 2023" dept="Sanitation" status="Pending" />
+                                    {isSupervisor ? (
+                                        <SupervisorRow name="Amit Sharma" date="Oct 24, 2023" dept="Sanitation" status="Pending" />
                                     ) : (
                                         <WorkerRow month="September 2023" date="Sep 30, 2023" pay="₹45,200" status="Paid" />
                                     )}
@@ -267,7 +267,7 @@ const WorkerRow = ({ month, date, pay, status }: any) => (
     </tr>
 );
 
-const OfficialRow = ({ name, date, dept, status }: any) => (
+const SupervisorRow = ({ name, date, dept, status }: any) => (
     <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group cursor-pointer">
         <td className="px-6 py-4 font-bold text-gray-900 dark:text-white">{name}</td>
         <td className="px-6 py-4 text-gray-500">{date}</td>

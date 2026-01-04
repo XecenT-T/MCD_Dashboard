@@ -5,7 +5,7 @@ interface User {
     id: string;
     name: string;
     username: string;
-    role: 'official' | 'worker';
+    role: 'supervisor' | 'worker';
     faceDescriptor?: number[];
     isFaceRegistered?: boolean;
 }
