@@ -7,9 +7,9 @@ const data = [
     { name: 'Week 4', present: 3, absent: 2 },
 ];
 
-const AttendanceChart = ({ isOfficial }: { isOfficial: boolean }) => {
+const AttendanceChart = ({ isSupervisor }: { isSupervisor: boolean }) => {
     // Customize colors based on role or theme if needed
-    const presentColor = isOfficial ? "#82ca9d" : "#135bec"; // Green for official/team, Primary blue for worker
+    const presentColor = isSupervisor ? "#82ca9d" : "#2563eb"; // Green for supervisor/team, Primary blue for worker
 
     return (
         <div className="w-full h-full">

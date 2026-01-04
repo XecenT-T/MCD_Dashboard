@@ -36,7 +36,7 @@ const Login = () => {
                     <div className="size-8 flex items-center justify-center text-primary rounded-lg bg-primary/10">
                         <span className="material-symbols-outlined text-2xl">account_balance</span>
                     </div>
-                    <h2 className="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">MCD Official Portal</h2>
+                    <h2 className="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">MCD User Portal</h2>
                 </Link>
                 <div className="flex items-center gap-6">
                     <a className="text-text-main dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary transition-colors flex items-center gap-1" href="#">
@@ -72,7 +72,7 @@ const Login = () => {
                                 Unified Management System
                             </h1>
                             <p className="text-lg text-blue-100 font-medium leading-relaxed mb-8">
-                                Streamlined access for all Municipal Corporation officials. Manage attendance, payroll, transfers, and grievances in one secure location.
+                                Streamlined access for all Municipal Corporation users. Manage attendance, payroll, transfers, and grievances in one secure location.
                             </p>
                         </div>
                         {/* Feature List */}
@@ -108,7 +108,7 @@ const Login = () => {
                     </div>
                     {/* Footer for Left Panel */}
                     <div className="relative z-20 mt-auto pt-10">
-                        <p className="text-xs text-blue-200">© 2023 Municipal Corporation. All rights reserved.</p>
+                        <p className="text-xs text-blue-200">© 2026 Municipal Corporation. All rights reserved.</p>
                     </div>
                 </div>
 
@@ -128,7 +128,7 @@ const Login = () => {
                             </div>
                             <h2 className="text-text-main dark:text-white tracking-tight text-[32px] font-bold leading-tight">Sign in to your account</h2>
                             <p className="text-text-muted dark:text-gray-400 text-sm font-normal leading-normal">
-                                Please enter your official credentials to access the dashboard.
+                                Please enter your credentials to access the dashboard.
                             </p>
                             {error && (
                                 <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm border border-red-200">
@@ -140,7 +140,7 @@ const Login = () => {
                         <form className="flex flex-col gap-6" onSubmit={onSubmit}>
                             {/* Username Field */}
                             <label className="flex flex-col w-full gap-2">
-                                <span className="text-text-main dark:text-gray-200 text-sm font-medium leading-normal">Official ID / Username</span>
+                                <span className="text-text-main dark:text-gray-200 text-sm font-medium leading-normal">User ID / Username</span>
                                 <div className="relative group">
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary">
                                         <span className="material-symbols-outlined text-[20px]">person</span>
@@ -207,7 +207,7 @@ const Login = () => {
                             {/* Register Link */}
                             <div className="text-center mt-4">
                                 <p className="text-text-muted dark:text-gray-400 text-sm">
-                                    New Official?
+                                    New User?
                                     <Link className="text-primary font-bold hover:underline ml-1" to="/register">Register New Account</Link>
                                 </p>
                             </div>

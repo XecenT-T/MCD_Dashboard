@@ -198,7 +198,7 @@ const Attendance = () => {
                     <div className="flex items-center justify-center rounded bg-primary/10 p-1.5 text-primary">
                         <span className="material-symbols-outlined text-2xl">admin_panel_settings</span>
                     </div>
-                    <h2 className="text-lg font-bold leading-tight tracking-tight text-slate-900 dark:text-white">MCD Official Portal</h2>
+                    <h2 className="text-lg font-bold leading-tight tracking-tight text-slate-900 dark:text-white">MCD Supervisor Portal</h2>
                 </div>
                 <div className="hidden md:flex flex-1 justify-center">
                     <nav className="flex items-center gap-8">

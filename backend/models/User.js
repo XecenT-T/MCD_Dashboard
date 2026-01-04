@@ -16,8 +16,8 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['official', 'worker'],
-        default: 'official'
+        enum: ['supervisor', 'worker'],
+        default: 'supervisor'
     },
     faceDescriptor: {
         type: Array,

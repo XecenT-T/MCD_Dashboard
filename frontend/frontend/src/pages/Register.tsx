@@ -6,7 +6,7 @@ const Register = () => {
     const [formData, setFormData] = useState({
         name: '',
         username: '',
-        role: 'official', // default role
+        role: 'supervisor', // default role
         password: '',
         confirmPassword: ''
     });
@@ -45,7 +45,7 @@ const Register = () => {
                     <div className="size-8 flex items-center justify-center text-primary rounded-lg bg-primary/10">
                         <span className="material-symbols-outlined text-2xl">account_balance</span>
                     </div>
-                    <h2 className="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">MCD Official Portal</h2>
+                    <h2 className="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">MCD Supervisor Portal</h2>
                 </Link>
                 <div className="flex items-center gap-6">
                     <a className="text-text-main dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary transition-colors flex items-center gap-1" href="#">
@@ -99,7 +99,7 @@ const Register = () => {
                     </div>
                     {/* Footer for Left Panel */}
                     <div className="relative z-20 mt-auto pt-10">
-                        <p className="text-xs text-blue-200">© 2023 Municipal Corporation. All rights reserved.</p>
+                        <p className="text-xs text-blue-200">© 2026 Municipal Corporation. All rights reserved.</p>
                     </div>
                 </div>
 
@@ -154,7 +154,7 @@ const Register = () => {
 
                             {/* Username/ID Field */}
                             <label className="flex flex-col w-full gap-2" htmlFor="username">
-                                <span className="text-text-main dark:text-gray-200 text-sm font-medium leading-normal">Official ID / Username</span>
+                                <span className="text-text-main dark:text-gray-200 text-sm font-medium leading-normal">Supervisor ID / Username</span>
                                 <div className="relative group">
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary">
                                         <span className="material-symbols-outlined text-[20px]">person</span>
@@ -229,7 +229,7 @@ const Register = () => {
                                     value={role}
                                     onChange={(e) => onChangeSpecific(e, 'role')}
                                 >
-                                    <option value="official">Official</option>
+                                    <option value="supervisor">Supervisor</option>
                                     <option value="worker">Worker</option>
                                 </select>
                             </div>

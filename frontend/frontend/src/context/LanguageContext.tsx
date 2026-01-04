@@ -10,7 +10,7 @@ type Translations = {
 
 const translations: Translations = {
     en: {
-        "dashboard_title_official": "Official Dashboard",
+        "dashboard_title_supervisor": "Supervisor Dashboard",
         "dashboard_title_worker": "Worker Dashboard",
         "welcome_back": "Welcome back",
         "what_happening": "Here's what's happening with your account today.",
@@ -52,7 +52,7 @@ const translations: Translations = {
         "submit_grievance_modal_title": "Submit a Grievance"
     },
     hi: {
-        "dashboard_title_official": "अधिकारी डैशबोर्ड",
+        "dashboard_title_supervisor": "पर्यवेक्षक डैशबोर्ड",
         "dashboard_title_worker": "कर्मी डैशबोर्ड",
         "welcome_back": "वापसी पर स्वागत है",
         "what_happening": "आज आपके खाते में क्या हो रहा है, यहां देखें।",
