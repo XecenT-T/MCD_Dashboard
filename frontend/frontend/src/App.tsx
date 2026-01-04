@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Attendance from './pages/Attendance';
 import GrievanceSubmission from './pages/GrievanceSubmission';
 import Payroll from './pages/Payroll';
+import LandingPage from './components/LandingPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
 import './App.css';
@@ -59,7 +60,7 @@ function App() {
                   </PrivateRoute>
                 }
               />
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/" element={<LandingPage />} />
             </Routes>
           </div>
         </LanguageProvider>
