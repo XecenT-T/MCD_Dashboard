@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useDashboardView } from '../context/DashboardViewContext';
 
 const DashboardLayout = ({ children, title }: { children: React.ReactNode, title?: string }) => {
     const { user, logout } = useAuth();
@@ -9,6 +10,8 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const isSupervisor = user?.role === 'supervisor';
+
+    const { viewMode } = useDashboardView();
 
     const handleLogout = () => {
         logout();
@@ -36,11 +39,31 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
 
                     <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
                         <NavItem icon="dashboard" label={t('nav_dashboard')} onClick={() => navigate('/dashboard')} active={window.location.pathname === '/dashboard'} />
-                        <NavItem icon="calendar_month" label={t('nav_attendance')} onClick={() => navigate('/attendance')} active={window.location.pathname === '/attendance'} />
-                        <NavItem icon="payments" label={t('nav_payroll')} onClick={() => navigate('/payroll')} active={window.location.pathname === '/payroll'} />
-                        <NavItem icon="swap_horiz" label={t('nav_transfers')} onClick={() => handleWIP('Transfers')} />
-                        <NavItem icon="report" label={t('nav_grievances')} onClick={() => handleWIP('Grievances')} />
-                        <NavItem icon="person" label={t('nav_profile')} onClick={() => handleWIP('Profile')} />
+
+                        {viewMode === 'personal' && (
+                            <>
+                                <NavItem icon="calendar_month" label={t('nav_attendance')} onClick={() => navigate('/attendance')} active={window.location.pathname === '/attendance'} />
+                                <NavItem icon="payments" label={t('nav_payroll')} onClick={() => navigate('/payroll')} active={window.location.pathname === '/payroll'} />
+
+                                <NavDropdown icon="description" label="Service Request">
+                                    <NavItem icon="badge" label="ID Card Generator" onClick={() => handleWIP('ID Card Generator')} />
+                                    <NavItem icon="folder_shared" label="Dept. Document" onClick={() => navigate('/department-documents')} />
+                                </NavDropdown>
+
+                                <NavItem icon="swap_horiz" label={t('nav_transfers')} onClick={() => handleWIP('Transfers')} />
+                                <NavItem icon="report" label={t('nav_grievances')} onClick={() => handleWIP('Grievances')} />
+                                <NavItem icon="person" label={t('nav_profile')} onClick={() => handleWIP('Profile')} />
+                            </>
+                        )}
+
+                        {viewMode === 'department' && (
+                            <div className="px-4 py-4 mt-4 bg-blue-50 dark:bg-primary/10 rounded-xl border border-blue-100 dark:border-primary/20">
+                                <p className="text-xs font-bold text-blue-600 dark:text-primary uppercase tracking-wider mb-2">Management Mode</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    You are currently viewing Department Management stats. Switch to "My Profile" to see your personal menu.
+                                </p>
+                            </div>
+                        )}
                     </nav>
 
                     <div className="p-4 border-t border-gray-100 dark:border-border-dark">
@@ -123,5 +146,31 @@ const NavItem = ({ icon, label, active = false, onClick }: { icon: string, label
         <span className="text-sm">{label}</span>
     </button>
 );
+
+const NavDropdown = ({ icon, label, children }: { icon: string, label: string, children: React.ReactNode }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <div className="space-y-1">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className={`w-full flex items-center justify-between px-3 py-3 rounded-lg transition-colors text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium`}
+            >
+                <div className="flex items-center gap-3">
+                    <span className="material-symbols-outlined text-[22px]">{icon}</span>
+                    <span className="text-sm">{label}</span>
+                </div>
+                <span className={`material-symbols-outlined text-[20px] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+                    expand_more
+                </span>
+            </button>
+            {isOpen && (
+                <div className="pl-4 space-y-1 animate-in slide-in-from-top-2 fade-in duration-200">
+                    {children}
+                </div>
+            )}
+        </div>
+    );
+};
 
 export default DashboardLayout;

@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema({
         enum: ['supervisor', 'worker'],
         default: 'supervisor'
     },
+    department: {
+        type: String,
+        default: 'General'
+    },
     faceDescriptor: {
         type: Array,
         default: []

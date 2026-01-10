@@ -52,4 +52,27 @@ router.get('/', auth, async (req, res) => {
     }
 });
 
+// Get Department Attendance (Supervisor Only)
+router.get('/department', auth, async (req, res) => {
+    try {
+        const user = await require('../models/User').findById(req.user.id);
+        if (user.role !== 'supervisor') {
+            return res.status(403).json({ msg: 'Not authorized' });
+        }
+
+        // Find users in the same department
+        const departmentUsers = await require('../models/User').find({ department: user.department });
+        const userIds = departmentUsers.map(u => u._id);
+
+        const attendance = await Attendance.find({ user: { $in: userIds } })
+            .populate('user', 'name role')
+            .sort({ date: -1 });
+
+        res.json(attendance);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;
