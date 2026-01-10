@@ -22,6 +22,13 @@ const Dashboard = () => {
     const [showGrievance, setShowGrievance] = useState(false);
     const [showNoticeModal, setShowNoticeModal] = useState(false);
 
+    // Force Personal View for Non-Officials
+    useEffect(() => {
+        if (user && user.role !== 'official' && viewMode === 'department') {
+            setViewMode('personal');
+        }
+    }, [user, viewMode, setViewMode]);
+
     // Auto-open Face Enrollment for first-time users
     useEffect(() => {
         if (user && !user.isFaceRegistered) {
@@ -80,7 +87,7 @@ const Dashboard = () => {
         { label: 'Total Payroll', value: '₹ 12.5L', sub: 'This Month', icon: 'payments', color: 'text-purple-600', bg: 'bg-purple-100' }
     ];
 
-    const currentStats = viewMode === 'department' ? departmentStats : workerStats;
+    const currentStats = (viewMode === 'department' && isOfficial) ? departmentStats : workerStats;
 
     return (
         <DashboardLayout>
@@ -94,7 +101,7 @@ const Dashboard = () => {
                             {t('welcome_back')}, {user?.name?.split(' ')[0]} <span className="text-2xl animate-wave">👋</span>
                         </h2>
                         <p className="text-text-muted mt-1">
-                            {viewMode === 'department' ? `Managing ${user?.department || 'General'} Department` : t('what_happening')}
+                            {(viewMode === 'department' && isOfficial) ? `Managing ${user?.department || 'General'} Department` : t('what_happening')}
                         </p>
                     </div>
 
@@ -151,7 +158,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Content Switching based on View Mode */}
-                {viewMode === 'personal' ? (
+                {viewMode === 'personal' || !isOfficial ? (
                     // PERSONAL VIEW
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2 bg-white dark:bg-surface-dark p-6 rounded-2xl border border-gray-100 dark:border-border-dark shadow-sm">
