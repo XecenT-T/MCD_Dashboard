@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Grievance } from '../../hooks/useHRData';
 
 interface GrievanceManagementSystemProps {

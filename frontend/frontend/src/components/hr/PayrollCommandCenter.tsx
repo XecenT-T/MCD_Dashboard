@@ -1,4 +1,4 @@
-import React from 'react';
+
 import type { PayrollData } from '../../hooks/useHRData';
 
 interface PayrollCommandCenterProps {
