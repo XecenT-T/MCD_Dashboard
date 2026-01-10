@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -9,10 +9,59 @@ interface GrievanceModalProps {
 
 const GrievanceModal: React.FC<GrievanceModalProps> = ({ onClose }) => {
     const { token } = useAuth();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isRecording, setIsRecording] = useState(false);
+    const [isSupported, setIsSupported] = useState(true);
+
+    useEffect(() => {
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            setIsSupported(false);
+        }
+    }, []);
+
+    const toggleSTT = () => {
+        if (!isSupported) return;
+
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert("Speech recognition is not supported in this browser.");
+            return;
+        }
+
+        if (isRecording) {
+            setIsRecording(false);
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = language === 'hi' ? 'hi-IN' : 'en-IN';
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        recognition.onstart = () => {
+            setIsRecording(true);
+        };
+
+        recognition.onresult = (event: any) => {
+            const transcript = event.results[0][0].transcript;
+            setDescription(prev => prev + (prev ? ' ' : '') + transcript);
+        };
+
+        recognition.onend = () => {
+            setIsRecording(false);
+        };
+
+        recognition.onerror = (event: any) => {
+            console.error('Speech recognition error', event.error);
+            setIsRecording(false);
+        };
+
+        recognition.start();
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -63,9 +112,21 @@ const GrievanceModal: React.FC<GrievanceModalProps> = ({ onClose }) => {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            {t('grievance_desc')}
-                        </label>
+                        <div className="flex justify-between items-center mb-1">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {t('grievance_desc')}
+                            </label>
+                            {isSupported && (
+                                <button
+                                    type="button"
+                                    onClick={toggleSTT}
+                                    className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-md transition-all ${isRecording ? 'bg-red-500 text-white animate-pulse' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}
+                                >
+                                    <span className="material-symbols-outlined text-[16px]">{isRecording ? 'stop' : 'mic'}</span>
+                                    {isRecording ? 'Listening...' : 'Speak'}
+                                </button>
+                            )}
+                        </div>
                         <textarea
                             required
                             value={description}

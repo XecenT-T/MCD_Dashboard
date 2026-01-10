@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -69,13 +70,15 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                     <div className="p-4 border-t border-gray-100 dark:border-border-dark">
                         <div className="bg-blue-50 dark:bg-primary/10 rounded-xl p-4 mb-4">
                             <div className="flex items-start gap-3">
-                                <div className="p-2 bg-blue-100 dark:bg-primary/20 text-blue-600 dark:text-primary rounded-lg">
-                                    <span className="material-symbols-outlined text-xl">support_agent</span>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-sm text-gray-900 dark:text-white">{t('need_help')}</h4>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('contact_support')}</p>
-                                </div>
+                                <button onClick={() => navigate('/help')} className="text-left flex items-start gap-3 w-full">
+                                    <div className="p-2 bg-blue-100 dark:bg-primary/20 text-blue-600 dark:text-primary rounded-lg">
+                                        <span className="material-symbols-outlined text-xl">support_agent</span>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold text-sm text-gray-900 dark:text-white">{t('need_help')}</h4>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('contact_support')}</p>
+                                    </div>
+                                </button>
                             </div>
                         </div>
                         <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg w-full transition-colors cursor-pointer">

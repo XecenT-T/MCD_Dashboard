@@ -16,7 +16,11 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/attendance', require('./routes/attendance'));
 app.use('/api/grievances', require('./routes/grievances'));
+
 app.use('/api/department-notices', require('./routes/departmentNotices'));
+app.use('/api/chat', require('./routes/chat'));
+
+
 
 // Database Connection
 mongoose.connect(process.env.MONGODB_URI)
