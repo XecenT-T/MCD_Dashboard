@@ -21,19 +21,13 @@ interface AuthContextType {
     error: string | null;
     clearError: () => void;
     reloadUser: () => Promise<void>;
+    loginAsHR?: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<User | null>({
-        id: 'mock-hr-1',
-        name: 'Demo Admin',
-        username: 'admin',
-        role: 'hr',
-        department: 'Administration',
-        isFaceRegistered: true
-    });
+    const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -83,6 +77,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const loginAsHR = async () => {
+        setLoading(true);
+        // Simulate API call
+        setTimeout(() => {
+            const mockHR: User = {
+                id: 'mock-hr-1',
+                name: 'Demo Admin',
+                username: 'admin',
+                role: 'hr',
+                department: 'Administration',
+                isFaceRegistered: true
+            };
+            setUser(mockHR);
+            setLoading(false);
+        }, 800);
+    };
+
     const register = async (formData: any) => {
         setLoading(true);
         setError(null);
@@ -112,7 +123,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const clearError = () => setError(null);
 
     return (
-        <AuthContext.Provider value={{ user, token, loading, login, register, logout, error, clearError, reloadUser: loadUser }}>
+        <AuthContext.Provider value={{ user, token, loading, login, register, logout, error, clearError, reloadUser: loadUser, loginAsHR }}>
             {children}
         </AuthContext.Provider>
     );
