@@ -14,10 +14,32 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    aadharCardNo: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    dob: {
+        type: Date,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    phoneNo: {
+        type: String,
+        required: true
+    },
+    post: {
+        type: String, // Designation
+        required: true
+    },
     role: {
         type: String,
-        enum: ['supervisor', 'worker'],
-        default: 'supervisor'
+        enum: ['official', 'worker'],
+        default: 'official'
     },
     department: {
         type: String,
@@ -34,6 +56,15 @@ const userSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    isOnboarded: {
+        type: Boolean,
+        default: false
+    },
+    preferredLanguage: {
+        type: String,
+        enum: ['en', 'hi'],
+        default: 'en'
     }
 });
 

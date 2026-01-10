@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../context/AuthContext';
-// removed unused import
+import api from '../api/axios';
 
 interface Document {
     id: string;
@@ -12,18 +12,23 @@ interface Document {
 }
 
 const DepartmentDocuments = () => {
-    const { user } = useAuth();
+    const { user, token } = useAuth();
     // removed duplicate user declaration
     const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
+    const [documents, setDocuments] = useState<Document[]>([]);
 
-    // Mock data - in a real app this would come from an API based on user.department
-    const documents: Document[] = [
-        { id: '1', title: 'Safety Guidelines 2024', date: '2024-01-01', type: 'PDF', size: '2.4 MB' },
-        { id: '2', title: 'Shift Schedule - January', date: '2024-01-05', type: 'PDF', size: '1.1 MB' },
-        { id: '3', title: 'Equipment Checklist', date: '2023-12-15', type: 'DOCX', size: '0.5 MB' },
-        { id: '4', title: 'Start of Year Protocol', date: '2024-01-02', type: 'PDF', size: '3.0 MB' },
-        { id: '5', title: 'Holiday List 2024', date: '2023-12-20', type: 'PDF', size: '0.8 MB' },
-    ];
+    useEffect(() => {
+        const fetchDocs = async () => {
+            try {
+                const config = { headers: { 'x-auth-token': token } };
+                const res = await api.get('/api/documents', config);
+                setDocuments(res.data);
+            } catch (err) {
+                console.error("Error fetching documents", err);
+            }
+        };
+        fetchDocs();
+    }, [token]);
 
     const handlePrint = (doc: Document) => {
         // Simulate printing

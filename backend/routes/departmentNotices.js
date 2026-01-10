@@ -22,13 +22,13 @@ router.get('/', auth, async (req, res) => {
 
 // @route   POST api/department-notices
 // @desc    Create a department notice
-// @access  Private (Supervisor only)
+// @access  Private (Official only)
 router.post('/', auth, async (req, res) => {
     try {
         const { title, content, type } = req.body;
         const user = await User.findById(req.user.id);
 
-        if (user.role !== 'supervisor') {
+        if (user.role !== 'official') {
             return res.status(403).json({ msg: 'Not authorized' });
         }
 

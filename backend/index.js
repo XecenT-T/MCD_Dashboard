@@ -19,6 +19,9 @@ app.use('/api/grievances', require('./routes/grievances'));
 
 app.use('/api/department-notices', require('./routes/departmentNotices'));
 app.use('/api/chat', require('./routes/chat'));
+app.use('/api/payroll', require('./routes/payroll'));
+app.use('/api/documents', require('./routes/documents'));
+app.use('/api/admin', require('./routes/admin'));
 
 
 

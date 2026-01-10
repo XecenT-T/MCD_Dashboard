@@ -21,8 +21,12 @@ const Login = () => {
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await login({ username, password });
-            navigate('/dashboard');
+            const user = await login({ username, password }); // login now returns user
+            if (user && user.username === 'admin') {
+                navigate('/admin/create-user');
+            } else {
+                navigate('/dashboard');
+            }
         } catch (err) {
             console.error(err);
         }
@@ -187,23 +191,7 @@ const Login = () => {
                                     <a className="text-primary text-sm font-semibold hover:underline" href="#">Forgot Password?</a>
                                 </div>
                             </label>
-                            {/* CAPTCHA Section */}
-                            <div className="flex flex-col gap-2">
-                                <span className="text-text-main dark:text-gray-200 text-sm font-medium leading-normal">Security Check</span>
-                                <div className="flex gap-3 flex-wrap sm:flex-nowrap">
-                                    {/* Visual Captcha Placeholder */}
-                                    <div className="h-12 w-32 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center select-none overflow-hidden relative border border-border-light dark:border-border-dark" title="CAPTCHA Image">
-                                        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 opacity-50"></div>
-                                        <span className="text-xl font-mono font-bold tracking-[0.2em] text-gray-500 dark:text-gray-400 italic z-10" style={{ textDecoration: 'line-through' }}>X7K9m</span>
-                                    </div>
-                                    {/* Refresh Button */}
-                                    <button className="h-12 w-12 flex items-center justify-center text-text-muted hover:text-primary hover:bg-primary/5 rounded-lg border border-border-light dark:border-border-dark transition-colors" title="Refresh CAPTCHA" type="button">
-                                        <span className="material-symbols-outlined">refresh</span>
-                                    </button>
-                                    {/* Input */}
-                                    <input className="form-input flex-1 h-12 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-surface-dark focus:border-primary focus:ring-2 focus:ring-primary/20 px-4 text-base placeholder:text-text-muted" placeholder="Enter code" type="text" />
-                                </div>
-                            </div>
+                            {/* CAPTCHA Section Removed */}
                             {/* Actions */}
                             <div className="pt-2">
                                 <button className="w-full flex items-center justify-center gap-2 h-12 bg-primary hover:bg-primary-dark text-white text-base font-bold rounded-lg shadow-lg shadow-primary/30 transition-all hover:scale-[1.01] active:scale-[0.99]">
@@ -226,11 +214,10 @@ const Login = () => {
                                     <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
                                 </button>
                             </div>
-                            {/* Register Link */}
+                            {/* Register Link Removed - Admin Only Creation */}
                             <div className="text-center mt-4">
                                 <p className="text-text-muted dark:text-gray-400 text-sm">
-                                    New User?
-                                    <Link className="text-primary font-bold hover:underline ml-1" to="/register">Register New Account</Link>
+                                    Don't have an account? <span className="text-gray-500">Contact your Department Head.</span>
                                 </p>
                             </div>
                         </form>

@@ -12,7 +12,7 @@ export interface DepartmentStats {
 export interface Grievance {
     id: string;
     submittedBy: string;
-    role: 'supervisor' | 'worker';
+    role: 'official' | 'worker';
     department: string;
     subject: string;
     description: string;
@@ -23,7 +23,7 @@ export interface Grievance {
 export interface LeaveRequest {
     id: string;
     applicant: string;
-    role: 'supervisor' | 'worker';
+    role: 'official' | 'worker';
     department: string;
     type: string;
     dates: string;
@@ -38,11 +38,10 @@ export interface PayrollData {
     status: 'Pending' | 'Processing' | 'Released';
 }
 
-export interface Supervisor {
+export interface Official {
     id: string;
     name: string;
     department: string;
-    contact: string;
     status: 'Active' | 'On Leave';
 }
 
@@ -54,7 +53,7 @@ export const useHRData = () => {
     const [grievances, setGrievances] = useState<Grievance[]>([]);
     const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
     const [payrollData, setPayrollData] = useState<PayrollData[]>([]);
-    const [supervisors, setSupervisors] = useState<Supervisor[]>([]);
+    const [officials, setOfficials] = useState<Official[]>([]);
 
     useEffect(() => {
         // Simulate API fetch delay
@@ -66,15 +65,15 @@ export const useHRData = () => {
             ]);
 
             setGrievances([
-                { id: '1', submittedBy: 'Rohan Gupta', role: 'supervisor', department: 'Education', subject: 'Staff Shortage', description: 'Urgent need for more math teachers.', date: '2023-10-25', status: 'Pending' },
+                { id: '1', submittedBy: 'Rohan Gupta', role: 'official', department: 'Education', subject: 'Staff Shortage', description: 'Urgent need for more math teachers.', date: '2023-10-25', status: 'Pending' },
                 { id: '2', submittedBy: 'Amit Kumar', role: 'worker', department: 'Health', subject: 'Salary Delay', description: 'September salary not received yet.', date: '2023-10-26', status: 'Under Review' },
                 { id: '3', submittedBy: 'Priya Singh', role: 'worker', department: 'Engineering', subject: 'Safety Gear', description: 'Helmets are damaged.', date: '2023-10-24', status: 'Pending' },
-                { id: '4', submittedBy: 'Vikram Malhotra', role: 'supervisor', department: 'Health', subject: 'Equipment Malfunction', description: 'X-Ray machine needs repair.', date: '2023-10-22', status: 'Resolved' },
+                { id: '4', submittedBy: 'Vikram Malhotra', role: 'official', department: 'Health', subject: 'Equipment Malfunction', description: 'X-Ray machine needs repair.', date: '2023-10-22', status: 'Resolved' },
             ]);
 
             setLeaveRequests([
                 { id: '1', applicant: 'Suresh Raina', role: 'worker', department: 'Education', type: 'Sick Leave', dates: 'Oct 28 - Oct 30', reason: 'Viral Fever', status: 'Pending' },
-                { id: '2', applicant: 'Ajay Jadeja', role: 'supervisor', department: 'Engineering', type: 'Casual Leave', dates: 'Nov 1 - Nov 5', reason: 'Family Wedding', status: 'Pending' },
+                { id: '2', applicant: 'Ajay Jadeja', role: 'official', department: 'Engineering', type: 'Casual Leave', dates: 'Nov 1 - Nov 5', reason: 'Family Wedding', status: 'Pending' },
                 { id: '3', applicant: 'Deepak Hooda', role: 'worker', department: 'Health', type: 'Emergency', dates: 'Oct 27', reason: 'Personal Emergency', status: 'Approved' },
             ]);
 
@@ -84,10 +83,10 @@ export const useHRData = () => {
                 { department: 'Engineering', budget: 1300000, actuals: 1250000, status: 'Released' },
             ]);
 
-            setSupervisors([
-                { id: '1', name: 'Rohan Gupta', department: 'Education', contact: '+91 98765 43210', status: 'Active' },
-                { id: '2', name: 'Vikram Malhotra', department: 'Health', contact: '+91 98765 12345', status: 'On Leave' },
-                { id: '3', name: 'Ajay Jadeja', department: 'Engineering', contact: '+91 98765 67890', status: 'Active' },
+            setOfficials([
+                { id: '1', name: 'Dr. A. Verma', department: 'Health', status: 'Active' },
+                { id: '2', name: 'Mr. R. Singh', department: 'Sanitation', status: 'Active' },
+                { id: '3', name: 'Mrs. K. Sharma', department: 'Education', status: 'On Leave' },
             ]);
 
             setLoading(false);
@@ -119,7 +118,7 @@ export const useHRData = () => {
         grievances,
         leaveRequests,
         payrollData,
-        supervisors,
+        officials,
         releasePayroll,
         updateGrievanceStatus,
         updateLeaveStatus

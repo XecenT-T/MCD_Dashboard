@@ -7,10 +7,10 @@ import { useDashboardView } from '../context/DashboardViewContext';
 
 const DashboardLayout = ({ children, title }: { children: React.ReactNode, title?: string }) => {
     const { user, logout } = useAuth();
-    const { t, language, toggleLanguage } = useLanguage();
+    const { t, language, setLanguage } = useLanguage();
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const isSupervisor = user?.role === 'supervisor';
+    const isOfficial = user?.role === 'official';
 
     const { viewMode } = useDashboardView();
 
@@ -34,7 +34,7 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                         </div>
                         <div>
                             <h1 className="font-bold text-lg leading-tight text-primary">MCD Portal</h1>
-                            <p className="text-xs text-text-muted">MCD Supervisor Portal</p>
+                            <p className="text-xs text-text-muted">MCD Official Portal</p>
                         </div>
                     </div>
 
@@ -52,7 +52,7 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                                 </NavDropdown>
 
                                 <NavItem icon="swap_horiz" label={t('nav_transfers')} onClick={() => handleWIP('Transfers')} />
-                                <NavItem icon="report" label={t('nav_grievances')} onClick={() => handleWIP('Grievances')} />
+                                <NavItem icon="report" label={t('nav_grievances')} onClick={() => navigate('/grievances')} active={window.location.pathname === '/grievances'} />
                                 <NavItem icon="person" label={t('nav_profile')} onClick={() => handleWIP('Profile')} />
                             </>
                         )}
@@ -112,14 +112,20 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                             <span className="material-symbols-outlined">menu</span>
                         </button>
                         <h2 className="text-xl font-bold text-gray-800 dark:text-white hidden sm:block">
-                            {title || (isSupervisor ? t('dashboard_title_supervisor') : t('dashboard_title_worker'))}
+                            {title || (isOfficial ? t('dashboard_title_official') : t('dashboard_title_worker'))}
                         </h2>
                     </div>
 
                     <div className="flex items-center gap-2 sm:gap-6 flex-1 justify-end max-w-2xl">
-                        {/* Language Toggle */}
+                        {/* Language Toggle (Simple Cycle for now or Modal later) */}
                         <button
-                            onClick={toggleLanguage}
+                            onClick={() => {
+                                // Simple cycle for demo purposes or redirect to settings
+                                const langs: any[] = ['en', 'hi', 'pa', 'mr', 'ta', 'te', 'bn'];
+                                const currentIndex = langs.indexOf(language);
+                                const nextIndex = (currentIndex + 1) % langs.length;
+                                setLanguage(langs[nextIndex]);
+                            }}
                             className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-border-dark hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                         >
                             <span className="material-symbols-outlined text-gray-500 text-[20px]">translate</span>

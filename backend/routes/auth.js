@@ -37,7 +37,7 @@ router.post('/register', async (req, res) => {
             name,
             username,
             password: hashedPassword,
-            role: role || 'supervisor'
+            role: role || 'official'
         });
 
         await user.save();
@@ -51,7 +51,7 @@ router.post('/register', async (req, res) => {
 
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 360000 }, (err, token) => {
             if (err) throw err;
-            res.json({ token, user: { id: user.id, name: user.name, username: user.username, role: user.role, isFaceRegistered: user.isFaceRegistered, faceDescriptor: user.faceDescriptor } });
+            res.json({ token, user: { id: user.id, name: user.name, username: user.username, role: user.role, isFaceRegistered: user.isFaceRegistered, faceDescriptor: user.faceDescriptor, isOnboarded: user.isOnboarded, preferredLanguage: user.preferredLanguage } });
         });
 
     } catch (err) {
@@ -86,7 +86,7 @@ router.post('/login', async (req, res) => {
 
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 360000 }, (err, token) => {
             if (err) throw err;
-            res.json({ token, user: { id: user.id, name: user.name, username: user.username, role: user.role, isFaceRegistered: user.isFaceRegistered, faceDescriptor: user.faceDescriptor } });
+            res.json({ token, user: { id: user.id, name: user.name, username: user.username, role: user.role, isFaceRegistered: user.isFaceRegistered, faceDescriptor: user.faceDescriptor, isOnboarded: user.isOnboarded, preferredLanguage: user.preferredLanguage } });
         });
 
     } catch (err) {
@@ -121,3 +121,35 @@ router.post('/enroll-face', auth, async (req, res) => {
 });
 
 module.exports = router;
+
+// Complete Onboarding
+router.post('/complete-onboarding', auth, async (req, res) => {
+    try {
+        const { language } = req.body;
+
+        let user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ msg: 'User not found' });
+
+        user.preferredLanguage = language || 'en';
+        user.isOnboarded = true;
+
+        await user.save();
+
+        res.json({
+            success: true,
+            user: {
+                id: user.id,
+                name: user.name,
+                username: user.username,
+                role: user.role,
+                isFaceRegistered: user.isFaceRegistered,
+                faceDescriptor: user.faceDescriptor,
+                isOnboarded: user.isOnboarded,
+                preferredLanguage: user.preferredLanguage
+            }
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});

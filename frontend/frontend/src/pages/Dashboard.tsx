@@ -14,7 +14,7 @@ const Dashboard = () => {
     const { user, reloadUser } = useAuth();
     const { t } = useLanguage();
     const navigate = useNavigate();
-    const isSupervisor = user?.role === 'supervisor';
+    const isOfficial = user?.role === 'official';
     const { viewMode, setViewMode } = useDashboardView();
 
     const [showEnrollment, setShowEnrollment] = useState(false);
@@ -76,6 +76,16 @@ const Dashboard = () => {
         <DashboardLayout>
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Header & View Switcher */}
+                {/* Welcome Section */}
+                <div className="mb-8">
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                        Welcome back, {user?.name || 'User'}
+                    </h1>
+                    <p className="text-gray-500 dark:text-gray-400 mt-1">
+                        Here's what's happening in your department today.
+                    </p>
+                </div>
+
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
@@ -86,7 +96,7 @@ const Dashboard = () => {
                         </p>
                     </div>
 
-                    {isSupervisor && (
+                    {isOfficial && (
                         <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
                             <button
                                 onClick={() => setViewMode('personal')}
@@ -138,9 +148,9 @@ const Dashboard = () => {
                     ))}
                 </div>
 
-                {/* Main Content Area */}
+                {/* Content Switching based on View Mode */}
                 {viewMode === 'personal' ? (
-                    // PERSONAL VIEW (Same as original Worker View)
+                    // PERSONAL VIEW
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2 bg-white dark:bg-surface-dark p-6 rounded-2xl border border-gray-100 dark:border-border-dark shadow-sm">
                             <div className="flex items-center justify-between mb-6">
@@ -151,7 +161,7 @@ const Dashboard = () => {
                                 <button className="text-sm font-medium text-primary">{t('view_report')}</button>
                             </div>
                             <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg p-2">
-                                <AttendanceChart isSupervisor={isSupervisor} />
+                                <AttendanceChart isOfficial={isOfficial} />
                             </div>
                         </div>
 
@@ -172,31 +182,12 @@ const Dashboard = () => {
                         </div>
                     </div>
                 ) : (
-                    // DEPARTMENT VIEW
+                    // DEPARTMENT VIEW (Only available to Officials)
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2 space-y-6">
                             {/* Worker Management Table */}
                             <div className="bg-white dark:bg-surface-dark rounded-2xl border border-gray-100 dark:border-border-dark shadow-sm overflow-hidden">
                                 <div className="p-6 border-b border-gray-100 dark:border-border-dark flex items-center justify-between">
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Department Workers</h3>
-                                    <button className="text-sm font-bold text-primary hover:underline">{t('view_all')}</button>
-                                </div>
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-left text-sm">
-                                        <thead className="bg-gray-50 dark:bg-gray-800/50 text-gray-500 font-medium">
-                                            <tr>
-                                                <th className="px-6 py-4">Employee</th>
-                                                <th className="px-6 py-4">Status</th>
-                                                <th className="px-6 py-4">Attendance</th>
-                                                <th className="px-6 py-4 text-right">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                                            <WorkerManagementRow name="Rishabh Pant" status="Present" attendance="95%" />
-                                            <WorkerManagementRow name="Axar Patel" status="On Leave" attendance="88%" />
-                                            <WorkerManagementRow name="Kuldeep Yadav" status="Present" attendance="92%" />
-                                        </tbody>
-                                    </table>
                                 </div>
                             </div>
 
@@ -214,7 +205,7 @@ const Dashboard = () => {
                         </div>
 
                         <div className="space-y-6">
-                            {/* Supervisor Actions */}
+                            {/* Official Actions */}
                             <div className="bg-white dark:bg-surface-dark p-6 rounded-2xl border border-gray-100 dark:border-border-dark shadow-sm">
                                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Management Actions</h3>
                                 <div className="grid grid-cols-2 gap-4">
@@ -229,6 +220,7 @@ const Dashboard = () => {
                                     <QuickAction icon="how_to_reg" label={t('approve_leave')} color="text-green-600" bg="bg-green-50" onClick={() => handleWIP('Approve Leave')} />
                                     <QuickAction icon="transfer_within_a_station" label={t('transfers')} color="text-purple-600" bg="bg-purple-50" onClick={() => handleWIP('Transfers')} />
                                     <QuickAction icon="summarize" label={t('team_reports')} color="text-orange-600" bg="bg-orange-50" onClick={() => handleWIP('Team Reports')} />
+                                    <QuickAction icon="person_add" label="Add User" color="text-indigo-600" bg="bg-indigo-50" onClick={() => navigate('/admin/create-user')} />
                                 </div>
                             </div>
 
@@ -264,20 +256,6 @@ const QuickAction = ({ icon, label, color, bg, onClick, primary }: { icon: strin
     </button>
 );
 
-const WorkerManagementRow = ({ name, status, attendance }: any) => (
-    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-        <td className="px-6 py-4 font-bold text-gray-900 dark:text-white">{name}</td>
-        <td className="px-6 py-4">
-            <span className={`inline-block px-2 py-1 rounded-full text-xs font-bold ${status === 'Present' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                {status}
-            </span>
-        </td>
-        <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{attendance}</td>
-        <td className="px-6 py-4 text-right">
-            <button className="text-blue-600 hover:underline text-xs font-bold">View Profile</button>
-        </td>
-    </tr>
-);
 
 const GrievanceRow = ({ title, user, date }: any) => (
     <div className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">

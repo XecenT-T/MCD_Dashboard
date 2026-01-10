@@ -7,7 +7,7 @@ interface LeaveManagementTableProps {
 }
 
 const LeaveManagementTable: React.FC<LeaveManagementTableProps> = ({ requests, onUpdateStatus }) => {
-    const [roleFilter, setRoleFilter] = useState<'All' | 'supervisor' | 'worker'>('All');
+    const [roleFilter, setRoleFilter] = useState<'All' | 'official' | 'worker'>('All');
 
     const filteredRequests = requests.filter(r => (roleFilter === 'All' || r.role === roleFilter) && r.status === 'Pending');
 
@@ -22,13 +22,13 @@ const LeaveManagementTable: React.FC<LeaveManagementTableProps> = ({ requests, o
                     <p className="text-sm text-text-muted mt-1">Pending approvals</p>
                 </div>
                 <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-                    {(['All', 'supervisor', 'worker'] as const).map((f) => (
+                    {(['All', 'official', 'worker'] as const).map((f) => (
                         <button
                             key={f}
                             onClick={() => setRoleFilter(f)}
-                            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all capitalize ${roleFilter === f ? 'bg-white dark:bg-surface-dark shadow-sm text-primary' : 'text-gray-500 dark:text-gray-400'}`}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${roleFilter === f ? 'bg-primary text-white shadow-md' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600'}`}
                         >
-                            {f === 'supervisor' ? 'Sup.' : f === 'worker' ? 'Work.' : 'All'}
+                            {f === 'official' ? 'Off.' : f === 'worker' ? 'Work.' : 'All'}
                         </button>
                     ))}
                 </div>
@@ -56,7 +56,7 @@ const LeaveManagementTable: React.FC<LeaveManagementTableProps> = ({ requests, o
                                     <td className="px-6 py-4">
                                         <div className="font-bold text-gray-900 dark:text-white">{request.applicant}</div>
                                         <div className="flex items-center gap-1 mt-1">
-                                            <span className={`px-1.5 py-0.5 rounded text-[10px] uppercase font-bold border ${request.role === 'supervisor' ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
+                                            <span className={`px-1.5 py-0.5 rounded text-[10px] uppercase font-bold border ${request.role === 'official' ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
                                                 {request.role}
                                             </span>
                                             <span className="text-xs text-text-muted">• {request.department}</span>
