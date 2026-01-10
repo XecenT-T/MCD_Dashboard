@@ -54,10 +54,14 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                                 <NavItem icon="swap_horiz" label={t('nav_transfers')} onClick={() => handleWIP('Transfers')} />
                                 <NavItem icon="report" label={t('nav_grievances')} onClick={() => navigate('/grievances')} active={window.location.pathname === '/grievances'} />
                                 <NavItem icon="person" label={t('nav_profile')} onClick={() => handleWIP('Profile')} />
+
+                                {isOfficial && (
+                                    <NavItem icon="map" label="Live Location" onClick={() => navigate('/heatmap')} active={window.location.pathname === '/heatmap'} />
+                                )}
                             </>
                         )}
 
-                        {viewMode === 'department' && (
+                        {viewMode === 'department' && user?.role === 'official' && (
                             <div className="px-4 py-4 mt-4 bg-blue-50 dark:bg-primary/10 rounded-xl border border-blue-100 dark:border-primary/20">
                                 <p className="text-xs font-bold text-blue-600 dark:text-primary uppercase tracking-wider mb-2">Management Mode</p>
                                 <p className="text-xs text-gray-500 dark:text-gray-400">

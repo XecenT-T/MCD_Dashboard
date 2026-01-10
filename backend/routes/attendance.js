@@ -64,7 +64,18 @@ router.get('/department', auth, async (req, res) => {
         const departmentUsers = await require('../models/User').find({ department: user.department });
         const userIds = departmentUsers.map(u => u._id);
 
-        const attendance = await Attendance.find({ user: { $in: userIds } })
+        let query = { user: { $in: userIds } };
+
+        // Date Filtering
+        if (req.query.date === 'today') {
+            const startOfDay = new Date();
+            startOfDay.setHours(0, 0, 0, 0);
+            const endOfDay = new Date();
+            endOfDay.setHours(23, 59, 59, 999);
+            query.date = { $gte: startOfDay, $lte: endOfDay };
+        }
+
+        const attendance = await Attendance.find(query)
             .populate('user', 'name role')
             .sort({ date: -1 });
 
