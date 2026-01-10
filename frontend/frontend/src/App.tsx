@@ -6,7 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Attendance from './pages/Attendance';
 import GrievanceSubmission from './pages/GrievanceSubmission';
 import Payroll from './pages/Payroll';
-// removed unused ChatPage import
+import ChatPage from './pages/ChatPage';
 import LandingPage from './components/LandingPage';
 import DepartmentDocuments from './pages/DepartmentDocuments';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -69,6 +69,14 @@ function App() {
                   element={
                     <PrivateRoute>
                       <DepartmentDocuments />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/help"
+                  element={
+                    <PrivateRoute>
+                      <ChatPage />
                     </PrivateRoute>
                   }
                 />
