@@ -23,9 +23,13 @@ const Register = () => {
 
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Register Submit:', { password, confirmPassword, formData }); // DEBUG LOG
+
+        if (password.length < 6) {
+            setPasswordError('Password must be at least 6 characters long');
+            return;
+        }
+
         if (password !== confirmPassword) {
-            console.log('Password mismatch detected'); // DEBUG LOG
             setPasswordError('Passwords do not match');
             return;
         }
@@ -124,10 +128,6 @@ const Register = () => {
                             {(error || passwordError) && (
                                 <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm border border-red-200">
                                     {error || passwordError}
-                                    <div className="text-xs mt-1 font-mono">
-                                        P: "{password}" ({password.length}) <br />
-                                        CP: "{confirmPassword}" ({confirmPassword.length})
-                                    </div>
                                 </div>
                             )}
                         </div>
