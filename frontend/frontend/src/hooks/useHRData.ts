@@ -17,7 +17,9 @@ export interface Grievance {
     subject: string;
     description: string;
     date: string;
-    status: 'Pending' | 'Resolved' | 'Under Review';
+    status: 'Pending' | 'Resolved' | 'Under Review' | 'Rejected';
+    supervisorApproval?: boolean;
+    hrApproval?: boolean;
 }
 
 export interface LeaveRequest {

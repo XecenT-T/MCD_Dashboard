@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ProfileModal from './ProfileModal';
 
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -10,7 +11,12 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
     const { t, language, setLanguage } = useLanguage();
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [showProfileModal, setShowProfileModal] = useState(false);
     const isOfficial = user?.role === 'official';
+
+    // HR Detection
+    const department = (user?.department || '').toLowerCase();
+    const isHR = (isOfficial && ['general', 'administration', 'hr'].includes(department)) || user?.role === 'hr';
 
     const { viewMode } = useDashboardView();
 
@@ -39,7 +45,12 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                     </div>
 
                     <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-                        <NavItem icon="dashboard" label={t('nav_dashboard')} onClick={() => navigate('/dashboard')} active={window.location.pathname === '/dashboard'} />
+                        <NavItem
+                            icon="dashboard"
+                            label={t('nav_dashboard')}
+                            onClick={() => navigate(isHR ? '/hr-dashboard' : '/dashboard')}
+                            active={window.location.pathname === '/dashboard' || window.location.pathname === '/hr-dashboard'}
+                        />
 
                         {viewMode === 'personal' && (
                             <>
@@ -53,7 +64,7 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
 
                                 <NavItem icon="swap_horiz" label={t('nav_transfers')} onClick={() => handleWIP('Transfers')} />
                                 <NavItem icon="report" label={t('nav_grievances')} onClick={() => navigate('/grievances')} active={window.location.pathname === '/grievances'} />
-                                <NavItem icon="person" label={t('nav_profile')} onClick={() => handleWIP('Profile')} />
+                                <NavItem icon="person" label={t('nav_profile')} onClick={() => setShowProfileModal(true)} />
                             </>
                         )}
 
@@ -66,7 +77,7 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                             </div>
                         )}
 
-                        {user?.role === 'hr' && (
+                        {isHR && (
                             <>
                                 <div className="px-4 mt-6 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
                                     Administration
@@ -146,9 +157,16 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                                 <p className="text-sm font-bold text-gray-900 dark:text-white leading-none">{user?.name || 'User'}</p>
                                 <p className="text-xs text-text-muted mt-1 capitalize">{user?.role || 'Role'}</p>
                             </div>
-                            <div className="size-10 bg-gradient-to-br from-primary to-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-md shadow-primary/20">
-                                {user?.name?.charAt(0).toUpperCase() || 'U'}
-                            </div>
+                            <button
+                                onClick={() => setShowProfileModal(true)}
+                                className="size-10 bg-gradient-to-br from-primary to-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-md shadow-primary/20 hover:shadow-lg hover:scale-105 transition-all overflow-hidden"
+                            >
+                                {user?.profileImage ? (
+                                    <img src={user.profileImage} alt={user.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    user?.name?.charAt(0).toUpperCase() || 'U'
+                                )}
+                            </button>
                         </div>
                     </div>
                 </header>
@@ -156,6 +174,7 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                 <main className="flex-1 overflow-y-auto p-4 sm:p-8">
                     {children}
                 </main>
+                {showProfileModal && <ProfileModal onClose={() => setShowProfileModal(false)} />}
             </div>
         </div>
     );

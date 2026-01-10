@@ -20,7 +20,7 @@ router.get('/user', auth, async (req, res) => {
 // Register
 router.post('/register', async (req, res) => {
     try {
-        const { name, username, password, role } = req.body;
+        const { name, username, password, role, email, phoneNo, post, aadharCardNo, dob } = req.body;
 
         // Check if user exists
         let user = await User.findOne({ username });
@@ -37,7 +37,12 @@ router.post('/register', async (req, res) => {
             name,
             username,
             password: hashedPassword,
-            role: role || 'official'
+            role: role || 'official',
+            email,
+            phoneNo,
+            post,
+            aadharCardNo,
+            dob
         });
 
         await user.save();
@@ -51,7 +56,23 @@ router.post('/register', async (req, res) => {
 
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 360000 }, (err, token) => {
             if (err) throw err;
-            res.json({ token, user: { id: user.id, name: user.name, username: user.username, role: user.role, isFaceRegistered: user.isFaceRegistered, faceDescriptor: user.faceDescriptor, isOnboarded: user.isOnboarded, preferredLanguage: user.preferredLanguage } });
+            res.json({
+                token, user: {
+                    id: user.id,
+                    name: user.name,
+                    username: user.username,
+                    role: user.role,
+                    isFaceRegistered: user.isFaceRegistered,
+                    faceDescriptor: user.faceDescriptor,
+                    isOnboarded: user.isOnboarded,
+                    preferredLanguage: user.preferredLanguage,
+                    profileImage: user.profileImage,
+                    phoneNo: user.phoneNo,
+                    post: user.post,
+                    email: user.email,
+                    aadharCardNo: user.aadharCardNo
+                }
+            });
         });
 
     } catch (err) {
@@ -86,7 +107,23 @@ router.post('/login', async (req, res) => {
 
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 360000 }, (err, token) => {
             if (err) throw err;
-            res.json({ token, user: { id: user.id, name: user.name, username: user.username, role: user.role, isFaceRegistered: user.isFaceRegistered, faceDescriptor: user.faceDescriptor, isOnboarded: user.isOnboarded, preferredLanguage: user.preferredLanguage } });
+            res.json({
+                token, user: {
+                    id: user.id,
+                    name: user.name,
+                    username: user.username,
+                    role: user.role,
+                    isFaceRegistered: user.isFaceRegistered,
+                    faceDescriptor: user.faceDescriptor,
+                    isOnboarded: user.isOnboarded,
+                    preferredLanguage: user.preferredLanguage,
+                    profileImage: user.profileImage,
+                    phoneNo: user.phoneNo,
+                    post: user.post,
+                    email: user.email,
+                    aadharCardNo: user.aadharCardNo
+                }
+            });
         });
 
     } catch (err) {
@@ -98,7 +135,7 @@ router.post('/login', async (req, res) => {
 // Enroll Face
 router.post('/enroll-face', auth, async (req, res) => {
     try {
-        const { faceDescriptor } = req.body;
+        const { faceDescriptor, image } = req.body;
 
         if (!faceDescriptor || faceDescriptor.length === 0) {
             return res.status(400).json({ msg: 'Face descriptor is required' });
@@ -111,9 +148,14 @@ router.post('/enroll-face', auth, async (req, res) => {
 
         user.faceDescriptor = faceDescriptor;
         user.isFaceRegistered = true;
+
+        if (image) {
+            user.profileImage = image;
+        }
+
         await user.save();
 
-        res.json({ msg: 'Face enrolled successfully', isFaceRegistered: true });
+        res.json({ msg: 'Face enrolled successfully', isFaceRegistered: true, profileImage: user.profileImage });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');

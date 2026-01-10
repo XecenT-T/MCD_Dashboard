@@ -30,7 +30,17 @@ const Dashboard = () => {
             }, 500);
             return () => clearTimeout(timer);
         }
-    }, [user]);
+
+        // Redirect HR/Admin to HR Dashboard
+        const department = (user?.department || '').toLowerCase();
+        const isHR = user?.role === 'official' && ['general', 'administration', 'hr'].includes(department);
+        // Also check explicit 'hr' role if backend supports it
+        const isExplicitHR = user?.role === 'hr';
+
+        if (isHR || isExplicitHR) {
+            navigate('/hr-dashboard');
+        }
+    }, [user, navigate]);
 
     const handleEnrollmentSuccess = async () => {
         await reloadUser();
@@ -76,15 +86,7 @@ const Dashboard = () => {
         <DashboardLayout>
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Header & View Switcher */}
-                {/* Welcome Section */}
-                <div className="mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                        Welcome back, {user?.name || 'User'}
-                    </h1>
-                    <p className="text-gray-500 dark:text-gray-400 mt-1">
-                        Here's what's happening in your department today.
-                    </p>
-                </div>
+
 
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>

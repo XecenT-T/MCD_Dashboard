@@ -11,6 +11,12 @@ interface User {
     isFaceRegistered?: boolean;
     isOnboarded?: boolean;
     preferredLanguage?: 'en' | 'hi';
+    profileImage?: string;
+    phoneNo?: string;
+    email?: string;
+    post?: string;
+    aadharCardNo?: string;
+    dob?: string;
 }
 
 interface AuthContextType {

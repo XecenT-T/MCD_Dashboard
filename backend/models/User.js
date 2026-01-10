@@ -16,25 +16,22 @@ const userSchema = new mongoose.Schema({
     },
     aadharCardNo: {
         type: String,
-        required: true,
-        unique: true
+        unique: true,
+        sparse: true
     },
     dob: {
-        type: Date,
-        required: true
+        type: Date
     },
     email: {
         type: String,
-        required: true,
-        unique: true
+        unique: true,
+        sparse: true
     },
     phoneNo: {
-        type: String,
-        required: true
+        type: String
     },
     post: {
-        type: String, // Designation
-        required: true
+        type: String // Designation
     },
     role: {
         type: String,
@@ -65,6 +62,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['en', 'hi'],
         default: 'en'
+    },
+    profileImage: {
+        type: String,
+        default: ''
     }
 });
 

@@ -99,20 +99,30 @@ const FaceEnrollment: React.FC<FaceEnrollmentProps> = ({ onSuccess, onClose }) =
         if (detections) {
             const descriptor = Array.from(detections.descriptor);
 
-            try {
-                const config = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-auth-token': token
-                    }
-                };
+            // Capture image
+            const canvas = document.createElement('canvas');
+            canvas.width = videoRef.current.videoWidth;
+            canvas.height = videoRef.current.videoHeight;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+                const imageBase64 = canvas.toDataURL('image/jpeg');
 
-                await api.post('/api/auth/enroll-face', { faceDescriptor: descriptor }, config);
-                setStatus('Enrollment Successful!');
-                setTimeout(onSuccess, 1500);
-            } catch (err) {
-                console.error(err);
-                setStatus('Enrollment failed. Please try again.');
+                try {
+                    const config = {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-auth-token': token
+                        }
+                    };
+
+                    await api.post('/api/auth/enroll-face', { faceDescriptor: descriptor, image: imageBase64 }, config);
+                    setStatus('Enrollment Successful!');
+                    setTimeout(onSuccess, 1500);
+                } catch (err) {
+                    console.error(err);
+                    setStatus('Enrollment failed. Please try again.');
+                }
             }
         }
     };

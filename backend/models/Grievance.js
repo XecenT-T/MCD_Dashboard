@@ -19,6 +19,14 @@ const GrievanceSchema = new mongoose.Schema({
         enum: ['pending', 'in-progress', 'resolved', 'rejected', 'forwarded-to-hr'],
         default: 'pending'
     },
+    supervisorApproval: {
+        type: Boolean,
+        default: null
+    },
+    hrApproval: {
+        type: Boolean,
+        default: null
+    },
     department: {
         type: mongoose.Schema.Types.String,
         required: true
