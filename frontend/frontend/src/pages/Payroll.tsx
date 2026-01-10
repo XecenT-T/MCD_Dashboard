@@ -1,33 +1,41 @@
+import { useState, useEffect } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
 import { useLanguage } from '../context/LanguageContext';
 
 const Payroll = () => {
-    const { user } = useAuth();
+    const { user, token } = useAuth();
     const { t } = useLanguage();
-    const isSupervisor = user?.role === 'supervisor';
+    const isOfficial = user?.role === 'official';
 
-    // Mock data for the logged-in worker's payslip
-    const workerPayslip = {
-        month: 'October 2023',
-        earnings: {
-            basic: '₹18,000',
-            hra: '₹3,600',
-            conveyance: '₹1,600',
-            medical: '₹1,250',
-            special: '₹1,050',
-            total: '₹25,500'
-        },
-        deductions: {
-            pf: '₹2,160',
-            esi: '₹191',
-            tax: '₹500',
-            total: '₹2,851'
-        },
-        netPay: '₹22,649',
-        status: 'Processed',
-        paidOn: 'Oct 31, 2023',
-        accountNo: 'XXXX-XXXX-4521'
+    const [payslipData, setPayslipData] = useState<any>(null);
+    // const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchPayroll = async () => {
+            try {
+                const config = { headers: { 'x-auth-token': token } };
+                const res = await api.get('/api/payroll', config);
+                if (res.data && res.data.length > 0) {
+                    setPayslipData(res.data[0]); // Show latest
+                }
+            } catch (err) {
+                console.error("Error fetching payroll", err);
+            }
+        };
+        fetchPayroll();
+    }, [token]);
+
+    // Fallback/Loading UI or Default empty state if no data
+    const workerPayslip = payslipData || {
+        month: 'No Data',
+        earnings: { basic: '0', hra: '0', conveyance: '0', medical: '0', special: '0', total: '0' },
+        deductions: { pf: '0', esi: '0', tax: '0', total: '0' },
+        netPay: '0',
+        status: 'N/A',
+        paidOn: '-',
+        accountNo: '-'
     };
 
     return (
@@ -43,18 +51,18 @@ const Payroll = () => {
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-                                {isSupervisor ? 'Payroll Overview' : 'My Payslip'}
+                                {isOfficial ? 'Payroll Overview' : 'My Payslip'}
                             </h1>
                             <p className="text-gray-500 dark:text-gray-400 mt-1">
-                                {isSupervisor ? 'Manage disbursements, track processing status, and view history.' : 'View your salary details and download payslips.'}
+                                {isOfficial ? 'Manage disbursements, track processing status, and view history.' : 'View your salary details and download payslips.'}
                             </p>
                         </div>
                         <div className="flex gap-3">
                             <button className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-medium text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 transition-colors">
                                 <span className="material-symbols-outlined text-lg">download</span>
-                                {isSupervisor ? 'Export Report' : 'Download Payslip'}
+                                {isOfficial ? 'Export Report' : 'Download Payslip'}
                             </button>
-                            {isSupervisor && (
+                            {isOfficial && (
                                 <button className="px-4 py-2 rounded-lg bg-primary text-white font-medium text-sm shadow hover:bg-blue-700 flex items-center gap-2 transition-colors">
                                     <span className="material-symbols-outlined text-lg">add</span>
                                     Create New Batch
@@ -234,7 +242,7 @@ const Payroll = () => {
                 ) : (
                     /* Official View - Full Table (existing code) */
                     <>
-                        {/* Stats Grid for Supervisors */}
+                        {/* Stats Grid for Officials */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col gap-2">
                                 <div className="flex justify-between items-start">
@@ -261,7 +269,7 @@ const Payroll = () => {
                             </div>
                         </div>
 
-                        {/* Table for Supervisors */}
+                        {/* Table for Officials */}
                         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
                             <div className="p-5 border-b border-gray-200 dark:border-gray-700">
                                 <h3 className="font-bold text-gray-900 dark:text-white text-lg">Payroll Master List</h3>

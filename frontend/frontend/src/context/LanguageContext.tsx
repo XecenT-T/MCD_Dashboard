@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 
-type Language = 'en' | 'hi';
+type Language = 'en' | 'hi' | 'pa' | 'mr' | 'ta' | 'te' | 'bn';
 
 type Translations = {
     [key in Language]: {
@@ -10,7 +10,7 @@ type Translations = {
 
 const translations: Translations = {
     en: {
-        "dashboard_title_supervisor": "Supervisor Dashboard",
+        "dashboard_title_official": "Official Dashboard",
         "dashboard_title_worker": "Worker Dashboard",
         "welcome_back": "Welcome back",
         "what_happening": "Here's what's happening with your account today.",
@@ -52,7 +52,7 @@ const translations: Translations = {
         "submit_grievance_modal_title": "Submit a Grievance"
     },
     hi: {
-        "dashboard_title_supervisor": "पर्यवेक्षक डैशबोर्ड",
+        "dashboard_title_official": "अधिकारी डैशबोर्ड",
         "dashboard_title_worker": "कर्मी डैशबोर्ड",
         "welcome_back": "वापसी पर स्वागत है",
         "what_happening": "आज आपके खाते में क्या हो रहा है, यहां देखें।",
@@ -92,12 +92,222 @@ const translations: Translations = {
         "submit": "जमा करें",
         "cancel": "रद्द करें",
         "submit_grievance_modal_title": "शिकायत दर्ज करें"
+    },
+    pa: {
+        "dashboard_title_official": "ਅਧਿਕਾਰੀ ਡੈਸ਼ਬੋਰਡ",
+        "dashboard_title_worker": "ਵਰਕਰ ਡੈਸ਼ਬੋਰਡ",
+        "welcome_back": "ਜੀ ਆਇਆਂ ਨੂੰ",
+        "what_happening": "ਇੱਥੇ ਵੇਖੋ ਅੱਜ ਤੁਹਾਡੇ ਖਾਤੇ ਵਿੱਚ ਕੀ ਹੋ ਰਿਹਾ ਹੈ।",
+        "reports": "ਰਿਪੋਰਟਾਂ",
+        "submit_grievance": "ਸ਼ਿਕਾਇਤ ਦਰਜ ਕਰੋ",
+        "team_attendance": "ਟੀਮ ਹਾਜ਼ਰੀ",
+        "attendance_overview": "ਹਾਜ਼ਰੀ ਝਲਕ",
+        "view_report": "ਰਿਪੋਰਟ ਵੇਖੋ",
+        "quick_actions": "ਤੁਰੰਤ ਕਰਵਾਈ",
+        "approve_leave": "ਛੁੱਟੀ ਮਨਜ਼ੂਰ ਕਰੋ",
+        "transfers": "ਤਬਾਦਲੇ",
+        "team_reports": "ਟੀਮ ਰਿਪੋਰਟਾਂ",
+        "announce": "ਐਲਾਨ ਕਰੋ",
+        "mark_in": "ਹਾਜ਼ਰੀ ਲਗਾਓ (ਚਿਹਰਾ)",
+        "setup_face": "ਚਿਹਰਾ ਸੈੱਟਅੱਪ",
+        "apply_leave": "ਛੁੱਟੀ ਲਈ ਅਰਜ਼ੀ",
+        "payslip": "ਤਨਖਾਹ ਪਰਚੀ",
+        "form_16": "ਫਾਰਮ 16",
+        "recent_transfers": "ਹਾਲੀਆ ਤਬਾਦਲੇ",
+        "recent_payroll": "ਹਾਲੀਆ ਤਨਖਾਹ",
+        "view_all": "ਸਾਰਾ ਇਤਿਹਾਸ ਵੇਖੋ",
+        "active_grievances": "ਸਰਗਰਮ ਸ਼ਿਕਾਇਤਾਂ",
+        "view_all_tickets": "ਸਾਰੀਆਂ ਟਿਕਟਾਂ ਵੇਖੋ",
+        "logout": "ਲੌਗ ਆਉਟ",
+        "need_help": "ਮਦਦ ਚਾਹੀਦੀ ਹੈ?",
+        "contact_support": "ਸੰਪਰਕ ਕਰੋ",
+        "nav_dashboard": "ਡੈਸ਼ਬੋਰਡ",
+        "nav_attendance": "ਹਾਜ਼ਰੀ",
+        "nav_payroll": "ਤਨਖਾਹ",
+        "nav_transfers": "ਤਬਾਦਲੇ",
+        "nav_grievances": "ਸ਼ਿਕਾਇਤਾਂ",
+        "nav_profile": "ਪ੍ਰੋਫਾਈਲ",
+        "wip": "ਕੰਮ ਜਾਰੀ ਹੈ",
+        "grievance_submitted": "ਸ਼ਿਕਾਇਤ ਦਰਜ ਹੋ ਗਈ!",
+        "grievance_title": "ਸਿਰਲੇਖ",
+        "grievance_desc": "ਵੇਰਵਾ",
+        "submit": "ਜਮ੍ਹਾਂ ਕਰੋ",
+        "cancel": "ਰੱਦ ਕਰੋ",
+        "submit_grievance_modal_title": "ਸ਼ਿਕਾਇਤ ਦਰਜ ਕਰੋ"
+    },
+    mr: {
+        "dashboard_title_official": "अधिकारी डॅशबोर्ड",
+        "dashboard_title_worker": "कामगार डॅशबोर्ड",
+        "welcome_back": "स्वागत आहे",
+        "what_happening": "आज तुमच्या खात्यात काय घडत आहे ते पहा.",
+        "reports": "अहवाल",
+        "submit_grievance": "तक्रार नोंदवा",
+        "team_attendance": "टीम उपस्थिती",
+        "attendance_overview": "उपस्थिती आढावा",
+        "view_report": "अहवाल पहा",
+        "quick_actions": "त्वरित क्रिया",
+        "approve_leave": "रजा मंजूर करा",
+        "transfers": "बदल्या",
+        "team_reports": "टीम अहवाल",
+        "announce": "घोषणा करा",
+        "mark_in": "हजेरी लावा (चेहरा)",
+        "setup_face": "फेस आयडी सेट करा",
+        "apply_leave": "रजेसाठी अर्ज करा",
+        "payslip": "पगार स्लिप",
+        "form_16": "फॉर्म 16",
+        "recent_transfers": "अलीकडील बदल्या",
+        "recent_payroll": "अलीकडील पगार",
+        "view_all": "सर्व इतिहास पहा",
+        "active_grievances": "सक्रिय तक्रारी",
+        "view_all_tickets": "सर्व तिकिटे पहा",
+        "logout": "लॉग आउट",
+        "need_help": "मदत हवी आहे?",
+        "contact_support": "संपर्क साधा",
+        "nav_dashboard": "डॅशबोर्ड",
+        "nav_attendance": "उपस्थिती",
+        "nav_payroll": "पगार",
+        "nav_transfers": "बदल्या",
+        "nav_grievances": "तक्रारी",
+        "nav_profile": "प्रोफाइल",
+        "wip": "काम चालू आहे",
+        "grievance_submitted": "तक्रार यशस्वीरित्या नोंदवली गेली!",
+        "grievance_title": "शीर्षक",
+        "grievance_desc": "वर्णन",
+        "submit": "सबमिट करा",
+        "cancel": "रद्द करा",
+        "submit_grievance_modal_title": "तक्रार नोंदवा"
+    },
+    ta: {
+        "dashboard_title_official": "அதிகாரி டாஷ்போர்டு",
+        "dashboard_title_worker": "தொழிலாளர் டாஷ்போர்டு",
+        "welcome_back": "மீண்டும் வருக",
+        "what_happening": "இன்று உங்கள் கணக்கில் என்ன நடக்கிறது என்று பாருங்கள்.",
+        "reports": "அறிக்கைகள்",
+        "submit_grievance": "குறை சமர்ப்பிக்கவும்",
+        "team_attendance": "குழு வருகை",
+        "attendance_overview": "வருகை கண்ணோட்டம்",
+        "view_report": "அறிக்கையை பார்க்கவும்",
+        "quick_actions": "விரைவு செயல்கள்",
+        "approve_leave": "விடுப்பை அங்கீகரிக்கவும்",
+        "transfers": "இடமாற்றங்கள்",
+        "team_reports": "குழு அறிக்கைகள்",
+        "announce": "அறிவிப்பு",
+        "mark_in": "வருகையை பதிவு செய் (முகம்)",
+        "setup_face": "முக ஐடியை அமைக்கவும்",
+        "apply_leave": "விடுப்பு விண்ணப்பிக்கவும்",
+        "payslip": "சம்பள சீட்டு",
+        "form_16": "படிவம் 16",
+        "recent_transfers": "சமீபத்திய இடமாற்றங்கள்",
+        "recent_payroll": "சமீபத்திய சம்பளம்",
+        "view_all": "எல்லா வரலாற்றையும் காண்க",
+        "active_grievances": "செயலில் உள்ள குறைகள்",
+        "view_all_tickets": "அனைத்து டிக்கெட்டுகளையும் காண்க",
+        "logout": "வெளியேறு",
+        "need_help": "உதவி தேவையா?",
+        "contact_support": "தொடர்பு கொள்ளவும்",
+        "nav_dashboard": "டாஷ்போர்டு",
+        "nav_attendance": "வருகை",
+        "nav_payroll": "சம்பளம்",
+        "nav_transfers": "இடமாற்றங்கள்",
+        "nav_grievances": "குறைகள்",
+        "nav_profile": "சுயவிவரம்",
+        "wip": "பணி நடந்து கொண்டிருக்கிறது",
+        "grievance_submitted": "குறை வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது!",
+        "grievance_title": "தலைப்பு",
+        "grievance_desc": "விளக்கம்",
+        "submit": "சமர்ப்பிக்கவும்",
+        "cancel": "ரத்துசெய்",
+        "submit_grievance_modal_title": "குறை சமர்ப்பிக்கவும்"
+    },
+    te: {
+        "dashboard_title_official": "అధికారి డాష్‌బోర్డ్",
+        "dashboard_title_worker": "కార్మికుడు డాష్‌బోర్డ్",
+        "welcome_back": "స్వాగతం",
+        "what_happening": "ఈ రోజు మీ ఖాతాలో ఏం జరుగుతుందో చూడండి.",
+        "reports": "నివేదికలు",
+        "submit_grievance": "ఫిర్యాదు చేయండి",
+        "team_attendance": "జట్టు హాజరు",
+        "attendance_overview": "హాజరు అవలోకనం",
+        "view_report": "నివేదిక చూడండి",
+        "quick_actions": "త్వరిత చర్యలు",
+        "approve_leave": "సెలవు ఆమోదించండి",
+        "transfers": "బదిలీలు",
+        "team_reports": "జట్టు నివేదికలు",
+        "announce": "ప్రకటించండి",
+        "mark_in": "హాజరు వేయండి (ముఖం)",
+        "setup_face": "ఫేస్ ఐడి సెట్ చేయండి",
+        "apply_leave": "సెలవు దరఖాస్తు",
+        "payslip": "జీతం స్లిప్",
+        "form_16": "ఫారం 16",
+        "recent_transfers": "ఇటీవలి బదిలీలు",
+        "recent_payroll": "ఇటీవలి జీతం",
+        "view_all": "మొత్తం చరిత్ర చూడండి",
+        "active_grievances": "యాక్టివ్ ఫిర్యాదులు",
+        "view_all_tickets": "అన్ని టిక్కెట్లు చూడండి",
+        "logout": "లాగ్ అవుట్",
+        "need_help": "సహాయం కావాలా?",
+        "contact_support": "సంప్రదించండి",
+        "nav_dashboard": "డాష్‌బోర్డ్",
+        "nav_attendance": "హాజరు",
+        "nav_payroll": "జీతం",
+        "nav_transfers": "బదిలీలు",
+        "nav_grievances": "ఫిర్యాదులు",
+        "nav_profile": "ప్రొఫైల్",
+        "wip": "పని జరుగుతోంది",
+        "grievance_submitted": "ఫిర్యాదు విజయవంతంగా సమర్పించబడింది!",
+        "grievance_title": "శీర్షిక",
+        "grievance_desc": "వివరణ",
+        "submit": "సమర్పించు",
+        "cancel": "రద్దు చేయండి",
+        "submit_grievance_modal_title": "ఫిర్యాదు చేయండి"
+    },
+    bn: {
+        "dashboard_title_official": "অফিসিয়াল ড্যাশবোর্ড",
+        "dashboard_title_worker": "কর্মী ড্যাশবোর্ড",
+        "welcome_back": "স্বাগতম",
+        "what_happening": "আজ আপনার অ্যাকাউন্টে কী ঘটছে তা দেখুন।",
+        "reports": "রিপোর্ট",
+        "submit_grievance": "অভিযোগ জমা দিন",
+        "team_attendance": "টিম উপস্থিতি",
+        "attendance_overview": "উপস্থিতি ওভারভিউ",
+        "view_report": "রিপোর্ট দেখুন",
+        "quick_actions": "দ্রুত পদক্ষেপ",
+        "approve_leave": "ছুটি অনুমোদন করুন",
+        "transfers": "বদলি",
+        "team_reports": "টিম রিপোর্ট",
+        "announce": "ঘোষণা করুন",
+        "mark_in": "হাজিরা দিন (মুখ)",
+        "setup_face": "ফেস আইডি সেট করুন",
+        "apply_leave": "ছুটির আবেদন",
+        "payslip": "বেতন স্লিপ",
+        "form_16": "ফর্ম 16",
+        "recent_transfers": "সাম্প্রতিক বদলি",
+        "recent_payroll": "সাম্প্রতিক বেতন",
+        "view_all": "সব ইতিহাস দেখুন",
+        "active_grievances": "সক্রিয় অভিযোগ",
+        "view_all_tickets": "সব টিকেট দেখুন",
+        "logout": "লগ আউট",
+        "need_help": "সাহায্য প্রয়োজন?",
+        "contact_support": "যোগাযোগ করুন",
+        "nav_dashboard": "ড্যাশবোর্ড",
+        "nav_attendance": "উপস্থিতি",
+        "nav_payroll": "বেতন",
+        "nav_transfers": "বদলি",
+        "nav_grievances": "অভিযোগ",
+        "nav_profile": "প্রোফাইল",
+        "wip": "কাজ চলছে",
+        "grievance_submitted": "অভিযোগ সফলভাবে জমা দেওয়া হয়েছে!",
+        "grievance_title": "শিরোনাম",
+        "grievance_desc": "বিবরণ",
+        "submit": "জমা দিন",
+        "cancel": "বাতিল",
+        "submit_grievance_modal_title": "অভিযোগ জমা দিন"
     }
 };
 
 interface LanguageContextType {
     language: Language;
-    toggleLanguage: () => void;
+    setLanguage: (lang: Language) => void;
     t: (key: string) => string;
 }
 
@@ -106,16 +316,12 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     const [language, setLanguage] = useState<Language>('en');
 
-    const toggleLanguage = () => {
-        setLanguage(prev => prev === 'en' ? 'hi' : 'en');
-    };
-
     const t = (key: string) => {
-        return translations[language][key] || key;
+        return translations[language][key] || translations['en'][key] || key;
     };
 
     return (
-        <LanguageContext.Provider value={{ language, toggleLanguage, t }}>
+        <LanguageContext.Provider value={{ language, setLanguage, t }}>
             {children}
         </LanguageContext.Provider>
     );
@@ -128,3 +334,4 @@ export const useLanguage = () => {
     }
     return context;
 };
+

@@ -6,7 +6,7 @@ import AttendanceAnalyticsHub from '../components/hr/AttendanceAnalyticsHub';
 import GrievanceManagementSystem from '../components/hr/GrievanceManagementSystem';
 import LeaveManagementTable from '../components/hr/LeaveManagementTable';
 import PayrollCommandCenter from '../components/hr/PayrollCommandCenter';
-import SupervisorList from '../components/hr/SupervisorList';
+import OfficialList from '../components/hr/OfficialList';
 
 const HRDashboard = () => {
     const { user } = useAuth();
@@ -16,7 +16,7 @@ const HRDashboard = () => {
         grievances,
         leaveRequests,
         payrollData,
-        supervisors,
+        officials,
         releasePayroll,
         updateGrievanceStatus,
         updateLeaveStatus
@@ -69,9 +69,9 @@ const HRDashboard = () => {
                     <GrievanceManagementSystem grievances={grievances} onUpdateStatus={updateGrievanceStatus} />
                 </div>
 
-                {/* Bottom Row: Supervisors & Directory */}
+                {/* Bottom Row: Officials & Directory */}
                 <div className="grid grid-cols-1 gap-6">
-                    <SupervisorList supervisors={supervisors} />
+                    <OfficialList officials={officials} />
                 </div>
 
             </div>

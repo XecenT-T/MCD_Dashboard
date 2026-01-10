@@ -5,17 +5,19 @@ interface User {
     id: string;
     name: string;
     username: string;
-    role: 'supervisor' | 'worker' | 'hr';
+    role: 'official' | 'worker' | 'hr';
     department?: string;
     faceDescriptor?: number[];
     isFaceRegistered?: boolean;
+    isOnboarded?: boolean;
+    preferredLanguage?: 'en' | 'hi';
 }
 
 interface AuthContextType {
     user: User | null;
     token: string | null;
     loading: boolean;
-    login: (formData: any) => Promise<void>;
+    login: (formData: any) => Promise<User | any>;
     register: (formData: any) => Promise<void>;
     logout: () => void;
     error: string | null;
@@ -66,6 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             localStorage.setItem('token', res.data.token);
             setToken(res.data.token);
             setUser(res.data.user);
+            return res.data.user;
         } catch (err: any) {
             setError(err.response?.data?.msg || 'Login failed');
             localStorage.removeItem('token');
@@ -85,9 +88,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 id: 'mock-hr-1',
                 name: 'Demo Admin',
                 username: 'admin',
-                role: 'hr',
+                role: 'official', // acts as official/admin
                 department: 'Administration',
-                isFaceRegistered: true
+                isFaceRegistered: true,
+                isOnboarded: true,
+                preferredLanguage: 'en'
             };
             setUser(mockHR);
             setLoading(false);

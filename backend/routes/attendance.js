@@ -52,11 +52,11 @@ router.get('/', auth, async (req, res) => {
     }
 });
 
-// Get Department Attendance (Supervisor Only)
+// Get Department Attendance (Official Only)
 router.get('/department', auth, async (req, res) => {
     try {
         const user = await require('../models/User').findById(req.user.id);
-        if (user.role !== 'supervisor') {
+        if (user.role !== 'official') {
             return res.status(403).json({ msg: 'Not authorized' });
         }
 

@@ -7,7 +7,7 @@ interface GrievanceManagementSystemProps {
 }
 
 const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ grievances, onUpdateStatus }) => {
-    const [filter, setFilter] = useState<'All' | 'supervisor' | 'worker'>('All');
+    const [filter, setFilter] = useState<'All' | 'official' | 'worker'>('All');
 
     // Derived state for filtered grievances
     const filteredGrievances = grievances.filter(g => filter === 'All' || g.role === filter);
@@ -23,13 +23,13 @@ const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ g
                     <p className="text-sm text-text-muted mt-1">Review and resolve issues</p>
                 </div>
                 <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg self-start">
-                    {(['All', 'supervisor', 'worker'] as const).map((f) => (
+                    {(['All', 'official', 'worker'] as const).map((f) => (
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
                             className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all capitalize ${filter === f ? 'bg-white dark:bg-surface-dark shadow-sm text-primary' : 'text-gray-500 dark:text-gray-400'}`}
                         >
-                            {f === 'supervisor' ? 'Supervisors' : f === 'worker' ? 'Workers' : 'All'}
+                            {f === 'official' ? 'Officials' : f === 'worker' ? 'Workers' : 'All'}
                         </button>
                     ))}
                 </div>
@@ -44,7 +44,7 @@ const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ g
                             <div key={grievance.id} className="p-5 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
                                 <div className="flex justify-between items-start mb-2">
                                     <div className="flex items-center gap-2">
-                                        <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${grievance.role === 'supervisor'
+                                        <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${grievance.role === 'official'
                                             ? 'bg-purple-50 text-purple-600 border-purple-100'
                                             : 'bg-blue-50 text-blue-600 border-blue-100'
                                             }`}>

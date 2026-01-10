@@ -74,9 +74,9 @@ const LandingPage: React.FC = () => {
                                     <h1 className="text-text-main dark:text-white text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
                                         Unified. <span className="text-primary">Efficient.</span> Transparent.
                                     </h1>
-                                    <h2 className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed max-w-xl">
-                                        The single digital gateway for all MCD supervisors and workers to manage attendance, payroll, and administrative services efficiently.
-                                    </h2>
+                                    <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+                                        The single digital gateway for all MCD officials and workers to manage attendance, payroll, and administrative services efficiently.
+                                    </p>
                                 </div>
                                 <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                                     <Link to="/login" className="flex items-center justify-center rounded-lg h-12 px-8 bg-primary hover:bg-primary-dark text-white text-base font-bold shadow-md transition-all w-full sm:w-auto">
@@ -134,13 +134,13 @@ const LandingPage: React.FC = () => {
                                     </ul>
                                 </div>
 
-                                {/* Card 2: Supervisors */}
+                                {/* Card 2: Officials */}
                                 <div className="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-background-light dark:bg-background-dark p-6 hover:shadow-lg hover:border-primary/50 transition-all duration-300">
                                     <div className="flex items-center gap-4">
                                         <div className="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                                             <span className="material-symbols-outlined text-2xl">supervisor_account</span>
                                         </div>
-                                        <h3 className="text-text-main dark:text-white text-xl font-bold">Supervisors</h3>
+                                        <h3 className="text-text-main dark:text-white text-xl font-bold">Officials</h3>
                                     </div>
                                     <ul className="flex flex-col gap-3 mt-2">
                                         {['Team attendance', 'Approvals', 'Performance inputs'].map((item, i) => (

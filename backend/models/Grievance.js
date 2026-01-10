@@ -16,8 +16,12 @@ const GrievanceSchema = new mongoose.Schema({
     },
     status: {
         type: mongoose.Schema.Types.String,
-        enum: ['pending', 'in-progress', 'resolved', 'rejected'],
+        enum: ['pending', 'in-progress', 'resolved', 'rejected', 'forwarded-to-hr'],
         default: 'pending'
+    },
+    department: {
+        type: mongoose.Schema.Types.String,
+        required: true
     },
     createdAt: {
         type: Date,
