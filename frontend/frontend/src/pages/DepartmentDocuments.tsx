@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../context/AuthContext';
-import { useLanguage } from '../context/LanguageContext';
+// removed unused import
 
 interface Document {
     id: string;
@@ -13,7 +13,7 @@ interface Document {
 
 const DepartmentDocuments = () => {
     const { user } = useAuth();
-    const { t } = useLanguage();
+    // removed duplicate user declaration
     const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
 
     // Mock data - in a real app this would come from an API based on user.department

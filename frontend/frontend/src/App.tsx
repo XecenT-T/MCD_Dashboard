@@ -6,7 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Attendance from './pages/Attendance';
 import GrievanceSubmission from './pages/GrievanceSubmission';
 import Payroll from './pages/Payroll';
-import ChatPage from './pages/ChatPage';
+// removed unused ChatPage import
 import LandingPage from './components/LandingPage';
 import DepartmentDocuments from './pages/DepartmentDocuments';
 import { AuthProvider, useAuth } from './context/AuthContext';
