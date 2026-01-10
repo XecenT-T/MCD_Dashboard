@@ -65,6 +65,18 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                                 </p>
                             </div>
                         )}
+
+                        {user?.role === 'hr' && (
+                            <>
+                                <div className="px-4 mt-6 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                    Administration
+                                </div>
+                                <NavItem icon="grid_view" label="Overview" onClick={() => navigate('/hr-dashboard')} active={window.location.pathname === '/hr-dashboard'} />
+                                <NavItem icon="domain" label="Departments" onClick={() => handleWIP('Departments')} />
+                                <NavItem icon="payments" label="Payroll" onClick={() => handleWIP('Payroll Master')} />
+                                <NavItem icon="inbox" label="Requests" onClick={() => handleWIP('Requests')} />
+                            </>
+                        )}
                     </nav>
 
                     <div className="p-4 border-t border-gray-100 dark:border-border-dark">

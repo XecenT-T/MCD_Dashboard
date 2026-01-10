@@ -5,7 +5,7 @@ interface User {
     id: string;
     name: string;
     username: string;
-    role: 'supervisor' | 'worker';
+    role: 'supervisor' | 'worker' | 'hr';
     department?: string;
     faceDescriptor?: number[];
     isFaceRegistered?: boolean;
@@ -26,7 +26,14 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<User | null>({
+        id: 'mock-hr-1',
+        name: 'Demo Admin',
+        username: 'admin',
+        role: 'hr',
+        department: 'Administration',
+        isFaceRegistered: true
+    });
     const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
