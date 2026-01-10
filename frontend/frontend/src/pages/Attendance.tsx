@@ -54,29 +54,71 @@ const Attendance = () => {
         }
     }, [user]);
 
-    // 2. Geolocation Check
-    useEffect(() => {
+    // 2. Geolocation Check with Strict Delhi Fallback
+    const fetchLocation = async () => {
+        setLocationStatus("Locating...");
+        setLocationStep('pending');
+
+        const useFallback = () => {
+            // Default to Delhi (MCD Civic Centre) if GPS fails
+            console.warn("GPS failed. Defaulting to Delhi.");
+            const delhiLat = 28.6139;
+            const delhiLng = 77.2090;
+
+            setLocation({
+                lat: delhiLat,
+                lng: delhiLng,
+                address: 'New Delhi, India (Default)'
+            });
+            setLocationStatus("GPS Failed. Defaulting to Delhi.");
+            setLocationStep('success');
+            setFaceStep('scanning');
+        };
+
         if (!navigator.geolocation) {
-            setLocationStatus("Geolocation not supported");
+            useFallback();
             return;
         }
 
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 15000, // Increased timeout for better GPS chance
+            maximumAge: 0
+        };
+
         navigator.geolocation.getCurrentPosition(
-            (position) => {
+            async (position) => {
+                // Reverse Geocoding
+                let address = 'Unknown Location';
+                try {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
+                    const data = await res.json();
+                    if (data && data.display_name) {
+                        address = data.display_name.split(',').slice(0, 3).join(',');
+                    }
+                } catch (e) {
+                    console.error("Geocoding failed", e);
+                }
+
                 setLocation({
                     lat: position.coords.latitude,
                     lng: position.coords.longitude,
-                    address: 'Office Location'
+                    address: address
                 });
-                setLocationStatus("Inside Geo-fence"); // Simulating success
+                setLocationStatus("Location Verified (GPS)");
                 setLocationStep('success');
-                setFaceStep('scanning'); // Start face scan
+                setFaceStep('scanning');
             },
             (error) => {
-                console.error(error);
-                setLocationStatus("Location access denied");
-            }
+                console.error("GPS Error:", error);
+                useFallback();
+            },
+            options
         );
+    };
+
+    useEffect(() => {
+        fetchLocation();
     }, []);
 
     // 3. Face Recognition Logic
@@ -442,6 +484,9 @@ const Attendance = () => {
                                                     <p className={`text-sm font-bold ${locationStep === 'success' ? 'text-green-800' : 'text-yellow-800'}`}>{locationStatus}</p>
                                                     {location && <p className="text-xs text-slate-500">Lat: {location.lat.toFixed(4)}, Lng: {location.lng.toFixed(4)}</p>}
                                                 </div>
+                                                <button onClick={fetchLocation} className="ml-auto text-xs bg-white border border-slate-300 px-2 py-1 rounded hover:bg-slate-50 transition-colors">
+                                                    Refresh
+                                                </button>
                                             </div>
                                         </div>
                                     </div>

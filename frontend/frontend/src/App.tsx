@@ -11,6 +11,7 @@ import Grievances from './pages/Grievances';
 import ChatPage from './pages/ChatPage';
 import LandingPage from './components/LandingPage';
 import Onboarding from './pages/Onboarding';
+import Heatmap from './pages/Heatmap';
 import DepartmentDocuments from './pages/DepartmentDocuments';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
@@ -141,6 +142,14 @@ function App() {
                   element={
                     <PrivateRoute>
                       <ChatPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/heatmap"
+                  element={
+                    <PrivateRoute>
+                      <Heatmap />
                     </PrivateRoute>
                   }
                 />

@@ -82,32 +82,59 @@ const Onboarding = () => {
             });
     };
 
-    const handleVideoOnPlay = () => {
-        setInterval(async () => {
-            if (canvasRef.current && videoRef.current) {
-                // canvasRef.current.innerHTML = ''; // Canvas doesn't use innerHTML like this for media content usually, but face-api example does. 
-                // However, face-api `createCanvasFromMedia` returns a new canvas element. We should append it or draw on existing.
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+
+        const startDetection = async () => {
+            if (captureVideo && videoRef.current && canvasRef.current && !faceDescriptor) {
+                // Ensure video is playing
+                if (videoRef.current.paused || videoRef.current.ended) return;
+
                 const displaySize = {
-                    width: videoRef.current.width,
-                    height: videoRef.current.height
+                    width: videoRef.current.videoWidth || 300,
+                    height: videoRef.current.videoHeight || 300
                 };
-                faceapi.matchDimensions(canvasRef.current, displaySize);
-                const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 })).withFaceLandmarks().withFaceDescriptors();
-                const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
-                // Draw logic (optional, for feedback)
-                canvasRef.current.getContext('2d')?.clearRect(0, 0, displaySize.width, displaySize.height);
-                faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+                // Match dimensions only if they differ to avoid flickering
+                if (canvasRef.current.width !== displaySize.width) {
+                    faceapi.matchDimensions(canvasRef.current, displaySize);
+                }
 
-                if (detections.length > 0 && !faceDescriptor) {
-                    setFaceDescriptor(detections[0].descriptor);
-                    // Stop video after capture
-                    // setCaptureVideo(false); 
-                    // Let user confirm
+                try {
+                    const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 }))
+                        .withFaceLandmarks()
+                        .withFaceDescriptors();
+
+                    const resizedDetections = faceapi.resizeResults(detections, displaySize);
+
+                    // Draw logic
+                    const ctx = canvasRef.current.getContext('2d');
+                    if (ctx) {
+                        ctx.clearRect(0, 0, displaySize.width, displaySize.height);
+                        faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+                    }
+
+                    if (detections.length > 0) {
+                        console.log("Face detected!", detections[0].descriptor);
+                        setFaceDescriptor(detections[0].descriptor);
+                        // Interval will be cleared by cleanup function as effect re-runs or component unmounts
+                        // But since we set state, we likely want to stop detecting immediately
+                        clearInterval(interval);
+                    }
+                } catch (e) {
+                    console.error("Detection error:", e);
                 }
             }
-        }, 100);
-    };
+        };
+
+        if (captureVideo && modelsLoaded) {
+            interval = setInterval(startDetection, 100);
+        }
+
+        return () => {
+            if (interval) clearInterval(interval);
+        };
+    }, [captureVideo, modelsLoaded, faceDescriptor]); // Re-run if descriptor changes (to stop detection)
 
     const handleLanguageSelect = (lang: 'en' | 'hi' | 'pa' | 'mr' | 'ta' | 'te' | 'bn') => {
         setLanguage(lang);
@@ -221,7 +248,7 @@ const Onboarding = () => {
 
                             {captureVideo && !faceDescriptor && (
                                 <div className="relative w-[300px] h-[300px] rounded-2xl overflow-hidden border-4 border-primary shadow-lg">
-                                    <video ref={videoRef} onPlay={handleVideoOnPlay} width="300" height="300" autoPlay muted className="object-cover w-full h-full" />
+                                    <video ref={videoRef} width="300" height="300" autoPlay muted className="object-cover w-full h-full" />
                                     <canvas ref={canvasRef} className="absolute top-0 left-0" />
                                 </div>
                             )}
