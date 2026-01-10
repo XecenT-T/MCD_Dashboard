@@ -6,6 +6,7 @@ interface User {
     name: string;
     username: string;
     role: 'supervisor' | 'worker';
+    department?: string;
     faceDescriptor?: number[];
     isFaceRegistered?: boolean;
 }

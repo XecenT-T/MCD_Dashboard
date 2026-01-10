@@ -65,7 +65,7 @@ const Payroll = () => {
                 </div>
 
                 {/* Worker View - Personal Payslip */}
-                {!isSupervisor ? (
+                {true ? (
                     <div className="flex flex-col lg:flex-row gap-6">
                         {/* Main Payslip Card */}
                         <div className="flex-1 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">

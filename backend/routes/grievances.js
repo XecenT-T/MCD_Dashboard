@@ -37,4 +37,29 @@ router.get('/', auth, async (req, res) => {
     }
 });
 
+// @route   GET api/grievances/department
+// @desc    Get all grievances for supervisor's department
+// @access  Private (Supervisor only)
+router.get('/department', auth, async (req, res) => {
+    try {
+        const user = await require('../models/User').findById(req.user.id);
+        if (user.role !== 'supervisor') {
+            return res.status(403).json({ msg: 'Not authorized' });
+        }
+
+        // Find users in the same department
+        const departmentUsers = await require('../models/User').find({ department: user.department });
+        const userIds = departmentUsers.map(u => u._id);
+
+        const grievances = await Grievance.find({ userId: { $in: userIds } })
+            .populate('userId', 'name')
+            .sort({ createdAt: -1 });
+
+        res.json(grievances);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;

@@ -6,10 +6,12 @@ import Dashboard from './pages/Dashboard';
 import Attendance from './pages/Attendance';
 import GrievanceSubmission from './pages/GrievanceSubmission';
 import Payroll from './pages/Payroll';
-import ChatPage from './pages/ChatPage';
+// removed unused ChatPage import
 import LandingPage from './components/LandingPage';
+import DepartmentDocuments from './pages/DepartmentDocuments';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
+import { DashboardViewProvider } from './context/DashboardViewContext';
 import './App.css';
 
 // Protected Route Component
@@ -24,55 +26,57 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <LanguageProvider>
-          <div className="App">
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route
-                path="/dashboard"
-                element={
-                  <PrivateRoute>
-                    <Dashboard />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/attendance"
-                element={
-                  <PrivateRoute>
-                    <Attendance />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/grievance-submission"
-                element={
-                  <PrivateRoute>
-                    <GrievanceSubmission />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/payroll"
-                element={
-                  <PrivateRoute>
-                    <Payroll />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/help"
-                element={
-                  <PrivateRoute>
-                    <ChatPage />
-                  </PrivateRoute>
-                }
-              />
-              <Route path="/" element={<LandingPage />} />
-            </Routes>
-          </div>
-        </LanguageProvider>
+        <DashboardViewProvider>
+          <LanguageProvider>
+            <div className="App">
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <PrivateRoute>
+                      <Dashboard />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/attendance"
+                  element={
+                    <PrivateRoute>
+                      <Attendance />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/grievance-submission"
+                  element={
+                    <PrivateRoute>
+                      <GrievanceSubmission />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/payroll"
+                  element={
+                    <PrivateRoute>
+                      <Payroll />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/department-documents"
+                  element={
+                    <PrivateRoute>
+                      <DepartmentDocuments />
+                    </PrivateRoute>
+                  }
+                />
+                <Route path="/" element={<LandingPage />} />
+              </Routes>
+            </div>
+          </LanguageProvider>
+        </DashboardViewProvider>
       </AuthProvider>
     </Router>
   );
