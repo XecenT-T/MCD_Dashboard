@@ -8,6 +8,8 @@ import AttendanceAnalyticsHub from '../components/hr/AttendanceAnalyticsHub';
 import GrievanceManagementSystem from '../components/hr/GrievanceManagementSystem';
 import LeaveManagementTable from '../components/hr/LeaveManagementTable';
 import PayrollCommandCenter from '../components/hr/PayrollCommandCenter';
+import DepartmentPayrollCommandCenter from '../components/hr/DepartmentPayrollCommandCenter';
+import DepartmentPayrollManagerModal from '../components/hr/DepartmentPayrollManagerModal';
 import OfficialList from '../components/hr/OfficialList';
 import LiveLocationMap from '../components/LiveLocationMap';
 
@@ -16,22 +18,11 @@ import { useLanguage } from '../context/LanguageContext';
 const HRDashboard = () => {
     const { user } = useAuth();
     const { t } = useLanguage();
-    const {
-        loading,
-        attendanceData,
-        grievances,
-        leaveRequests,
-        payrollData,
-        officials,
-        liveAttendanceRecords,
-        releasePayroll,
-        updateGrievanceStatus,
-        updateLeaveStatus
-    } = useHRData();
-
     // View State
     const [viewMode, setViewMode] = useState<'overall' | 'department'>('overall');
-    const [selectedDept, setSelectedDept] = useState('Health'); // Default to first
+    const [selectedDept, setSelectedDept] = useState('Health');
+    const [isPayrollManagerOpen, setIsPayrollManagerOpen] = useState(false);
+    const [selectedPayrollUser, setSelectedPayrollUser] = useState<any>(null); // For direct edit
     const [activeTab, setActiveTab] = useState('overview');
     const [searchParams] = useSearchParams();
 
@@ -43,10 +34,24 @@ const HRDashboard = () => {
         }
     }, [searchParams]);
 
+    const {
+        loading,
+        attendanceData,
+        grievances,
+        leaveRequests,
+        payrollData,
+        officials,
+        liveAttendanceRecords,
+        releasePayroll,
+        updateGrievanceStatus,
+        updateLeaveStatus,
+        departmentPayroll
+    } = useHRData(viewMode === 'department' ? selectedDept : undefined);
+
     const departments = ['Health', 'Education', 'Engineering', 'Sanitation', 'General'];
 
     const filteredAttendance = attendanceData.filter(d => d.department === selectedDept);
-    const filteredGrievances = grievances.filter(g => g.department === selectedDept);
+    const filteredGrievances = grievances;
 
     const filteredPayroll = payrollData.filter(p => p.department === selectedDept);
     const filteredLiveRecords = liveAttendanceRecords.filter(r => r.user.department === selectedDept);
@@ -64,6 +69,7 @@ const HRDashboard = () => {
     return (
         <DashboardLayout
             title={viewMode === 'overall' ? t('admin_console') : `${selectedDept} ${t('department')}`}
+            forceCollapsed={viewMode === 'department'}
         >
             <div className="max-w-7xl mx-auto space-y-6">
 
@@ -193,9 +199,27 @@ const HRDashboard = () => {
                                     </div>
                                 </div>
                             )}
-
                             {activeTab === 'payroll' && (
-                                <PayrollCommandCenter data={filteredPayroll} onRelease={() => releasePayroll(selectedDept)} />
+                                <>
+                                    <DepartmentPayrollCommandCenter
+                                        department={selectedDept}
+                                        data={departmentPayroll}
+                                        onManage={(item) => {
+                                            setSelectedPayrollUser(item || null);
+                                            setIsPayrollManagerOpen(true);
+                                        }}
+                                    />
+                                    <DepartmentPayrollManagerModal
+                                        isOpen={isPayrollManagerOpen}
+                                        onClose={() => {
+                                            setIsPayrollManagerOpen(false);
+                                            setSelectedPayrollUser(null);
+                                        }}
+                                        department={selectedDept}
+                                        employees={departmentPayroll}
+                                        initialSelectedUser={selectedPayrollUser}
+                                    />
+                                </>
                             )}
 
                             {activeTab === 'grievances' && (

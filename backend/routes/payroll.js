@@ -54,6 +54,11 @@ router.get('/history', auth, checkHR, payrollController.getAllPayrolls);
 // @access  Private
 router.get('/slip/:id/pdf', auth, payrollController.downloadPayslip);
 
+// @route   GET /api/payroll/by-department
+// @desc    Get payrolls for a specific department
+// @access  Private (HR only)
+router.get('/by-department', auth, checkHR, payrollController.getDepartmentPayroll);
+
 // @route   GET /api/payroll/users
 // @desc    Get all users for payroll
 // @access  Private (HR only)

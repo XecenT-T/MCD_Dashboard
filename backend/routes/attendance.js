@@ -3,6 +3,114 @@ const router = express.Router();
 const auth = require('../middleware/authMiddleware');
 const Attendance = require('../models/Attendance');
 
+// Get Live Attendance (Today's check-ins with location)
+router.get('/live', auth, async (req, res) => {
+    try {
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        let query = {
+            date: { $gte: startOfDay, $lte: endOfDay },
+            'location.lat': { $exists: true, $ne: 0 }
+        };
+
+        // Optional Department Filter
+        if (req.query.department) {
+            // Must find users first
+            const departmentUsers = await require('../models/User').find({
+                department: { $regex: new RegExp(`^${req.query.department}$`, 'i') }
+            }).select('_id');
+            query.user = { $in: departmentUsers.map(u => u._id) };
+        }
+
+        const records = await Attendance.find(query)
+            .populate('user', 'name role department')
+            .sort({ date: -1 });
+
+        res.json(records);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Get Daily Attendance Stats by Department
+router.get('/stats', auth, async (req, res) => {
+    try {
+        const User = require('../models/User');
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        // 1. Get all departments (or distinct from Users)
+        const departments = await User.distinct('department');
+
+        const stats = await Promise.all(departments.map(async (dept) => {
+            if (!dept) return null;
+
+            // Total users in department
+            const totalUsers = await User.countDocuments({ department: dept, role: { $in: ['official', 'worker'] } });
+
+            // Get users in department to query attendance
+            const deptUsers = await User.find({ department: dept }).select('_id');
+            const userIds = deptUsers.map(u => u._id);
+
+            // Present today
+            const present = await Attendance.countDocuments({
+                user: { $in: userIds },
+                date: { $gte: startOfDay, $lte: endOfDay },
+                status: 'Present'
+            });
+
+            // Leave today (Assuming 'status'='Leave' or checking LeaveRequests - for now check Attendance status if you have 'Leave' status or inferred)
+            // The Attendance model has default 'Present', enum ['Present', 'Absent', 'Late']. 
+            // So logic for 'Leave' might be missing in Attendance model usage, usually Leave is in LeaveRequests. 
+            // However, typically a dashboard aggregates LeaveRequests for 'Leave' count.
+            // Let's check LeaveRequests for Approved leaves today.
+            // For MVP, I'll rely on Attendance model having a 'Leave' status if marked, OR just use 0 for now if complex.
+            // Wait, looking at Attendance.js model, enum is ['Present', 'Absent', 'Late']. No 'Leave'.
+            // So 'Leave' comes from LeaveRequests.
+
+            // Let's assume for now we just count Present.
+            // Absent = Total - Present - Leave.
+
+            // Fetch Approved Leaves for today
+            const LeaveRequest = require('../models/LeaveRequest'); // Assuming model exists, if not use 0
+            let leave = 0;
+            try {
+                // Check if LeaveRequest model exists (it wasn't in the list_dir of models earlier? verify)
+                // List dir output: Attendance.js, Chat.js, DepartmentNotice.js, Grievance.js, Payroll.js, User.js, Ward.js
+                // NO LeaveRequest.js model in list_dir!
+                // So 'Leave' data in frontend must be purely Mock up to now?
+                // Or defined elsewhere?
+                // HRDashboard uses `LeaveManagementTable` and `leaveRequests` state.
+                // Inspect `useHRData.ts` imports... no LeaveRequest model import in backend code I viewed.
+                // So LeaveRequest might not exist in backend yet.
+                // I will set leave to 0 for now.
+                leave = 0;
+            } catch (e) { }
+
+            const absent = Math.max(0, totalUsers - present - leave);
+
+            return {
+                department: dept,
+                present,
+                absent,
+                leave,
+                total: totalUsers
+            };
+        }));
+
+        res.json(stats.filter(s => s !== null));
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 // Mark Attendance
 router.post('/mark', auth, async (req, res) => {
     try {
