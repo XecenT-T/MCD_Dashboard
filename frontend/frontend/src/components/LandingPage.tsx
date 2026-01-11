@@ -241,7 +241,7 @@ const LandingPage: React.FC = () => {
             </main>
 
             {/* Footer */}
-            <footer className="w-full bg-surface-light dark:bg-surface-dark border-t border-slate-200 dark:border-slate-800 mt-auto">
+            <footer className="w-full bg-gray-50 dark:bg-[#020617] border-t border-slate-300 dark:border-slate-700 mt-auto">
                 <div className="max-w-7xl mx-auto px-4 md:px-10 py-12">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                         <div className="col-span-1 md:col-span-2 flex flex-col gap-4">
