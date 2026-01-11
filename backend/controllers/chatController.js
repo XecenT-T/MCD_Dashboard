@@ -1,6 +1,10 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const User = require('../models/User');
 const Chat = require('../models/Chat');
+const Attendance = require('../models/Attendance');
+const Payroll = require('../models/Payroll');
+const Grievance = require('../models/Grievance');
+const DepartmentNotice = require('../models/DepartmentNotice');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -22,26 +26,63 @@ exports.chatWithGemini = async (req, res) => {
             });
         }
 
+        // Fetch Real Context Data in Parallel
+        const [attendance, payroll, grievances, notices] = await Promise.all([
+            Attendance.find({ user: userId }).sort({ date: -1 }).limit(30),
+            Payroll.find({ user: userId }).sort({ year: -1, month: -1 }).limit(3),
+            Grievance.find({ userId: userId }).select('title status department createdAt'),
+            DepartmentNotice.find({ department: user.department }).sort({ date: -1 }).limit(5)
+        ]);
+
+        // Format Data for LLM
+        const contextData = `
+        ### User Profile
+        - Name: ${user.name}
+        - Role: ${user.role}
+        - Department: ${user.department}
+        - Ward: ${user.ward || 'N/A'}
+
+        ### Recent Attendance (Last 30 Days)
+        ${attendance.length ? attendance.map(a => `- ${new Date(a.date).toLocaleDateString()}: ${a.status} (${a.checkInTime || '-'} to ${a.checkOutTime || '-'})`).join('\n') : "No attendance records found."}
+
+        ### Payroll History (Recent)
+        ${payroll.length ? payroll.map(p => `- ${p.month}: Net Salary ₹${p.netPay} (Status: ${p.status})`).join('\n') : "No payroll records found."}
+
+        ### My Grievances
+        ${grievances.length ? grievances.map(g => `- ${new Date(g.createdAt).toLocaleDateString()}: "${g.title}" (Status: ${g.status})`).join('\n') : "No grievances submitted."}
+
+        ### Department Notices
+        ${notices.length ? notices.map(n => `- ${new Date(n.date).toLocaleDateString()}: ${n.title}\n  ${n.content.substring(0, 150)}...`).join('\n') : "No recent notices."}
+        `;
+
         // Context Prompt Construction
         const systemPrompt = `
         You are the "MCD Personal Assistant" for the Municipal Corporation of Delhi.
-        User: ${user.name} (${user.role}).
+        Your goal is to help the employee by answering questions based STRICTLY on the provided data below.
         
-        Style: Professional, helpful, concise. Use Markdown.
+        IMPORTANT: Data IS AVAILABLE. Do NOT say the system is under construction. If you see payroll or attendance records below, state them clearly.
         
-        (Simulated Data Context):
-        - Attendance: Data unavailable (System Under Construction).
-        - Payroll: Data unavailable (System Under Construction).
-        - Grievances: Check "My Grievances" section.
+        Style: Professional, helpful, concise, empathetic. Use Markdown for formatting.
         
-        History:
-        ${chat.messages.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`).join('\n')}
+        
+        === USER DATA CONTEXT ===
+        Debug Info: UserID=${userId}, PayrollCount=${payroll.length}, AttendanceCount=${attendance.length}
+        ${contextData}
+        =========================
+
+        // History:
+        // ${chat.messages.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`).join('\n')}
         
         User Query: ${message}
         `;
 
+        console.log("--- SYSTEM PROMPT DEBUG ---");
+        console.log("User:", user.email);
+        console.log(contextData);
+        console.log("---------------------------");
+
         // Start Chat
-        const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+        const model = genAI.getGenerativeModel({ model: "gemini-flash-lite-latest" });
 
         const result = await model.generateContent(systemPrompt);
         const response = await result.response;
@@ -82,7 +123,7 @@ exports.refineText = async (req, res) => {
             return res.json({ refinedText: text });
         }
 
-        const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+        const model = genAI.getGenerativeModel({ model: "gemini-flash-lite-latest" });
         const prompt = `
         You are an expert editor. 
         Input Text (${language || 'en'}): "${text}"
@@ -116,7 +157,7 @@ exports.classifyGrievance = async (req, res) => {
             return res.status(400).json({ msg: "Title or description required" });
         }
 
-        const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+        const model = genAI.getGenerativeModel({ model: "gemini-flash-lite-latest" });
 
         const prompt = `
         You are an intelligent classification system for Municipal Corporation grievances.
