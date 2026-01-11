@@ -29,9 +29,7 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
         navigate('/login');
     };
 
-    const handleWIP = (feature: string) => {
-        alert(`${feature} ${t('wip')}!`);
-    };
+
 
     return (
         <div className="flex h-screen bg-gray-50 font-display text-text-main dark:text-gray-100 dark:bg-background-dark overflow-hidden">
@@ -64,6 +62,7 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
                             <>
                                 <NavItem icon="calendar_month" label={t('nav_attendance')} onClick={() => navigate('/attendance')} active={window.location.pathname === '/attendance'} />
                                 <NavItem icon="payments" label={t('nav_payroll')} onClick={() => navigate('/payroll')} active={window.location.pathname === '/payroll'} />
+                                {!isOfficial && <NavItem icon="event_available" label="Request Leave" onClick={() => navigate('/leave-request')} active={window.location.pathname === '/leave-request'} />}
 
                                 <NavDropdown icon="description" label={t('service_request')}>
                                     <NavItem icon="badge" label={t('id_card_generator')} onClick={() => navigate('/id-card-print')} active={window.location.pathname === '/id-card-print'} />
@@ -82,7 +81,8 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
                                 <NavItem icon="swap_horiz" label={t('nav_transfers')} onClick={() => navigate('/transfers')} active={window.location.pathname === '/transfers'} />
                                 <NavItem icon="map" label={t('live_location')} onClick={() => navigate('/heatmap')} active={window.location.pathname === '/heatmap'} />
                                 <NavItem icon="report" label={t('dept_grievances')} onClick={() => navigate('/department-grievances')} active={window.location.pathname === '/department-grievances'} />
-                                <NavItem icon="description" label={t('dept_leaves')} onClick={() => navigate('/hr-dashboard?tab=leaves')} active={window.location.search.includes('tab=leaves')} />
+                                <NavItem icon="description" label={t('dept_leaves') || "Dept. Leaves"} onClick={() => navigate('/department-leaves')} active={window.location.pathname === '/department-leaves'} />
+
                             </div>
                         )}
 
@@ -94,7 +94,7 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
                                 <NavItem icon="grid_view" label={t('overview')} onClick={() => navigate('/hr-dashboard')} active={window.location.pathname === '/hr-dashboard'} />
 
                                 <NavItem icon="payments" label={t('nav_payroll')} onClick={() => navigate('/payroll')} active={window.location.pathname === '/payroll'} />
-                                <NavItem icon="inbox" label={t('requests')} onClick={() => handleWIP('Requests')} />
+
                                 <NavItem icon="report" label={t('nav_grievances')} onClick={() => navigate('/grievances')} active={window.location.pathname === '/grievances'} />
                             </>
                         )}
