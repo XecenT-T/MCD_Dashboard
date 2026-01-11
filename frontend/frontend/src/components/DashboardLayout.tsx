@@ -66,7 +66,7 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
                                 <NavItem icon="payments" label={t('nav_payroll')} onClick={() => navigate('/payroll')} active={window.location.pathname === '/payroll'} />
 
                                 <NavDropdown icon="description" label={t('service_request')}>
-                                    <NavItem icon="badge" label={t('id_card_generator')} onClick={() => handleWIP('ID Card Generator')} />
+                                    <NavItem icon="badge" label={t('id_card_generator')} onClick={() => navigate('/id-card-print')} active={window.location.pathname === '/id-card-print'} />
                                     <NavItem icon="folder_shared" label={t('dept_document_nav')} onClick={() => navigate('/department-documents')} />
                                 </NavDropdown>
 
