@@ -349,7 +349,7 @@ const Dashboard = () => {
                                         primary
                                     />
                                     <QuickAction icon="how_to_reg" label={t('approve_leave')} color="text-green-600" bg="bg-green-50" onClick={() => handleWIP('Approve Leave')} />
-                                    <QuickAction icon="transfer_within_a_station" label={t('transfers')} color="text-purple-600" bg="bg-purple-50" onClick={() => handleWIP('Transfers')} />
+                                    <QuickAction icon="transfer_within_a_station" label={t('transfers')} color="text-purple-600" bg="bg-purple-50" onClick={() => navigate('/transfers')} />
                                     <QuickAction icon="summarize" label={t('team_reports')} color="text-orange-600" bg="bg-orange-50" onClick={() => handleWIP('Team Reports')} />
                                     <QuickAction icon="person_add" label="Add User" color="text-indigo-600" bg="bg-indigo-50" onClick={() => navigate('/admin/create-user')} />
                                 </div>

@@ -23,6 +23,7 @@ app.use('/api/chat', require('./routes/chat'));
 app.use('/api/payroll', require('./routes/payroll'));
 app.use('/api/documents', require('./routes/documents'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/wards', require('./routes/wards'));
 
 
 
