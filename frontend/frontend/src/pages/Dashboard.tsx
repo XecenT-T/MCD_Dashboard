@@ -113,10 +113,10 @@ const Dashboard = () => {
 
     const handleResolveGrievance = async (id: string) => {
         try {
-            await api.patch(`/api/grievances/${id}/status`, { status: "Resolved" });
+            await api.patch(`/api/grievances/${id}/status`, { status: "resolved" });
             // Update local state
             setPendingGrievances(prev => prev.filter(g => g._id !== id)); // Remove resolved from pending list
-            setSelectedGrievance((prev: any) => prev ? { ...prev, status: 'Resolved' } : null);
+            setSelectedGrievance((prev: any) => prev ? { ...prev, status: 'resolved' } : null);
             // Verify if user wants it removed from list immediately or just updated. Usually "Pending" list implies only pending items.
         } catch (error) {
             console.error("Failed to resolve", error);
@@ -351,7 +351,7 @@ const Dashboard = () => {
                                         primary
                                     />
                                     <QuickAction icon="how_to_reg" label={t('approve_leave')} color="text-green-600" bg="bg-green-50" onClick={() => handleWIP('Approve Leave')} />
-                                    <QuickAction icon="transfer_within_a_station" label={t('transfers')} color="text-purple-600" bg="bg-purple-50" onClick={() => handleWIP('Transfers')} />
+                                    <QuickAction icon="transfer_within_a_station" label={t('transfers')} color="text-purple-600" bg="bg-purple-50" onClick={() => navigate('/transfers')} />
                                     <QuickAction icon="summarize" label={t('team_reports_label')} color="text-orange-600" bg="bg-orange-50" onClick={() => handleWIP('Team Reports')} />
                                     <QuickAction icon="person_add" label={t('add_user')} color="text-indigo-600" bg="bg-indigo-50" onClick={() => navigate('/admin/create-user')} />
                                 </div>
