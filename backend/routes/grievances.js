@@ -56,7 +56,7 @@ router.get('/department', auth, async (req, res) => {
         const grievances = await Grievance.find({
             department: { $regex: new RegExp(`^${user.department}$`, 'i') }
         })
-            .populate('userId', 'name role department')
+            .populate('userId', 'name role department email phoneNo aadharCardNo dob profileImage isFaceRegistered')
             .populate('replies.senderId', 'name role')
             .sort({ createdAt: -1 });
 
@@ -89,7 +89,7 @@ router.get("/all", auth, async (req, res) => {
         const grievances = await Grievance.find({
             department: { $in: regexDepts }
         })
-            .populate("userId", "name role department")
+            .populate("userId", "name role department email phoneNo aadharCardNo dob profileImage isFaceRegistered")
             .populate('replies.senderId', 'name role')
             .sort({ createdAt: -1 });
 
@@ -123,19 +123,21 @@ router.patch('/:id/status', auth, async (req, res) => {
 
         // STRICT RESOLVE PERMISSIONS
         const hrDepartments = ["general", "administration", "hr"];
-        const userDept = (user.department || '').toLowerCase();
-        const grievanceDept = (grievance.department || '').toLowerCase();
+        const userDept = (user.department || '').toLowerCase().trim();
+        const grievanceDept = (grievance.department || '').toLowerCase().trim();
 
         // 1. If Grievance is for HR/General -> Only HR/Admin/HR Role can resolve
         if (hrDepartments.includes(grievanceDept)) {
+            // Must be HR role OR Official in HR-related dept
             if (user.role !== 'hr' && !hrDepartments.includes(userDept)) {
                 return res.status(403).json({ msg: 'Only HR can resolve this grievance' });
             }
         }
-        // 2. If Grievance is for specific department -> Only that department's Official OR HR can resolve
+        // 2. If Grievance is for specific department -> Only that department's Official can resolve
         else {
-            if (user.role !== 'hr' && (grievanceDept !== userDept && !hrDepartments.includes(userDept))) {
-                return res.status(403).json({ msg: 'Not authorized to manage this department' });
+            // STRICT: HR role CANNOT resolve these. Only specific department officials.
+            if (userDept !== grievanceDept) {
+                return res.status(403).json({ msg: `Not authorized to manage this department. userDept: '${userDept}' vs grievanceDept: '${grievanceDept}'` });
             }
         }
 

@@ -18,6 +18,7 @@ export interface Grievance {
     description: string;
     date: string;
     status: 'Pending' | 'Resolved' | 'Under Review' | 'Rejected';
+    submitterProfile?: any; // Full user object for modal
     replies?: {
         senderId: any;
         role: string;

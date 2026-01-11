@@ -18,8 +18,8 @@ const FaceEnrollment: React.FC<FaceEnrollmentProps> = ({ onSuccess, onClose }) =
 
     useEffect(() => {
         const loadModels = async () => {
-            // Use CDN for better reliability
-            const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
+            // Load models from local public folder
+            const MODEL_URL = '/models';
             try {
                 await Promise.all([
                     faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
@@ -76,13 +76,20 @@ const FaceEnrollment: React.FC<FaceEnrollmentProps> = ({ onSuccess, onClose }) =
             }
 
             if (detections.length === 1) {
-                setStatus('Face detected! Click "Enroll Face" to save.');
-                setCanCapture(true);
+                // Ensure high quality detection (score > 0.9)
+                const score = detections[0].detection.score;
+                if (score > 0.9) {
+                    setStatus('Perfect! Face detected clearly. Click "Enroll Face".');
+                    setCanCapture(true);
+                } else {
+                    setStatus('Face detected but lighting is poor. Please improve lighting.');
+                    setCanCapture(false);
+                }
             } else if (detections.length === 0) {
-                setStatus('No face detected. Please look at the camera.');
+                setStatus('No face detected. Please look directly at the camera.');
                 setCanCapture(false);
             } else {
-                setStatus('Multiple faces detected. Please ensure only you are in frame.');
+                setStatus('Multiple faces detected. Ensure only you are in frame.');
                 setCanCapture(false);
             }
         }, 500);

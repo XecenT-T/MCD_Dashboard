@@ -55,6 +55,7 @@ const Grievances = () => {
                         id: g._id,
                         submittedBy: g.userId?.name || 'Unknown',
                         submitterId: g.userId?._id, // Added for filtering
+                        submitterProfile: g.userId, // Full profile for modal
                         role: g.userId?.role || 'worker',
                         department: g.department,
                         subject: g.title,
@@ -188,15 +189,17 @@ const Grievances = () => {
                                         // HR RESTRICTION: Only see grievances for HR/General/Admin
                                         if (isHR) {
                                             if (!hrDepts.includes(grievanceDept)) return false;
-                                            // Optional: Allow filtering within HR scope if needed
+                                            // Additional check: Ensure specific dept filter is respected
                                             if (selectedDepartment !== 'All' && g.department !== selectedDepartment) return false;
                                             return true;
                                         }
 
-                                        // Role Filter: Officials (non-HR) only see Worker grievances
-                                        if (!isHR && g.role !== 'worker') {
-                                            return false;
-                                        }
+                                        // NON-HR RESTRICTION:
+                                        // 1. Should NOT see HR grievances (backend ensures this via /department route but good to double check)
+                                        if (hrDepts.includes(grievanceDept)) return false;
+
+                                        // 2. Only see Worker grievances
+                                        if (g.role !== 'worker') return false;
 
                                         return true;
                                     })}

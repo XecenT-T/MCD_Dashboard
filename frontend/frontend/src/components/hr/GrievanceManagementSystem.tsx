@@ -18,10 +18,10 @@ const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ g
     const [replying, setReplying] = useState(false);
 
     const { user } = useAuth();
-    const department = (user?.department || '').toLowerCase();
+    const department = (user?.department || '').toLowerCase().trim();
     // Prioritize 'hr' role. Legacy fallback: Official + HR department
     const isHR = user?.role === 'hr' || (user?.role === 'official' && ['general', 'administration', 'hr'].includes(department));
-    const userDept = (user?.department || '').toLowerCase();
+    const userDept = (user?.department || '').toLowerCase().trim();
 
     // Derived state for filtered grievances
     const filteredGrievances = grievances.filter(g => filter === 'All' || g.role === filter);
@@ -37,15 +37,22 @@ const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ g
     }, [grievances, selectedGrievance]);
 
     const openProfile = (g: Grievance) => {
-        // Construct a User-like object from the grievance data to pass to ProfileModal
-        setViewProfileUser({
-            name: g.submittedBy,
-            role: g.role,
-            department: g.department,
-            _id: 'unknown',
-            email: 'Loading...', // Placeholder
-            id: 'unknown'
-        });
+        if (g.submitterProfile) {
+            setViewProfileUser({
+                ...g.submitterProfile,
+                id: g.submitterProfile._id // Ensure ID mapping
+            });
+        } else {
+            // Fallback (Legacy)
+            setViewProfileUser({
+                name: g.submittedBy,
+                role: g.role,
+                department: g.department,
+                _id: 'unknown',
+                email: 'Not available',
+                id: 'unknown'
+            });
+        }
     };
 
     const handleSendReply = async () => {
@@ -65,16 +72,20 @@ const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ g
     const canResolve = (grievance: Grievance) => {
         if (!user || (user.role !== 'official' && user.role !== 'hr')) return false;
 
-        const grievanceDept = (grievance.department || '').toLowerCase();
+        const grievanceDept = (grievance.department || '').toLowerCase().trim();
         const hrDepartments = ["general", "administration", "hr"];
 
-        // If grievance is for HR, only HR resolves
+        // console.log(`Debug Resolve: userDept='${userDept}' grievanceDept='${grievanceDept}' role='${user.role}'`);
+
+        // If grievance is for HR logic
         if (hrDepartments.includes(grievanceDept)) {
+            // Must be HR role OR Official in HR-related dept
             return isHR;
         }
 
-        // If grievance is for Dept X, only Dept X official (or HR admin) resolves
-        return grievanceDept === userDept || isHR;
+        // If grievance is for Dept X -> Only Dept X official resolves.
+        // STRICT: HR cannot resolve unrelated departments.
+        return grievanceDept === userDept;
     };
 
     const isClosed = (g: Grievance) => g.status === 'Resolved' || g.status === 'Rejected';
@@ -101,7 +112,6 @@ const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ g
                     ))}
                 </div>
             </div>
-
             <div className="overflow-y-auto max-h-[400px]">
                 {filteredGrievances.length === 0 ? (
                     <div className="p-8 text-center text-gray-500">No grievances found.</div>
@@ -131,12 +141,14 @@ const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ g
                                     </div>
                                 </div>
 
-                                <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase
-                                    ${grievance.status === 'Resolved' ? 'bg-green-100 text-green-700' :
-                                        grievance.status === 'Rejected' ? 'bg-red-100 text-red-700' :
-                                            'bg-yellow-100 text-yellow-700'}`}>
-                                    {grievance.status}
-                                </span>
+                                <div className="flex items-center gap-3">
+                                    <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase
+                                        ${grievance.status === 'Resolved' ? 'bg-green-100 text-green-700' :
+                                            grievance.status === 'Rejected' ? 'bg-red-100 text-red-700' :
+                                                'bg-yellow-100 text-yellow-700'}`}>
+                                        {grievance.status}
+                                    </span>
+                                </div>
                             </div>
                         ))}
                     </div>

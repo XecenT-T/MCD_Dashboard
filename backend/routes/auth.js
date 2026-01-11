@@ -70,7 +70,9 @@ router.post('/register', async (req, res) => {
                     phoneNo: user.phoneNo,
                     post: user.post,
                     email: user.email,
-                    aadharCardNo: user.aadharCardNo
+                    aadharCardNo: user.aadharCardNo,
+                    department: user.department,
+                    dob: user.dob
                 }
             });
         });
@@ -142,6 +144,7 @@ router.post('/login', async (req, res) => {
                     name: user.name,
                     username: user.username,
                     role: user.role,
+                    department: user.department,
                     isFaceRegistered: user.isFaceRegistered,
                     faceDescriptor: user.faceDescriptor,
                     isOnboarded: user.isOnboarded,
@@ -150,7 +153,8 @@ router.post('/login', async (req, res) => {
                     phoneNo: user.phoneNo,
                     post: user.post,
                     email: user.email,
-                    aadharCardNo: user.aadharCardNo
+                    aadharCardNo: user.aadharCardNo,
+                    dob: user.dob
                 }
             });
         });

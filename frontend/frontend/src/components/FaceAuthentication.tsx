@@ -22,8 +22,8 @@ const FaceAuthentication: React.FC<FaceAuthenticationProps> = ({ onSuccess, onCl
         }
 
         const loadModels = async () => {
-            // Use CDN for better reliability
-            const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
+            // Load models from local public folder
+            const MODEL_URL = '/models';
             try {
                 await Promise.all([
                     faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
@@ -53,6 +53,8 @@ const FaceAuthentication: React.FC<FaceAuthenticationProps> = ({ onSuccess, onCl
             });
     };
 
+    const consecutiveMatches = useRef(0);
+
     const handleVideoPlay = () => {
         setStatus('Verifying face...');
 
@@ -80,32 +82,42 @@ const FaceAuthentication: React.FC<FaceAuthenticationProps> = ({ onSuccess, onCl
 
             if (detections.length > 0) {
                 // Check if any detected face matches stored user descriptor
-                const faceMatcher = new faceapi.FaceMatcher(userDescriptor, 0.6); // 0.6 is threshold
+                // 0.4 is very strict threshold to prevent false positives
+                const faceMatcher = new faceapi.FaceMatcher(userDescriptor, 0.4);
 
                 const bestMatch = detections.map(d => faceMatcher.findBestMatch(d.descriptor)).find(match => match.label !== 'unknown');
 
                 if (bestMatch) {
-                    clearInterval(intervalId);
-                    setStatus('Verified! Marking attendance...');
+                    consecutiveMatches.current += 1;
+                    setStatus(`Verifying... Keep still (${consecutiveMatches.current}/3)`);
 
-                    // Call Mark Attendance API
-                    try {
-                        const config = {
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'x-auth-token': token
-                            }
-                        };
-                        await api.post('/api/attendance/mark', {}, config);
-                        setStatus('Attendance Marked Successfully!');
-                        setTimeout(onSuccess, 1500);
-                    } catch (err: any) {
-                        console.error(err);
-                        setStatus(err.response?.data?.msg || 'Attendance Marking Failed');
+                    if (consecutiveMatches.current >= 3) {
+                        clearInterval(intervalId);
+                        setStatus('Verified! Marking attendance...');
+
+                        // Call Mark Attendance API
+                        try {
+                            const config = {
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'x-auth-token': token
+                                }
+                            };
+                            await api.post('/api/attendance/mark', {}, config);
+                            setStatus('Attendance Marked Successfully!');
+                            setTimeout(onSuccess, 1500);
+                        } catch (err: any) {
+                            console.error(err);
+                            setStatus(err.response?.data?.msg || 'Attendance Marking Failed');
+                        }
                     }
                 } else {
+                    consecutiveMatches.current = 0;
                     setStatus('Face not recognized. Please try again.');
                 }
+            } else {
+                consecutiveMatches.current = 0;
+                setStatus('No face detected.');
             }
         }, 500);
 
