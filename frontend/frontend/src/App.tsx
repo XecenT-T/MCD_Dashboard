@@ -186,23 +186,31 @@ function App() {
                   element={
                     <PrivateRoute>
                       <IDCardPrint />
-                  path="/department-grievances"
-                  element={
-                    <PrivateRoute>
-                      <DepartmentGrievances />
-                    </PrivateRoute>
-                  }
+                      path="/department-grievances"
+                      element={
+                        <PrivateRoute>
+                          <IDCardPrint />
+                        </PrivateRoute>
+                      }
                 />
-                <Route
-                  path="/admin/create-user"
-                  element={
-                    <PrivateRoute>
-                      <AdminUserCreation />
-                    </PrivateRoute>
-                  }
-                />
-                <Route path="/" element={<LandingPage />} />
-              </Routes>
+                      <Route
+                        path="/department-grievances"
+                        element={
+                          <PrivateRoute>
+                            <DepartmentGrievances />
+                          </PrivateRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/create-user"
+                        element={
+                          <PrivateRoute>
+                            <AdminUserCreation />
+                          </PrivateRoute>
+                        }
+                      />
+                      <Route path="/" element={<LandingPage />} />
+                    </Routes>
             </div>
           </LanguageProvider>
         </DashboardViewProvider>
