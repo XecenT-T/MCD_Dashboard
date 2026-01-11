@@ -89,7 +89,7 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
                                 </div>
                                 <NavItem icon="grid_view" label="Overview" onClick={() => navigate('/hr-dashboard')} active={window.location.pathname === '/hr-dashboard'} />
 
-                                <NavItem icon="payments" label="Payroll" onClick={() => handleWIP('Payroll Master')} />
+                                <NavItem icon="payments" label="Payroll" onClick={() => navigate('/payroll')} active={window.location.pathname === '/payroll'} />
                                 <NavItem icon="inbox" label="Requests" onClick={() => handleWIP('Requests')} />
                                 <NavItem icon="report" label="Grievances" onClick={() => navigate('/grievances')} active={window.location.pathname === '/grievances'} />
                             </>
