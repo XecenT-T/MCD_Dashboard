@@ -42,6 +42,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'General'
     },
+    ward: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Ward',
+        default: null
+    },
     faceDescriptor: {
         type: Array,
         default: []

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ProfileModal from './ProfileModal';
+import IDCardModal from './IDCardModal';
 
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -14,6 +15,7 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [showProfileModal, setShowProfileModal] = useState(false);
+    const [showIDCard, setShowIDCard] = useState(false);
     const isOfficial = user?.role === 'official';
 
     // HR Detection
@@ -194,6 +196,7 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
                     {children}
                 </main>
                 {showProfileModal && <ProfileModal onClose={() => setShowProfileModal(false)} />}
+                {showIDCard && user && <IDCardModal user={user} onClose={() => setShowIDCard(false)} />}
             </div>
         </div>
     );
