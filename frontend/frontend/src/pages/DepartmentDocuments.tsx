@@ -9,6 +9,7 @@ interface Document {
     date: string;
     type: string;
     size: string;
+    content?: string;
 }
 
 const DepartmentDocuments = () => {
@@ -39,10 +40,12 @@ const DepartmentDocuments = () => {
                     <head>
                         <title>${doc.title}</title>
                         <style>
-                            body { font-family: Arial, sans-serif; padding: 40px; }
-                            h1 { color: #333; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
-                            .meta { color: #666; margin-bottom: 30px; }
-                            .content { line-height: 1.6; }
+                            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; color: #333; }
+                            h1 { color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 30px; font-size: 24px; }
+                            .meta { color: #64748b; margin-bottom: 40px; font-size: 14px; background: #f8fafc; padding: 15px; border-radius: 8px; }
+                            .meta p { margin: 5px 0; }
+                            .content { line-height: 1.8; font-size: 16px; white-space: pre-wrap; font-family: monospace; background: #fff; padding: 10px; border: 1px solid #eee; }
+                            .footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: right; color: #64748b; font-size: 12px; }
                         </style>
                     </head>
                     <body>
@@ -53,12 +56,14 @@ const DepartmentDocuments = () => {
                             <p><strong>Document ID:</strong> ${doc.id}</p>
                         </div>
                         <div class="content">
-                            <p>This is a placeholder for the content of <strong>${doc.title}</strong>.</p>
-                            <p>In a real application, this would render the actual PDF or document content.</p>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                            <br/>
-                            <p>Approved By: ________________________</p>
+                            ${doc.content ? doc.content : 'No content available. Please contact support.'}
                         </div>
+                        
+                        <div class="footer">
+                             <p>Municipal Corporation of Delhi</p>
+                             <p>Official Document - Generated on ${new Date().toLocaleString()}</p>
+                        </div>
+
                         <script>
                             window.onload = function() { window.print(); }
                         </script>
@@ -184,11 +189,8 @@ const DepartmentDocuments = () => {
                                     </span>
                                 </div>
                                 <div>
-                                    <p className="text-gray-600 dark:text-gray-300">
-                                        You are viewing <strong>{selectedDoc.title}</strong>
-                                    </p>
-                                    <p className="text-sm text-text-muted mt-1">
-                                        This is a placeholder for the actual document viewer.
+                                    <p className="text-gray-600 dark:text-gray-300 whitespace-pre-wrap text-sm border p-4 rounded-md bg-gray-50 dark:bg-gray-800/50 text-left max-h-[300px] overflow-y-auto font-mono">
+                                        {selectedDoc.content || "No content available."}
                                     </p>
                                 </div>
                             </div>
@@ -201,10 +203,11 @@ const DepartmentDocuments = () => {
                                     Print
                                 </button>
                                 <button
+                                    onClick={() => handlePrint(selectedDoc)}
                                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25"
                                 >
                                     <span className="material-symbols-outlined text-[18px]">download</span>
-                                    Download
+                                    Download / Print
                                 </button>
                             </div>
                         </div>
