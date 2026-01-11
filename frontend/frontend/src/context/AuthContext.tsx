@@ -17,6 +17,8 @@ export interface User {
     post?: string;
     aadharCardNo?: string;
     dob?: string;
+    _id?: string;
+    gender?: string;
 }
 
 interface AuthContextType {
