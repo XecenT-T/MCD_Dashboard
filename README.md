@@ -20,7 +20,7 @@
 - **Interactive Visualizations:** Powered by `Recharts` for actionable data interpretation.
 
 ### 🗺️ Geo-Spatial Intelligence
-- **Deployment Heatmaps:** Visualize workforce density against reported civic issues using `Leaflet`.
+- **Deployment Maps:** Visualize workforce density against reported civic issues using `Leaflet`.
 - **Live Tracking:** Monitor departmental coverage in real-time.
 
 ### 🤖 AI-Powered Support
@@ -115,7 +115,7 @@ Follow these steps to set up the project locally.
 
 ## 📸 Screenshots
 
-*(Add screenshots of your Dashboard, Heatmap, and Chatbot here)*
+
 
 ---
 
