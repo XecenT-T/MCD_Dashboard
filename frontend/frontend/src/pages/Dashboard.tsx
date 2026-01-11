@@ -76,7 +76,8 @@ const Dashboard = () => {
     const [pendingGrievances, setPendingGrievances] = useState<any[]>([]);
     const [loadingGrievances, setLoadingGrievances] = useState(false);
     const [totalWorkers, setTotalWorkers] = useState<string>('...');
-    const [deptAttendance, setDeptAttendance] = useState<string>('...');
+    const [deptAttendance, setDeptAttendance] = useState<string>('...'); // This will be Today's Attendance
+    const [avgAttendance, setAvgAttendance] = useState<string>('...'); // This will be Monthly Average
     const [selectedGrievance, setSelectedGrievance] = useState<any | null>(null);
 
     // Fetch Data for Department View
@@ -95,9 +96,10 @@ const Dashboard = () => {
                     const resStats = await api.get('/api/auth/department-stats');
                     setTotalWorkers(resStats.data.totalWorkers.toString());
 
-                    // Fetch Department Attendance Average
+                    // Fetch Department Attendance Average & Today
                     const resAtt = await api.get('/api/attendance/department-stats');
-                    setDeptAttendance((resAtt.data.averageAttendance || 0) + '%');
+                    setDeptAttendance((resAtt.data.todayAttendance || 0) + '%');
+                    setAvgAttendance((resAtt.data.averageAttendance || 0) + '%');
 
                 } catch (err) {
                     console.error("Failed to fetch dashboard data", err);
@@ -145,7 +147,7 @@ const Dashboard = () => {
         { label: t('days_present') + ' (Oct)', value: '18 / 22', icon: 'calendar_month', color: 'text-green-600', bg: 'bg-green-100', progress: 85 },
         { label: t('leave_balance'), value: '5 ' + t('days_present').split(' ')[1], sub: t('expires_dec'), icon: 'beach_access', color: 'text-yellow-600', bg: 'bg-yellow-100' },
         { label: t('next_pay_date'), value: 'Oct 31', sub: t('processing'), icon: 'payments', color: 'text-blue-600', bg: 'bg-blue-100' },
-        { label: t('pending_actions'), value: '2 Items', sub: t('view_details'), icon: 'pending_actions', color: 'text-red-600', bg: 'bg-red-100' }
+        { label: t('salary_overview'), value: '₹ 28,500', sub: t('last_month_pay'), icon: 'account_balance_wallet', color: 'text-green-600', bg: 'bg-green-100' }
     ];
 
     const departmentStats = [
@@ -169,7 +171,7 @@ const Dashboard = () => {
             action: () => navigate('/department-attendance')
         },
         { label: t('pending_grievances'), value: loadingGrievances ? '...' : pendingGrievances.length.toString(), sub: t('action_required'), icon: 'report_problem', color: 'text-red-600', bg: 'bg-red-100' },
-        { label: t('total_payroll'), value: '₹ 12.5L', sub: t('this_month'), icon: 'payments', color: 'text-purple-600', bg: 'bg-purple-100' }
+        { label: t('avg_attendance'), value: avgAttendance, sub: t('this_month'), icon: 'trending_up', color: 'text-purple-600', bg: 'bg-purple-100' }
     ];
 
     const currentStats = (viewMode === 'department' && isOfficial) ? departmentStats : workerStats;

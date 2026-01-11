@@ -139,8 +139,23 @@ router.get('/department-stats', auth, async (req, res) => {
         const totalPercentage = stats.reduce((acc, curr) => acc + curr.percentage, 0);
         const averageAttendance = stats.length > 0 ? Math.round(totalPercentage / stats.length) : 0;
 
+        // Calculate Today's Attendance Stats
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+        const endOfToday = new Date();
+        endOfToday.setHours(23, 59, 59, 999);
+
+        const todayPresentCount = await Attendance.countDocuments({
+            user: { $in: workers.map(w => w._id) },
+            status: 'Present',
+            date: { $gte: startOfToday, $lte: endOfToday }
+        });
+
+        const todayPercentage = workers.length > 0 ? Math.round((todayPresentCount / workers.length) * 100) : 0;
+
         res.json({
             averageAttendance,
+            todayAttendance: todayPercentage,
             workers: stats
         });
     } catch (err) {

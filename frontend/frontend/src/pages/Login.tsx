@@ -8,7 +8,7 @@ const Login = () => {
         username: '',
         password: ''
     });
-    const { login, error, clearError, loginAsHR } = useAuth();
+    const { login, error, clearError } = useAuth();
     const { t } = useLanguage();
     const navigate = useNavigate();
     const { username, password } = formData;
@@ -34,12 +34,7 @@ const Login = () => {
         }
     };
 
-    const handleDevLogin = async () => {
-        if (loginAsHR) {
-            await loginAsHR();
-            navigate('/hr-dashboard');
-        }
-    };
+
 
     return (
         <div className="bg-background-light dark:bg-background-dark text-text-main dark:text-gray-100 font-display min-h-screen flex flex-col">
@@ -78,9 +73,7 @@ const Login = () => {
                     {/* Content */}
                     <div className="relative z-20 flex flex-col h-full justify-center max-w-lg">
                         <div className="mb-8">
-                            <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-semibold backdrop-blur-sm border border-white/30 mb-6">
-                                Official Portal v2.0
-                            </span>
+
                             <h1 className="text-4xl lg:text-5xl font-black leading-tight tracking-tight mb-6">
                                 {t('unified_sys')}
                             </h1>
@@ -201,20 +194,7 @@ const Login = () => {
                                     <span className="material-symbols-outlined text-[20px]">login</span>
                                 </button>
 
-                                {/* Dev Mode Login */}
-                                <div className="mt-4 relative">
-                                    <div className="absolute inset-0 flex items-center">
-                                        <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
-                                    </div>
-                                    <div className="relative flex justify-center text-sm">
-                                        <span className="px-2 bg-surface-light dark:bg-background-dark text-gray-500">Developer Access</span>
-                                    </div>
-                                </div>
 
-                                <button type="button" onClick={handleDevLogin} className="w-full mt-4 flex items-center justify-center gap-2 h-10 border-2 border-dashed border-indigo-300 dark:border-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 text-sm font-bold rounded-lg transition-colors">
-                                    <span>{t('demo_login')}</span>
-                                    <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
-                                </button>
                             </div>
                             {/* Register Link Removed - Admin Only Creation */}
                             <div className="text-center mt-4">
