@@ -84,7 +84,6 @@ function App() {
                     </PrivateRoute>
                   }
                 />
-                {/* Register removed - Admin only */}
                 <Route
                   path="/dashboard"
                   element={
