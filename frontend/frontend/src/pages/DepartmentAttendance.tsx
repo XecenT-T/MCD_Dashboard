@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import DashboardLayout from '../components/DashboardLayout';
 import api from '../api/axios';
-
+import { useLanguage } from '../context/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 
 const DepartmentAttendance = () => {
     const { user } = useAuth();
+    const { t } = useLanguage();
     const navigate = useNavigate();
     const [stats, setStats] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -32,7 +33,7 @@ const DepartmentAttendance = () => {
     );
 
     if (!user || (user.role !== 'official' && user.role !== 'hr')) {
-        return <div className="p-10 text-center">Access Denied</div>;
+        return <div className="p-10 text-center">{t('access_denied')}</div>;
     }
 
     return (
@@ -40,14 +41,14 @@ const DepartmentAttendance = () => {
             <div className="max-w-7xl mx-auto space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Attendance Overview</h2>
-                        <p className="text-text-muted">Tracking monthly presence for {user.department}</p>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('attendance_overview')}</h2>
+                        <p className="text-text-muted">{t('tracking_presence')} {user.department}</p>
                     </div>
                     <div className="relative">
                         <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
                         <input
                             type="text"
-                            placeholder="Search employee..."
+                            placeholder={t('search_employee')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-dark focus:ring-2 focus:ring-primary focus:outline-none w-full sm:w-64"
@@ -56,7 +57,7 @@ const DepartmentAttendance = () => {
                 </div>
 
                 {loading ? (
-                    <div className="p-10 text-center text-gray-500">Loading attendance data...</div>
+                    <div className="p-10 text-center text-gray-500">{t('loading_attendance')}</div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {filteredStats.map((stat) => (
@@ -79,7 +80,7 @@ const DepartmentAttendance = () => {
                                     </div>
                                     <div className="ml-auto text-right">
                                         <div className="text-lg font-bold text-gray-900 dark:text-white">{stat.percentage}%</div>
-                                        <div className="text-[10px] text-text-muted">Attendance</div>
+                                        <div className="text-[10px] text-text-muted">{t('attendance_link')}</div>
                                     </div>
                                 </div>
 
@@ -94,9 +95,9 @@ const DepartmentAttendance = () => {
                                 </div>
 
                                 <div className="flex items-center justify-between text-xs text-gray-500">
-                                    <span>{stat.presentDays} Present</span>
-                                    <span>{stat.totalDays - stat.presentDays} Absent/Off</span>
-                                    <span>{stat.totalDays} Total Days</span>
+                                    <span>{stat.presentDays} {t('present_days')}</span>
+                                    <span>{stat.totalDays - stat.presentDays} {t('absent_off')}</span>
+                                    <span>{stat.totalDays} {t('total_days')}</span>
                                 </div>
                             </div>
                         ))}
@@ -104,7 +105,7 @@ const DepartmentAttendance = () => {
                 )}
 
                 {!loading && filteredStats.length === 0 && (
-                    <div className="p-10 text-center text-gray-500">No records found.</div>
+                    <div className="p-10 text-center text-gray-500">{t('no_records')}</div>
                 )}
             </div>
         </DashboardLayout>

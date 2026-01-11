@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 
 const GrievanceSubmission = () => {
     const { token, user } = useAuth(); // Destructure user
+    const { t } = useLanguage();
     const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState(''); // Stores text notes
@@ -315,13 +317,13 @@ const GrievanceSubmission = () => {
             // If 'HR', we explicitly send 'HR' (or 'General' if that is the target department name)
 
             const payload = {
-                title: title || "Voice Grievance",
+                title: title || t('voice_grievance'),
                 description: description || "[No description]",
                 department: recipient === 'HR' ? 'HR' : undefined // If undefined, backend uses user.department (Official)
             };
 
             await api.post('/api/grievances', payload, config);
-            alert("Grievance Submitted Successfully!");
+            alert(t('grievance_submitted'));
             navigate('/dashboard');
         } catch (err) {
             console.error(err);
@@ -332,23 +334,23 @@ const GrievanceSubmission = () => {
     };
 
     return (
-        <DashboardLayout title="Voice Grievance">
+        <DashboardLayout title={t('voice_grievance')}>
             <div className="flex flex-col gap-3 mb-8">
                 {/* Breadcrumbs */}
                 <div className="flex flex-wrap gap-2 mb-2 text-sm">
-                    <button onClick={() => navigate('/dashboard')} className="text-slate-500 dark:text-slate-400 hover:text-primary font-medium">Dashboard</button>
+                    <button onClick={() => navigate('/dashboard')} className="text-slate-500 dark:text-slate-400 hover:text-primary font-medium">{t('nav_dashboard')}</button>
                     <span className="text-slate-500 dark:text-slate-400 font-medium">/</span>
-                    <span className="text-slate-900 dark:text-white font-medium">New Voice Submission</span>
+                    <span className="text-slate-900 dark:text-white font-medium">{t('new_voice_submission')}</span>
                 </div>
 
-                <h1 className="text-slate-900 dark:text-white text-4xl font-black leading-tight tracking-tight">Voice Grievance Submission</h1>
+                <h1 className="text-slate-900 dark:text-white text-4xl font-black leading-tight tracking-tight">{t('voice_grievance_submission')}</h1>
                 <p className="text-slate-500 dark:text-slate-400 text-lg font-normal leading-normal max-w-3xl">
-                    Press the microphone button and speak clearly to record your complaint. You can select your preferred language below.
+                    {t('voice_grievance_desc')}
                 </p>
 
                 {!isSupported && (
                     <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-red-200" role="alert">
-                        <span className="font-medium">Browser Verified:</span> Speech Recognition is not supported in this browser. Please use <b>Google Chrome</b>, <b>Microsoft Edge</b>, or <b>Safari</b>.
+                        <span className="font-medium">{t('browser_verified')}:</span> {t('browser_not_supported')}
                     </div>
                 )}
             </div>
@@ -361,7 +363,7 @@ const GrievanceSubmission = () => {
                         {/* Language Selector */}
                         <div className="mb-8">
                             <label className="flex flex-col w-full max-w-xs">
-                                <span className="text-slate-900 dark:text-white text-base font-medium leading-normal pb-2">Select Language</span>
+                                <span className="text-slate-900 dark:text-white text-base font-medium leading-normal pb-2">{t('select_language')}</span>
                                 <div className="relative">
                                     <select
                                         value={selectedLanguage}
@@ -384,7 +386,7 @@ const GrievanceSubmission = () => {
                         <div className="flex items-center justify-center h-32 mb-8 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 relative overflow-hidden group">
                             {!isRecording ? (
                                 <span className="absolute text-slate-400 dark:text-slate-500 text-sm font-medium z-10 transition-opacity">
-                                    Audio waveform will appear here
+                                    {t('audio_waveform')}
                                 </span>
                             ) : (
                                 <div className="flex flex-col items-center gap-3 w-full px-6">
@@ -410,7 +412,7 @@ const GrievanceSubmission = () => {
                             {isRefining && (
                                 <div className="absolute inset-0 bg-white/80 dark:bg-black/80 flex flex-col items-center justify-center z-20 backdrop-blur-sm">
                                     <span className="material-symbols-outlined text-primary text-3xl animate-spin">autorenew</span>
-                                    <p className="text-sm font-bold text-primary mt-2">Polishing your text with AI...</p>
+                                    <p className="text-sm font-bold text-primary mt-2">{t('polishing_ai')}</p>
                                 </div>
                             )}
                         </div>
@@ -434,18 +436,18 @@ const GrievanceSubmission = () => {
                             </div>
 
                             <p className="text-slate-500 dark:text-slate-400 text-sm">
-                                {!isSupported ? "Microphone unavailable" : isRecording ? "Tap stop to finish recording" : "Tap microphone to start recording"}
+                                {!isSupported ? t('mic_unavailable') : isRecording ? t('tap_stop') : t('tap_mic')}
                             </p>
 
                             {/* Secondary Controls */}
                             <div className={`flex gap-4 mt-2 transition-opacity ${!isRecording && timer !== 0 ? 'opacity-100 pointer-events-auto' : 'opacity-50 grayscale pointer-events-none'}`}>
                                 <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
                                     <span className="material-symbols-outlined !text-lg">play_arrow</span>
-                                    Preview
+                                    {t('preview')}
                                 </button>
                                 <button onClick={() => { setTimer(0); setDescription(''); }} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-red-600 dark:text-red-400 text-sm font-medium hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
                                     <span className="material-symbols-outlined !text-lg">delete_sweep</span>
-                                    Clear
+                                    {t('clear')}
                                 </button>
                             </div>
                         </div>
@@ -455,15 +457,15 @@ const GrievanceSubmission = () => {
                 {/* Right Column: Additional Details & Submit */}
                 <div className="flex-1 lg:max-w-md flex flex-col gap-6">
                     <div className="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-border-dark p-6">
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Additional Details</h3>
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">{t('additional_details')}</h3>
                         <div className="flex flex-col gap-4">
                             <label className="flex flex-col gap-2">
-                                <span className="text-slate-700 dark:text-slate-300 text-sm font-medium">Grievance Title</span>
+                                <span className="text-slate-700 dark:text-slate-300 text-sm font-medium">{t('grievance_title')}</span>
                                 <input
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
                                     className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                                    placeholder="Brief title"
+                                    placeholder={t('brief_title')}
                                     type="text"
                                 />
                             </label>
@@ -472,17 +474,17 @@ const GrievanceSubmission = () => {
                             {user?.role !== 'official' && (
                                 <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
                                     <div className="flex justify-between items-center mb-3">
-                                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Recipient</span>
+                                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('recipient')}</span>
                                         {aiConfidence && !isClassifying && (
                                             <span className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 animate-in fade-in zoom-in">
                                                 <span className="material-symbols-outlined text-[14px]">auto_awesome</span>
-                                                AI Selected
+                                                {t('ai_selected')}
                                             </span>
                                         )}
                                         {isClassifying && (
                                             <span className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 animate-pulse">
                                                 <span className="material-symbols-outlined text-[14px] animate-spin">refresh</span>
-                                                Analyzing...
+                                                {t('analyzing')}
                                             </span>
                                         )}
                                     </div>
@@ -494,8 +496,8 @@ const GrievanceSubmission = () => {
                                                 : 'bg-white dark:bg-surface-dark border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'}`}
                                         >
                                             <span className="material-symbols-outlined mb-1">admin_panel_settings</span>
-                                            <span className="text-sm font-bold">Official</span>
-                                            <span className="text-sm opacity-75">My Department</span>
+                                            <span className="text-sm font-bold">{t('official')}</span>
+                                            <span className="text-sm opacity-75">{t('my_department')}</span>
                                         </button>
                                         <button
                                             onClick={() => { setRecipient('HR'); setAiConfidence(false); }}
@@ -504,20 +506,20 @@ const GrievanceSubmission = () => {
                                                 : 'bg-white dark:bg-surface-dark border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'}`}
                                         >
                                             <span className="material-symbols-outlined mb-1">badge</span>
-                                            <span className="text-sm font-bold">HR Dept</span>
-                                            <span className="text-sm opacity-75">General/Admin</span>
+                                            <span className="text-sm font-bold">{t('hr_dept')}</span>
+                                            <span className="text-sm opacity-75">{t('general_admin')}</span>
                                         </button>
                                     </div>
                                 </div>
                             )}
 
                             <label className="flex flex-col gap-2">
-                                <span className="text-slate-700 dark:text-slate-300 text-sm font-medium">Additional Notes</span>
+                                <span className="text-slate-700 dark:text-slate-300 text-sm font-medium">{t('additional_notes')}</span>
                                 <textarea
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
                                     className="w-full resize-none rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                                    placeholder="Type any extra information here if you couldn't say it..."
+                                    placeholder={t('type_extra_info')}
                                     rows={5}
                                 ></textarea>
                             </label>
@@ -529,12 +531,12 @@ const GrievanceSubmission = () => {
                         <div className="flex gap-3">
                             <span className="material-symbols-outlined text-primary mt-0.5">info</span>
                             <div className="flex flex-col gap-1">
-                                <h4 className="text-sm font-bold text-slate-900 dark:text-white">Recording Tips</h4>
+                                <h4 className="text-sm font-bold text-slate-900 dark:text-white">{t('recording_tips')}</h4>
                                 <ul className="list-disc list-inside text-sm text-slate-600 dark:text-slate-400 space-y-1">
-                                    <li>Find a quiet place to record.</li>
-                                    <li>Speak clearly and at a normal pace.</li>
-                                    <li>Max recording time is 2 minutes.</li>
-                                    <li>Keep the phone close if using mobile.</li>
+                                    <li>{t('tip_quiet')}</li>
+                                    <li>{t('tip_clear')}</li>
+                                    <li>{t('tip_time')}</li>
+                                    <li>{t('tip_phone')}</li>
                                 </ul>
                             </div>
                         </div>
@@ -547,7 +549,7 @@ const GrievanceSubmission = () => {
                             disabled={loading || isClassifying}
                             className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary/90 text-white h-14 text-base font-bold shadow-md shadow-primary/20 transition-all hover:-translate-y-0.5 disabled:opacity-50"
                         >
-                            <span>{loading ? 'Sending...' : 'Submit Grievance'}</span>
+                            <span>{loading ? t('sending') : t('submit_grievance')}</span>
                             <span className="material-symbols-outlined">send</span>
                         </button>
                     </div>

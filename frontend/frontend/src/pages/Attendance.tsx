@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import * as faceapi from 'face-api.js';
 import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 
 interface AttendanceRecord {
     _id: string;
@@ -15,6 +16,7 @@ interface AttendanceRecord {
 
 const Attendance = () => {
     const { user, token } = useAuth();
+    const { t } = useLanguage();
     const navigate = useNavigate();
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -267,27 +269,28 @@ const Attendance = () => {
                                 <span className="material-symbols-outlined text-base">chevron_right</span>
                                 <span>Attendance</span>
                             </div>
-                            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">Daily Attendance</h1>
-                            <p className="mt-2 text-slate-500 dark:text-slate-400 text-base max-w-2xl">
-                                Verify your location and scan your face to mark your presence for the day.
-                            </p>
                         </div>
-                        {/* Toggle Buttons */}
-                        <div className="flex gap-2">
-                            <button
-                                onClick={() => setShowRecords(false)}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${!showRecords ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}
-                            >
-                                Mark Attendance
-                            </button>
-                            <button
-                                onClick={() => setShowRecords(true)}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${showRecords ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}
-                            >
-                                View Records
-                            </button>
-                        </div>
+                        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">{t('daily_attendance')}</h1>
+                        <p className="mt-2 text-slate-500 dark:text-slate-400 text-base max-w-2xl">
+                            {t('verify_attendance_desc')}
+                        </p>
                     </div>
+                    {/* Toggle Buttons */}
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setShowRecords(false)}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${!showRecords ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}
+                        >
+                            {t('mark_attendance')}
+                        </button>
+                        <button
+                            onClick={() => setShowRecords(true)}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${showRecords ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}
+                        >
+                            {t('view_records')}
+                        </button>
+                    </div>
+                    {/* </div> Removed premature closing tag */}
 
                     {showRecords ? (
                         /* Attendance Records Table */
@@ -295,7 +298,7 @@ const Attendance = () => {
                             <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                                 <h3 className="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
                                     <span className="material-symbols-outlined text-primary">history</span>
-                                    Attendance History
+                                    {t('attendance_history')}
                                 </h3>
                                 <span className="text-sm text-slate-500 dark:text-slate-400">{attendanceRecords.length} Records</span>
                             </div>
@@ -383,19 +386,19 @@ const Attendance = () => {
                                         <div className={`flex items-center justify-center w-10 h-10 rounded-full shadow-lg ring-4 ring-background-light dark:ring-background-dark ${locationStep === 'success' ? 'bg-green-500 text-white' : 'bg-primary text-white'}`}>
                                             {locationStep === 'success' ? <span className="material-symbols-outlined text-xl font-bold">check</span> : <span className="text-sm font-bold">1</span>}
                                         </div>
-                                        <span className={`text-sm font-semibold ${locationStep === 'success' ? 'text-green-600 dark:text-green-400' : 'text-primary'}`}>Location Check</span>
+                                        <span className={`text-sm font-semibold ${locationStep === 'success' ? 'text-green-600 dark:text-green-400' : 'text-primary'}`}>{t('location_check')}</span>
                                     </div>
                                     <div className="flex flex-col items-center gap-2">
                                         <div className={`flex items-center justify-center w-10 h-10 rounded-full shadow-lg ring-4 ring-background-light dark:ring-background-dark ${faceStep === 'success' ? 'bg-green-500 text-white' : faceStep === 'scanning' ? 'bg-primary text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-400'}`}>
                                             {faceStep === 'success' ? <span className="material-symbols-outlined text-xl font-bold">check</span> : <span className="material-symbols-outlined filled">face</span>}
                                         </div>
-                                        <span className={`text-sm font-bold ${faceStep === 'scanning' ? 'text-primary' : faceStep === 'success' ? 'text-green-600' : 'text-slate-400'}`}>Face Scan</span>
+                                        <span className={`text-sm font-bold ${faceStep === 'scanning' ? 'text-primary' : faceStep === 'success' ? 'text-green-600' : 'text-slate-400'}`}>{t('face_scan')}</span>
                                     </div>
                                     <div className="flex flex-col items-center gap-2">
                                         <div className={`flex items-center justify-center w-10 h-10 rounded-full shadow-lg ring-4 ring-background-light dark:ring-background-dark ${finalStep === 'success' ? 'bg-green-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-400'}`}>
                                             {finalStep === 'success' ? <span className="material-symbols-outlined text-xl font-bold">check</span> : <span className="text-sm font-bold">3</span>}
                                         </div>
-                                        <span className={`text-sm font-medium ${finalStep === 'success' ? 'text-green-600' : 'text-slate-400'}`}>Confirmation</span>
+                                        <span className={`text-sm font-medium ${finalStep === 'success' ? 'text-green-600' : 'text-slate-400'}`}>{t('confirmation')}</span>
                                     </div>
                                 </div>
                             </div>
@@ -407,7 +410,7 @@ const Attendance = () => {
                                         <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
                                             <h3 className="font-bold text-lg flex items-center gap-2">
                                                 <span className="material-symbols-outlined text-primary">videocam</span>
-                                                Live Camera Feed
+                                                {t('live_camera')}
                                             </h3>
                                             <span className="flex items-center gap-1.5 text-xs font-medium text-red-500 animate-pulse">
                                                 <span className="w-2 h-2 rounded-full bg-red-500"></span>
@@ -436,7 +439,7 @@ const Attendance = () => {
                                                     className="absolute bottom-20 bg-primary hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold shadow-lg transition-colors pointer-events-auto flex items-center gap-2"
                                                 >
                                                     <span className="material-symbols-outlined">how_to_reg</span>
-                                                    Setup Face ID Now
+                                                    {t('setup_face_now')}
                                                 </button>
                                             )}
                                         </div>
@@ -459,7 +462,7 @@ const Attendance = () => {
                                         <div className="p-4 border-b border-slate-100 dark:border-slate-800">
                                             <h3 className="font-bold text-base flex items-center gap-2">
                                                 <span className="material-symbols-outlined text-slate-500">location_on</span>
-                                                Location Verification
+                                                {t('location_verification')}
                                             </h3>
                                         </div>
                                         <div className="relative aspect-[4/3] w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
@@ -493,7 +496,7 @@ const Attendance = () => {
 
                                     {/* Employee Details */}
                                     <div className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-5">
-                                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Employee Details</h3>
+                                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">{t('employee_details')}</h3>
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="bg-slate-100 dark:bg-slate-800 p-2 rounded-lg text-slate-500">

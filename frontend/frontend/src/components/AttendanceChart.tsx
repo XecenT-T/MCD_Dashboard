@@ -1,12 +1,14 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useLanguage } from '../context/LanguageContext';
 
 const AttendanceChart = ({ isOfficial, data }: { isOfficial: boolean, data?: any[] }) => {
+    const { t } = useLanguage();
     // Check if data exists
     if (!data || data.length === 0) {
         return (
             <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm italic">
-                No attendance data available for graph
+                {t('no_records')}
             </div>
         );
     }
@@ -48,7 +50,7 @@ const AttendanceChart = ({ isOfficial, data }: { isOfficial: boolean, data?: any
                         }}
                         cursor={{ fill: '#f3f4f6' }}
                     />
-                    <Bar dataKey="present" name="Present Days" fill={presentColor} radius={[4, 4, 0, 0]} barSize={40}>
+                    <Bar dataKey="present" name={t('present_days_chart')} fill={presentColor} radius={[4, 4, 0, 0]} barSize={40}>
                         {/* Optional: individual cell styling */}
                     </Bar>
                 </BarChart>

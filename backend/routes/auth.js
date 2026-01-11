@@ -250,8 +250,27 @@ router.get('/department-workers', auth, async (req, res) => {
     }
 });
 
-module.exports = router;
+// Update Language Preference
+router.put('/update-language', auth, async (req, res) => {
+    try {
+        const { language } = req.body;
+        const user = await User.findById(req.user.id);
 
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        user.preferredLanguage = language;
+        await user.save();
+
+        res.json({ msg: 'Language updated', language });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+module.exports = router;
 // Complete Onboarding
 router.post('/complete-onboarding', auth, async (req, res) => {
     try {

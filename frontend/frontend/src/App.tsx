@@ -61,7 +61,7 @@ const LanguageSync = () => {
       // It's safe if the value matches one of the known languages.
       setLanguage(user.preferredLanguage as any);
     }
-  }, [user, language, setLanguage]);
+  }, [user]);
 
   return null;
 };

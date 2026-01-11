@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import DashboardLayout from '../components/DashboardLayout';
 import api from '../api/axios';
+import { useLanguage } from '../context/LanguageContext';
 
 const DepartmentWorkers = () => {
     const { user } = useAuth();
+    const { t } = useLanguage();
     const [workers, setWorkers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -30,7 +32,7 @@ const DepartmentWorkers = () => {
     );
 
     if (!user || (user.role !== 'official' && user.role !== 'hr')) {
-        return <div className="p-10 text-center">Access Denied</div>;
+        return <div className="p-10 text-center">{t('access_denied')}</div>;
     }
 
     return (
@@ -38,14 +40,14 @@ const DepartmentWorkers = () => {
             <div className="max-w-7xl mx-auto space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Department Workforce</h2>
-                        <p className="text-text-muted">Managing {workers.length} workers in {user.department}</p>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('dept_workforce')}</h2>
+                        <p className="text-text-muted">{t('managing_workers')} {user.department}</p>
                     </div>
                     <div className="relative">
                         <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
                         <input
                             type="text"
-                            placeholder="Search workers..."
+                            placeholder={t('search_workers')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-dark focus:ring-2 focus:ring-primary focus:outline-none w-full sm:w-64"
@@ -54,17 +56,17 @@ const DepartmentWorkers = () => {
                 </div>
 
                 {loading ? (
-                    <div className="p-10 text-center text-gray-500">Loading workforce data...</div>
+                    <div className="p-10 text-center text-gray-500">{t('loading_workforce')}</div>
                 ) : (
                     <div className="bg-white dark:bg-surface-dark rounded-xl border border-gray-100 dark:border-border-dark shadow-sm overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-sm">
                                 <thead className="bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 font-medium">
                                     <tr>
-                                        <th className="p-4">Employee</th>
-                                        <th className="p-4">Post/Designation</th>
-                                        <th className="p-4">Contact</th>
-                                        <th className="p-4">Status</th>
+                                        <th className="p-4">{t('employee_header')}</th>
+                                        <th className="p-4">{t('post_designation')}</th>
+                                        <th className="p-4">{t('contact_header')}</th>
+                                        <th className="p-4">{t('status_header')}</th>
                                         {/* <th className="p-4">Actions</th> */}
                                     </tr>
                                 </thead>
@@ -88,7 +90,7 @@ const DepartmentWorkers = () => {
                                                     </div>
                                                 </td>
                                                 <td className="p-4 text-gray-600 dark:text-gray-300">
-                                                    {worker.post || 'Worker'}
+                                                    {worker.post || t('worker')}
                                                 </td>
                                                 <td className="p-4">
                                                     <div className="text-gray-900 dark:text-white">{worker.phoneNo}</div>
@@ -97,14 +99,14 @@ const DepartmentWorkers = () => {
                                                 <td className="p-4">
                                                     <div className="flex flex-col gap-1 items-start">
                                                         {worker.isFaceRegistered ? (
-                                                            <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded uppercase border border-green-200">Face Reg</span>
+                                                            <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded uppercase border border-green-200">{t('face_reg')}</span>
                                                         ) : (
-                                                            <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-[10px] font-bold rounded uppercase border border-yellow-200">Pending Face</span>
+                                                            <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-[10px] font-bold rounded uppercase border border-yellow-200">{t('pending_face')}</span>
                                                         )}
                                                         {worker.isOnboarded ? (
-                                                            <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded uppercase border border-blue-100">Onboarded</span>
+                                                            <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded uppercase border border-blue-100">{t('onboarded')}</span>
                                                         ) : (
-                                                            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold rounded uppercase border border-gray-200">New</span>
+                                                            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold rounded uppercase border border-gray-200">{t('new_status')}</span>
                                                         )}
                                                     </div>
                                                 </td>
@@ -112,7 +114,7 @@ const DepartmentWorkers = () => {
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan={5} className="p-8 text-center text-gray-500">No workers found matching your search.</td>
+                                            <td colSpan={5} className="p-8 text-center text-gray-500">{t('no_records')}</td>
                                         </tr>
                                     )}
                                 </tbody>

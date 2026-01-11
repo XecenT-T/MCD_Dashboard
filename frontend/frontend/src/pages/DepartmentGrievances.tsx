@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import DashboardLayout from '../components/DashboardLayout';
+import { useLanguage } from '../context/LanguageContext';
 import GrievanceManagementSystem from '../components/hr/GrievanceManagementSystem';
 
 const DepartmentGrievances = () => {
     const { user, token } = useAuth();
+    const { t } = useLanguage();
     const [grievances, setGrievances] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -85,8 +87,8 @@ const DepartmentGrievances = () => {
         <DashboardLayout title="Department Grievances">
             <div className="max-w-7xl mx-auto space-y-6">
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Department Grievances</h2>
-                    <p className="text-text-muted mt-1">Review and resolve grievances from your department</p>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('grievance_hub')}</h2>
+                    <p className="text-text-muted mt-1">{t('grievance_hub_desc')}</p>
                 </div>
 
                 <GrievanceManagementSystem

@@ -60,7 +60,7 @@ const userSchema = new mongoose.Schema({
     },
     preferredLanguage: {
         type: String,
-        enum: ['en', 'hi'],
+        enum: ['en', 'hi', 'pa', 'mr', 'ta', 'te', 'bn'],
         default: 'en'
     },
     profileImage: {

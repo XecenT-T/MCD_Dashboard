@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+import { useLanguage } from '../context/LanguageContext';
 
 interface Document {
     id: string;
@@ -13,6 +14,7 @@ interface Document {
 
 const DepartmentDocuments = () => {
     const { user, token } = useAuth();
+    const { t } = useLanguage();
     // removed duplicate user declaration
     const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
     const [documents, setDocuments] = useState<Document[]>([]);
@@ -74,7 +76,7 @@ const DepartmentDocuments = () => {
     };
 
     return (
-        <DashboardLayout title="Department Documents">
+        <DashboardLayout title={t('dept_documents')}>
             <div className="max-w-5xl mx-auto space-y-6">
 
                 {/* Header Section */}
@@ -83,14 +85,14 @@ const DepartmentDocuments = () => {
                         <div>
                             <h2 className="text-xl font-bold text-white flex items-center gap-2">
                                 <span className="material-symbols-outlined text-blue-400">domain</span>
-                                {user?.department || 'Sanitation'} Department
+                                {t(`dept_${(user?.department || 'Sanitation').toLowerCase()}`) || user?.department} {t('department_suffix')}
                             </h2>
                             <p className="text-gray-400 text-sm mt-1">
-                                Access and manage all official documents for your department.
+                                {t('dept_docs_desc')}
                             </p>
                         </div>
                         <div className="px-4 py-2 bg-blue-500/10 text-blue-400 rounded-lg text-sm font-semibold border border-blue-500/20 shadow-sm shadow-blue-500/10">
-                            Total Documents: {documents.length}
+                            {t('total_docs')}: {documents.length}
                         </div>
                     </div>
                 </div>
@@ -101,10 +103,10 @@ const DepartmentDocuments = () => {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-gray-800/50 border-b border-gray-700/50">
-                                    <th className="px-6 py-4 text-sm font-semibold text-gray-400 uppercase tracking-wider">Document Name</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-gray-400 uppercase tracking-wider">Date</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-gray-400 uppercase tracking-wider">Type</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-gray-400 uppercase tracking-wider text-right">Actions</th>
+                                    <th className="px-6 py-4 text-sm font-semibold text-gray-400 uppercase tracking-wider">{t('doc_name')}</th>
+                                    <th className="px-6 py-4 text-sm font-semibold text-gray-400 uppercase tracking-wider">{t('doc_date')}</th>
+                                    <th className="px-6 py-4 text-sm font-semibold text-gray-400 uppercase tracking-wider">{t('doc_type')}</th>
+                                    <th className="px-6 py-4 text-sm font-semibold text-gray-400 uppercase tracking-wider text-right">{t('doc_actions')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -133,7 +135,7 @@ const DepartmentDocuments = () => {
                                         </td>
                                         <td className="px-6 py-4 text-sm">
                                             <span className="px-2.5 py-1 rounded-md bg-gray-800 text-xs font-bold text-gray-400 border border-gray-700">
-                                                {doc.type}
+                                                {t(`doc_type_${doc.type.toLowerCase().replace(/\s/g, '_')}`) || doc.type}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
@@ -141,14 +143,14 @@ const DepartmentDocuments = () => {
                                                 <button
                                                     onClick={() => handlePrint(doc)}
                                                     className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition-all"
-                                                    title="Print Document"
+                                                    title={t('print_doc')}
                                                 >
                                                     <span className="material-symbols-outlined text-[20px]">print</span>
                                                 </button>
                                                 <button
                                                     onClick={() => handleView(doc)}
                                                     className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition-all"
-                                                    title="View Document"
+                                                    title={t('view_doc')}
                                                 >
                                                     <span className="material-symbols-outlined text-[20px]">visibility</span>
                                                 </button>
@@ -185,10 +187,10 @@ const DepartmentDocuments = () => {
                                 </div>
                                 <div>
                                     <p className="text-gray-600 dark:text-gray-300">
-                                        You are viewing <strong>{selectedDoc.title}</strong>
+                                        {t('viewing_doc')} <strong>{selectedDoc.title}</strong>
                                     </p>
                                     <p className="text-sm text-text-muted mt-1">
-                                        This is a placeholder for the actual document viewer.
+                                        {t('doc_placeholder')}
                                     </p>
                                 </div>
                             </div>
@@ -198,13 +200,13 @@ const DepartmentDocuments = () => {
                                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                                 >
                                     <span className="material-symbols-outlined text-[18px]">print</span>
-                                    Print
+                                    {t('print')}
                                 </button>
                                 <button
                                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25"
                                 >
                                     <span className="material-symbols-outlined text-[18px]">download</span>
-                                    Download
+                                    {t('download')}
                                 </button>
                             </div>
                         </div>

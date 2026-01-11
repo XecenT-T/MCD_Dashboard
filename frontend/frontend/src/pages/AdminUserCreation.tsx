@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import api from '../api/axios';
 
 const AdminUserCreation = () => {
     const { token } = useAuth();
+    const { t } = useLanguage();
 
     const [formData, setFormData] = useState({
         name: '',
@@ -63,16 +65,16 @@ const AdminUserCreation = () => {
     };
 
     return (
-        <DashboardLayout title="User Management">
+        <DashboardLayout title={t('user_management')}>
             <div className="max-w-4xl mx-auto">
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                     <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             <span className="material-symbols-outlined text-primary">person_add</span>
-                            Register New Employee
+                            {t('register_employee')}
                         </h2>
                         <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-                            Enter details to auto-generate User ID & Password. Credentials will be emailed.
+                            {t('register_desc')}
                         </p>
                     </div>
 
@@ -89,9 +91,9 @@ const AdminUserCreation = () => {
                                     <p className="font-medium">{status.msg}</p>
                                     {createdCreds && (
                                         <div className="mt-2 text-sm bg-white/50 p-2 rounded border border-green-200">
-                                            <p><strong>Status:</strong> Email Sent ✅</p>
-                                            <p><strong>User ID:</strong> {createdCreds.username}</p>
-                                            <p><strong>Password:</strong> {createdCreds.password}</p>
+                                            <p><strong>Status:</strong> {t('email_sent')} ✅</p>
+                                            <p><strong>{t('user_id')}:</strong> {createdCreds.username}</p>
+                                            <p><strong>{t('password')}:</strong> {createdCreds.password}</p>
                                         </div>
                                     )}
                                 </div>
@@ -102,22 +104,22 @@ const AdminUserCreation = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* Personal Details */}
                                 <div className="space-y-4">
-                                    <h3 className="font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">Personal Details</h3>
+                                    <h3 className="font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">{t('personal_details')}</h3>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name (as per ID)</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('full_name')}</label>
                                         <input type="text" name="name" value={name} onChange={onChange} required
                                             className="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary focus:border-primary" />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date of Birth</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('dob')}</label>
                                         <input type="date" name="dob" value={dob} onChange={onChange} required
                                             className="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary focus:border-primary" />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Aadhar Card No.</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('aadhar')}</label>
                                         <input type="text" name="aadharCardNo" value={aadharCardNo} onChange={onChange} required placeholder="XXXX-XXXX-XXXX"
                                             className="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary focus:border-primary" />
                                     </div>
@@ -125,53 +127,53 @@ const AdminUserCreation = () => {
 
                                 {/* Contact & Job Details */}
                                 <div className="space-y-4">
-                                    <h3 className="font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">Contact & Job</h3>
+                                    <h3 className="font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">{t('contact_job')}</h3>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('email_address')}</label>
                                         <input type="email" name="email" value={email} onChange={onChange} required
                                             className="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary focus:border-primary" />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone Number</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('phone_number')}</label>
                                         <input type="tel" name="phoneNo" value={phoneNo} onChange={onChange} required
                                             className="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary focus:border-primary" />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Post / Designation</label>
-                                        <input type="text" name="post" value={post} onChange={onChange} required placeholder="e.g. Sanitation Worker I"
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('designation')}</label>
+                                        <input type="text" name="post" value={post} onChange={onChange} required placeholder={t('designation_placeholder')}
                                             className="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary focus:border-primary" />
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Department</label>
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('department')}</label>
                                             <select name="department" value={department} onChange={onChange} disabled={role === 'hr'}
                                                 className={`w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary focus:border-primary ${role === 'hr' ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                                 {role === 'hr' ? (
-                                                    <option value="HR">HR (Restricted)</option>
+                                                    <option value="HR">{t('hr_restricted')}</option>
                                                 ) : (
                                                     <>
-                                                        <option value="Education">Education</option>
-                                                        <option value="Health">Health</option>
-                                                        <option value="Engineering">Engineering</option>
+                                                        <option value="Education">{t('dept_education')}</option>
+                                                        <option value="Health">{t('dept_health')}</option>
+                                                        <option value="Engineering">{t('dept_engineering')}</option>
                                                     </>
                                                 )}
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('role')}</label>
                                             <select
                                                 name="role"
                                                 value={formData.role}
                                                 onChange={onChange}
                                                 className="w-full px-4 py-2 border border-border-light dark:border-border-dark rounded-lg bg-white dark:bg-surface-dark focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                             >
-                                                <option value="worker">Worker</option>
-                                                <option value="official">Official</option>
-                                                <option value="hr">HR / Admin</option>
+                                                <option value="worker">{t('worker')}</option>
+                                                <option value="official">{t('official')}</option>
+                                                <option value="hr">{t('hr_admin')}</option>
                                             </select>
                                         </div>
                                     </div>
@@ -186,7 +188,7 @@ const AdminUserCreation = () => {
                                     ) : (
                                         <span className="material-symbols-outlined">send</span>
                                     )}
-                                    Generate & Email Credentials
+                                    {t('generate_email')}
                                 </button>
                             </div>
                         </form>

@@ -140,16 +140,16 @@ const Payroll = () => {
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                            {isHR ? 'Payroll Management' : 'My Payslip'}
+                            {isHR ? t('payroll_management') : t('my_payslip')}
                         </h1>
                         <p className="text-gray-500 dark:text-gray-400">
-                            {isHR ? 'Manage employee salaries and view reports' : 'View and download your salary slips'}
+                            {isHR ? t('payroll_desc_hr') : t('payroll_desc_user')}
                         </p>
                     </div>
                     {isHR && (
                         <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-                            <button onClick={() => setView('overview')} className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${view === 'overview' ? 'bg-white dark:bg-gray-700 shadow text-primary' : 'text-gray-500'}`}>Overview</button>
-                            <button onClick={() => setView('manage')} className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${view === 'manage' ? 'bg-white dark:bg-gray-700 shadow text-primary' : 'text-gray-500'}`}>Manage Payroll</button>
+                            <button onClick={() => setView('overview')} className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${view === 'overview' ? 'bg-white dark:bg-gray-700 shadow text-primary' : 'text-gray-500'}`}>{t('overview')}</button>
+                            <button onClick={() => setView('manage')} className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${view === 'manage' ? 'bg-white dark:bg-gray-700 shadow text-primary' : 'text-gray-500'}`}>{t('management_mode')}</button>
                         </div>
                     )}
                 </div>
@@ -168,40 +168,40 @@ const Payroll = () => {
                                 <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white flex justify-between items-center">
                                     <div>
                                         <h2 className="text-2xl font-bold">{latestPayslip.month}</h2>
-                                        <p className="text-blue-100">Status: {latestPayslip.status}</p>
+                                        <p className="text-blue-100">{t('status')}: {latestPayslip.status}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-sm opacity-80">Net Pay</p>
+                                        <p className="text-sm opacity-80">{t('net_pay')}</p>
                                         <p className="text-3xl font-bold">₹{latestPayslip.netPay}</p>
                                     </div>
                                 </div>
 
                                 <div className="p-6 grid md:grid-cols-2 gap-8">
                                     <div>
-                                        <h3 className="font-bold mb-4 text-green-600">Earnings</h3>
+                                        <h3 className="font-bold mb-4 text-green-600">{t('earnings')}</h3>
                                         <div className="space-y-2 text-sm">
-                                            <div className="flex justify-between px-2 py-1 bg-gray-50 dark:bg-gray-900/50 rounded"><span>Basic</span><span>₹{latestPayslip.earnings.basic}</span></div>
-                                            <div className="flex justify-between px-2 py-1"><span>HRA</span><span>₹{latestPayslip.earnings.hra}</span></div>
-                                            <div className="flex justify-between px-2 py-1 bg-gray-50 dark:bg-gray-900/50 rounded"><span>Conveyance</span><span>₹{latestPayslip.earnings.conveyance}</span></div>
-                                            <div className="flex justify-between px-2 py-1"><span>Medical</span><span>₹{latestPayslip.earnings.medical}</span></div>
-                                            <div className="flex justify-between px-2 py-1 bg-gray-50 dark:bg-gray-900/50 rounded"><span>Special</span><span>₹{latestPayslip.earnings.special}</span></div>
-                                            <div className="flex justify-between font-bold pt-2 border-t"><span>Total</span><span>₹{latestPayslip.earnings.total}</span></div>
+                                            <div className="flex justify-between px-2 py-1 bg-gray-50 dark:bg-gray-900/50 rounded"><span>{t('basic_col')}</span><span>₹{latestPayslip.earnings.basic}</span></div>
+                                            <div className="flex justify-between px-2 py-1"><span>{t('hra_col')}</span><span>₹{latestPayslip.earnings.hra}</span></div>
+                                            <div className="flex justify-between px-2 py-1 bg-gray-50 dark:bg-gray-900/50 rounded"><span>{t('conveyance_col')}</span><span>₹{latestPayslip.earnings.conveyance}</span></div>
+                                            <div className="flex justify-between px-2 py-1"><span>{t('medical_col')}</span><span>₹{latestPayslip.earnings.medical}</span></div>
+                                            <div className="flex justify-between px-2 py-1 bg-gray-50 dark:bg-gray-900/50 rounded"><span>{t('special_col')}</span><span>₹{latestPayslip.earnings.special}</span></div>
+                                            <div className="flex justify-between font-bold pt-2 border-t"><span>{t('total')}</span><span>₹{latestPayslip.earnings.total}</span></div>
                                         </div>
                                     </div>
                                     <div>
-                                        <h3 className="font-bold mb-4 text-red-600">Deductions</h3>
+                                        <h3 className="font-bold mb-4 text-red-600">{t('deductions')}</h3>
                                         <div className="space-y-2 text-sm">
-                                            <div className="flex justify-between px-2 py-1 bg-gray-50 dark:bg-gray-900/50 rounded"><span>PF</span><span>₹{latestPayslip.deductions.pf}</span></div>
-                                            <div className="flex justify-between px-2 py-1"><span>ESI</span><span>₹{latestPayslip.deductions.esi}</span></div>
-                                            <div className="flex justify-between px-2 py-1 bg-gray-50 dark:bg-gray-900/50 rounded"><span>Tax</span><span>₹{latestPayslip.deductions.tax}</span></div>
-                                            <div className="flex justify-between font-bold pt-2 border-t"><span>Total</span><span>₹{latestPayslip.deductions.total}</span></div>
+                                            <div className="flex justify-between px-2 py-1 bg-gray-50 dark:bg-gray-900/50 rounded"><span>{t('pf_col')}</span><span>₹{latestPayslip.deductions.pf}</span></div>
+                                            <div className="flex justify-between px-2 py-1"><span>{t('esi_col')}</span><span>₹{latestPayslip.deductions.esi}</span></div>
+                                            <div className="flex justify-between px-2 py-1 bg-gray-50 dark:bg-gray-900/50 rounded"><span>{t('tax_col')}</span><span>₹{latestPayslip.deductions.tax}</span></div>
+                                            <div className="flex justify-between font-bold pt-2 border-t"><span>{t('total')}</span><span>₹{latestPayslip.deductions.total}</span></div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="bg-gray-50 dark:bg-gray-900/50 p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end">
                                     <button onClick={() => downloadPayslip(latestPayslip._id)} className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors">
-                                        <span className="material-symbols-outlined">download</span> Download PDF
+                                        <span className="material-symbols-outlined">download</span> {t('download_pdf')}
                                     </button>
                                 </div>
                             </div>
@@ -214,16 +214,16 @@ const Payroll = () => {
 
                         {/* History */}
                         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-                            <h3 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">Payment History</h3>
+                            <h3 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">{t('payment_history')}</h3>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left text-sm">
                                     <thead>
                                         <tr className="border-b border-gray-200 dark:border-gray-700 text-gray-500">
-                                            <th className="pb-3">Month</th>
-                                            <th className="pb-3">Paid On</th>
-                                            <th className="pb-3">Amount</th>
-                                            <th className="pb-3">Status</th>
-                                            <th className="pb-3 text-right">Action</th>
+                                            <th className="pb-3">{t('month')}</th>
+                                            <th className="pb-3">{t('paid_on')}</th>
+                                            <th className="pb-3">{t('amount')}</th>
+                                            <th className="pb-3">{t('status')}</th>
+                                            <th className="pb-3 text-right">{t('action')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -259,26 +259,26 @@ const Payroll = () => {
                                 className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg shadow hover:bg-blue-700 transition-colors"
                             >
                                 <span className="material-symbols-outlined">add_circle</span>
-                                Process New Payroll
+                                {t('process_new_payroll')}
                             </button>
                         </div>
 
                         {/* Stats */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                                <p className="text-gray-500 text-sm">Total Disbursed (All Time)</p>
+                                <p className="text-gray-500 text-sm">{t('total_disbursed')}</p>
                                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
                                     ₹{payrolls.reduce((acc, curr) => acc + parseInt(curr.netPay || 0), 0).toLocaleString()}
                                 </h3>
                             </div>
                             <div className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                                <p className="text-gray-500 text-sm">Pending Payments</p>
+                                <p className="text-gray-500 text-sm">{t('pending_actions')}</p>
                                 <h3 className="text-2xl font-bold text-yellow-600 mt-1">
                                     {payrolls.filter(p => p.status === 'Pending').length}
                                 </h3>
                             </div>
                             <div className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                                <p className="text-gray-500 text-sm">Employees Paid</p>
+                                <p className="text-gray-500 text-sm">{t('employees_paid')}</p>
                                 <h3 className="text-2xl font-bold text-green-600 mt-1">
                                     {payrolls.filter(p => p.status === 'Processed').length}
                                 </h3>
@@ -287,16 +287,16 @@ const Payroll = () => {
 
                         {/* Recent Transactions Table */}
                         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-                            <div className="p-5 border-b border-gray-200 dark:border-gray-700 font-bold text-gray-900 dark:text-white">Recent Transactions</div>
+                            <div className="p-5 border-b border-gray-200 dark:border-gray-700 font-bold text-gray-900 dark:text-white">{t('recent_transactions')}</div>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left text-sm">
                                     <thead className="bg-gray-50 dark:bg-gray-900/50">
                                         <tr>
                                             <th className="py-3 px-5 font-medium text-gray-500">Employee</th>
-                                            <th className="py-3 px-5 font-medium text-gray-500">Month</th>
-                                            <th className="py-3 px-5 font-medium text-gray-500">Net Pay</th>
-                                            <th className="py-3 px-5 font-medium text-gray-500">Status</th>
-                                            <th className="py-3 px-5 font-medium text-gray-500">Actions</th>
+                                            <th className="py-3 px-5 font-medium text-gray-500">{t('month')}</th>
+                                            <th className="py-3 px-5 font-medium text-gray-500">{t('net_pay')}</th>
+                                            <th className="py-3 px-5 font-medium text-gray-500">{t('status')}</th>
+                                            <th className="py-3 px-5 font-medium text-gray-500">{t('action')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -326,7 +326,7 @@ const Payroll = () => {
                 {isHR && view === 'manage' && !loading && (
                     <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
                         <div className="p-5 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                            <h3 className="font-bold text-gray-900 dark:text-white">Active Employees</h3>
+                            <h3 className="font-bold text-gray-900 dark:text-white">{t('active_employees')}</h3>
                             {/* Search could go here */}
                         </div>
                         <div className="overflow-x-auto">
@@ -336,7 +336,7 @@ const Payroll = () => {
                                         <th className="py-3 px-5 font-medium text-gray-500">Name</th>
                                         <th className="py-3 px-5 font-medium text-gray-500">Role</th>
                                         <th className="py-3 px-5 font-medium text-gray-500">Designation</th>
-                                        <th className="py-3 px-5 font-medium text-gray-500">Actions</th>
+                                        <th className="py-3 px-5 font-medium text-gray-500">{t('action')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -370,18 +370,18 @@ const Payroll = () => {
                         <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
                             <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                                 <h3 className="text-xl font-bold dark:text-white">
-                                    {selectedUser?.payrollId ? 'Edit Payroll' : `Create Payroll: ${selectedUser?.name}`}
+                                    {selectedUser?.payrollId ? t('save_payroll') : `${t('create_payroll')}: ${selectedUser?.name}`}
                                 </h3>
                                 <button onClick={() => setShowModal(false)}><span className="material-symbols-outlined">close</span></button>
                             </div>
                             <form onSubmit={handleSubmit} className="p-6 grid gap-6">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-xs font-medium text-gray-500 mb-1">Month</label>
+                                        <label className="block text-xs font-medium text-gray-500 mb-1">{t('month')}</label>
                                         <input type="text" value={formData.month} onChange={e => setFormData({ ...formData, month: e.target.value })} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                                        <label className="block text-xs font-medium text-gray-500 mb-1">{t('status')}</label>
                                         <select value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                             <option>Pending</option>
                                             <option>Processed</option>
@@ -393,17 +393,17 @@ const Payroll = () => {
                                         <input type="text" value={formData.accountNo} onChange={e => setFormData({ ...formData, accountNo: e.target.value })} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-medium text-gray-500 mb-1">Paid On</label>
+                                        <label className="block text-xs font-medium text-gray-500 mb-1">{t('paid_on')}</label>
                                         <input type="text" value={formData.paidOn} onChange={e => setFormData({ ...formData, paidOn: e.target.value })} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="DD/MM/YYYY" />
                                     </div>
                                 </div>
 
                                 <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                                    <h4 className="font-bold text-primary mb-3">Earnings</h4>
+                                    <h4 className="font-bold text-primary mb-3">{t('earnings')}</h4>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                         {['basic', 'hra', 'conveyance', 'medical', 'special'].map(f => (
                                             <div key={f}>
-                                                <label className="block text-xs font-medium text-gray-500 mb-1 capitalize">{f}</label>
+                                                <label className="block text-xs font-medium text-gray-500 mb-1 capitalize">{t(`${f}_col`)}</label>
                                                 <input type="number" value={formData[f as keyof typeof formData]} onChange={e => setFormData({ ...formData, [f]: e.target.value })} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                                             </div>
                                         ))}
@@ -411,11 +411,11 @@ const Payroll = () => {
                                 </div>
 
                                 <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                                    <h4 className="font-bold text-red-600 mb-3">Deductions</h4>
+                                    <h4 className="font-bold text-red-600 mb-3">{t('deductions')}</h4>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                         {['pf', 'esi', 'tax'].map(f => (
                                             <div key={f}>
-                                                <label className="block text-xs font-medium text-gray-500 mb-1 capitalize">{f.toUpperCase()}</label>
+                                                <label className="block text-xs font-medium text-gray-500 mb-1 capitalize">{t(`${f}_col`)}</label>
                                                 <input type="number" value={formData[f as keyof typeof formData]} onChange={e => setFormData({ ...formData, [f]: e.target.value })} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                                             </div>
                                         ))}
@@ -423,8 +423,8 @@ const Payroll = () => {
                                 </div>
 
                                 <div className="flex justify-end gap-3 mt-4">
-                                    <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 border rounded hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white">Cancel</button>
-                                    <button type="submit" className="px-4 py-2 bg-primary text-white rounded hover:bg-blue-700">Save Payroll</button>
+                                    <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 border rounded hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white">{t('cancel')}</button>
+                                    <button type="submit" className="px-4 py-2 bg-primary text-white rounded hover:bg-blue-700">{t('save_payroll')}</button>
                                 </div>
                             </form>
                         </div>
