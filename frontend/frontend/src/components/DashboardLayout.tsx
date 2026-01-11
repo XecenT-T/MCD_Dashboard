@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ProfileModal from './ProfileModal';
+import IDCardModal from './IDCardModal';
 
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -12,6 +13,7 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [showProfileModal, setShowProfileModal] = useState(false);
+    const [showIDCard, setShowIDCard] = useState(false);
     const isOfficial = user?.role === 'official';
 
     // HR Detection
@@ -58,7 +60,7 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                                 <NavItem icon="payments" label={t('nav_payroll')} onClick={() => navigate('/payroll')} active={window.location.pathname === '/payroll'} />
 
                                 <NavDropdown icon="description" label="Service Request">
-                                    <NavItem icon="badge" label="ID Card Generator" onClick={() => handleWIP('ID Card Generator')} />
+                                    <NavItem icon="badge" label="ID Card Generator" onClick={() => setShowIDCard(true)} />
                                     <NavItem icon="folder_shared" label="Dept. Document" onClick={() => navigate('/department-documents')} />
                                 </NavDropdown>
 
@@ -180,6 +182,7 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                     {children}
                 </main>
                 {showProfileModal && <ProfileModal onClose={() => setShowProfileModal(false)} />}
+                {showIDCard && user && <IDCardModal user={user} onClose={() => setShowIDCard(false)} />}
             </div>
         </div>
     );
