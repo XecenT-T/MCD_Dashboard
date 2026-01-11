@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import DashboardLayout from '../components/DashboardLayout';
-import LiveLocationMap, { GenericAttendanceRecord } from '../components/LiveLocationMap';
+import LiveLocationMap, { type GenericAttendanceRecord } from '../components/LiveLocationMap';
 
 const Heatmap = () => {
     const { token } = useAuth();
