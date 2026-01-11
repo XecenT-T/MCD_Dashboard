@@ -65,24 +65,6 @@ const LandingPage: React.FC = () => {
             </header>
 
             <main className="flex-grow flex flex-col items-center w-full">
-                {/* Action Panel (Announcement) */}
-                <div className="w-full max-w-7xl px-4 md:px-10 mt-6">
-                    <div className="w-full rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/20 p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
-                        <div className="flex items-start md:items-center gap-3">
-                            <div className="bg-primary/10 p-2 rounded-full text-primary shrink-0">
-                                <span className="material-symbols-outlined">campaign</span>
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                <p className="text-text-main dark:text-white text-sm font-bold uppercase tracking-wide text-primary">Latest Announcement</p>
-                                <p className="text-slate-600 dark:text-slate-300 text-base">Updated DA rates effective from July 2024 are now available for review.</p>
-                            </div>
-                        </div>
-                        <a className="group flex items-center gap-2 text-sm font-bold text-primary hover:text-primary-dark dark:text-blue-400 dark:hover:text-blue-300 transition-colors whitespace-nowrap" href="#">
-                            Read Details
-                            <span className="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>
 
                 {/* Hero Section */}
                 <div className="w-full max-w-7xl px-4 md:px-10 py-10 md:py-16">
@@ -256,35 +238,6 @@ const LandingPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Stats Section */}
-                <div className="w-full max-w-7xl px-4 md:px-10 py-16">
-                    <div className="flex flex-col gap-6">
-                        <h2 className="text-text-main dark:text-white text-2xl font-bold">Impact at a Glance</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                            <div className="flex flex-col gap-3 rounded-xl p-8 bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-4 opacity-5 text-text-main dark:text-white">
-                                    <span className="material-symbols-outlined text-8xl">groups</span>
-                                </div>
-                                <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold uppercase tracking-wider">Active Workforce Onboarded</p>
-                                <p className="text-text-main dark:text-white text-4xl font-black">120,000+</p>
-                            </div>
-                            <div className="flex flex-col gap-3 rounded-xl p-8 bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-4 opacity-5 text-text-main dark:text-white">
-                                    <span className="material-symbols-outlined text-8xl">description</span>
-                                </div>
-                                <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold uppercase tracking-wider">Monthly Claims Processed</p>
-                                <p className="text-text-main dark:text-white text-4xl font-black">45,000</p>
-                            </div>
-                            <div className="flex flex-col gap-3 rounded-xl p-8 bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-4 opacity-5 text-text-main dark:text-white">
-                                    <span className="material-symbols-outlined text-8xl">check_circle</span>
-                                </div>
-                                <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold uppercase tracking-wider">Grievances Resolved</p>
-                                <p className="text-text-main dark:text-white text-4xl font-black">92%</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </main>
 
             {/* Footer */}
