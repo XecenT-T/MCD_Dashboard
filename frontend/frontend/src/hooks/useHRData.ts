@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getDepartmentLeaves, updateLeaveStatus as apiUpdateLeaveStatus } from '../api/leaves';
 
 // Types
 export interface DepartmentStats {
@@ -88,11 +89,14 @@ export const useHRData = () => {
                 { id: '4', submittedBy: 'Vikram Malhotra', role: 'official', department: 'Health', subject: 'Equipment Malfunction', description: 'X-Ray machine needs repair.', date: '2023-10-22', status: 'Resolved' },
             ]);
 
-            setLeaveRequests([
-                { id: '1', applicant: 'Suresh Raina', role: 'worker', department: 'Education', type: 'Sick Leave', dates: 'Oct 28 - Oct 30', reason: 'Viral Fever', status: 'Pending' },
-                { id: '2', applicant: 'Ajay Jadeja', role: 'official', department: 'Engineering', type: 'Casual Leave', dates: 'Nov 1 - Nov 5', reason: 'Family Wedding', status: 'Pending' },
-                { id: '3', applicant: 'Deepak Hooda', role: 'worker', department: 'Health', type: 'Emergency', dates: 'Oct 27', reason: 'Personal Emergency', status: 'Approved' },
-            ]);
+            // Fetch real leave requests
+            getDepartmentLeaves().then(data => {
+                setLeaveRequests(data);
+            }).catch(err => {
+                console.error("Failed to fetch leaves", err);
+                // Fallback to empty if failed, or keep mock if desired (but plan says real data)
+                setLeaveRequests([]);
+            });
 
             setPayrollData([
                 { department: 'Education', budget: 1500000, actuals: 1450000, status: 'Processing' },
@@ -132,8 +136,13 @@ export const useHRData = () => {
         setGrievances(prev => prev.map(g => g.id === id ? { ...g, status } : g));
     };
 
-    const updateLeaveStatus = (id: string, status: LeaveRequest['status']) => {
-        setLeaveRequests(prev => prev.map(l => l.id === id ? { ...l, status } : l));
+    const updateLeaveStatus = async (id: string, status: LeaveRequest['status']) => {
+        try {
+            await apiUpdateLeaveStatus(id, status);
+            setLeaveRequests(prev => prev.map(l => l.id === id ? { ...l, status } : l));
+        } catch (error) {
+            console.error("Failed to update leave status", error);
+        }
     };
 
     return {

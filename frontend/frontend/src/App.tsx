@@ -19,6 +19,8 @@ import DepartmentAttendance from './pages/DepartmentAttendance';
 import WorkerAttendanceHistory from './pages/WorkerAttendanceHistory';
 import Transfers from './pages/Transfers';
 import IDCardPrint from './pages/IDCardPrint';
+import LeaveRequest from './pages/LeaveRequest';
+import DepartmentLeaves from './pages/DepartmentLeaves';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { DashboardViewProvider } from './context/DashboardViewContext';
@@ -211,6 +213,22 @@ function App() {
                   element={
                     <PrivateRoute>
                       <AdminUserCreation />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/leave-request"
+                  element={
+                    <PrivateRoute>
+                      <LeaveRequest />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/department-leaves"
+                  element={
+                    <PrivateRoute>
+                      <DepartmentLeaves />
                     </PrivateRoute>
                   }
                 />
