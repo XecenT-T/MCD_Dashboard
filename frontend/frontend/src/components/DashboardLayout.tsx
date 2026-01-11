@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useDashboardView } from '../context/DashboardViewContext';
 
-const DashboardLayout = ({ children, title }: { children: React.ReactNode, title?: string }) => {
+const DashboardLayout = ({ children, title, forceCollapsed = false }: { children: React.ReactNode, title?: string, forceCollapsed?: boolean }) => {
     const { user, logout } = useAuth();
     const { t, language, setLanguage } = useLanguage();
     const navigate = useNavigate();
@@ -32,7 +32,11 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
     return (
         <div className="flex h-screen bg-gray-50 font-display text-text-main dark:text-gray-100 dark:bg-background-dark overflow-hidden">
             {/* Sidebar */}
-            <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-border-dark transform transition-transform duration-300 md:relative md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <aside className={`fixed inset-y-0 left-0 z-50 bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-border-dark transform transition-all duration-300 ease-in-out md:relative 
+                ${forceCollapsed ? 'w-0 -translate-x-full opacity-0 overflow-hidden' : 'w-64 opacity-100'} 
+                ${!forceCollapsed && sidebarOpen ? 'translate-x-0' : ''} 
+                ${!forceCollapsed && !sidebarOpen ? '-translate-x-full md:translate-x-0' : ''}
+            `}>
                 <div className="flex flex-col h-full">
                     <div className="flex items-center gap-3 px-6 h-16 border-b border-gray-100 dark:border-border-dark">
                         <div className="size-8 flex items-center justify-center text-primary bg-primary/10 rounded-lg">
@@ -62,22 +66,19 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                                     <NavItem icon="folder_shared" label="Dept. Document" onClick={() => navigate('/department-documents')} />
                                 </NavDropdown>
 
-                                <NavItem icon="swap_horiz" label={t('nav_transfers')} onClick={() => handleWIP('Transfers')} />
+
                                 <NavItem icon="report" label={t('nav_grievances')} onClick={() => navigate('/grievances')} active={window.location.pathname === '/grievances'} />
                                 <NavItem icon="person" label={t('nav_profile')} onClick={() => setShowProfileModal(true)} />
-
-                                {isOfficial && (
-                                    <NavItem icon="map" label="Live Location" onClick={() => navigate('/heatmap')} active={window.location.pathname === '/heatmap'} />
-                                )}
                             </>
                         )}
 
                         {viewMode === 'department' && user?.role === 'official' && (
                             <div className="px-4 py-4 mt-4 bg-blue-50 dark:bg-primary/10 rounded-xl border border-blue-100 dark:border-primary/20">
                                 <p className="text-xs font-bold text-blue-600 dark:text-primary uppercase tracking-wider mb-2">Management Mode</p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    You are currently viewing Department Management stats. Switch to "My Profile" to see your personal menu.
-                                </p>
+                                <NavItem icon="swap_horiz" label={t('nav_transfers')} onClick={() => handleWIP('Transfers')} />
+                                <NavItem icon="map" label="Live Location" onClick={() => navigate('/heatmap')} active={window.location.pathname === '/heatmap'} />
+                                <NavItem icon="report" label="Dept. Grievances" onClick={() => navigate('/department-grievances')} active={window.location.pathname === '/department-grievances'} />
+                                <NavItem icon="description" label="Dept. Leaves" onClick={() => navigate('/hr-dashboard?tab=leaves')} active={window.location.search.includes('tab=leaves')} />
                             </div>
                         )}
 

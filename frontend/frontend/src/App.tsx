@@ -12,6 +12,7 @@ import ChatPage from './pages/ChatPage';
 import LandingPage from './components/LandingPage';
 import Onboarding from './pages/Onboarding';
 import Heatmap from './pages/Heatmap';
+import DepartmentGrievances from './pages/DepartmentGrievances';
 import DepartmentDocuments from './pages/DepartmentDocuments';
 import DepartmentWorkers from './pages/DepartmentWorkers';
 import DepartmentAttendance from './pages/DepartmentAttendance';
@@ -177,6 +178,14 @@ function App() {
                   element={
                     <PrivateRoute>
                       <Heatmap />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/department-grievances"
+                  element={
+                    <PrivateRoute>
+                      <DepartmentGrievances />
                     </PrivateRoute>
                   }
                 />
