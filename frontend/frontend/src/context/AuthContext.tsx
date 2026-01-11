@@ -39,7 +39,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(!!localStorage.getItem('token'));
     const [error, setError] = useState<string | null>(null);
 
     // Configure axios defaults
@@ -56,11 +56,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             const res = await api.get('/api/auth/user');
             setUser(res.data);
-        } catch (err) {
-            localStorage.removeItem('token');
-            setToken(null);
-            setUser(null);
-            delete api.defaults.headers.common['x-auth-token'];
+        } catch (err: any) {
+            console.error('Load user failed:', err);
+            if (err.response && err.response.status === 401) {
+                localStorage.removeItem('token');
+                setToken(null);
+                setUser(null);
+                delete api.defaults.headers.common['x-auth-token'];
+            }
+        } finally {
+            setLoading(false);
         }
     };
 

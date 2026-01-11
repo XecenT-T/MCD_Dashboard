@@ -78,7 +78,7 @@ router.get('/stats', auth, async (req, res) => {
             // Absent = Total - Present - Leave.
 
             // Fetch Approved Leaves for today
-            const LeaveRequest = require('../models/LeaveRequest'); // Assuming model exists, if not use 0
+            const LeaveRequest = require('../models/Leave'); // Assuming model exists, if not use 0
             let leave = 0;
             try {
                 // Check if LeaveRequest model exists (it wasn't in the list_dir of models earlier? verify)
