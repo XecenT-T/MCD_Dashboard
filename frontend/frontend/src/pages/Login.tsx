@@ -9,7 +9,7 @@ const Login = () => {
         password: ''
     });
     const { login, error, clearError } = useAuth();
-    const { t } = useLanguage();
+    const { t, language, setLanguage } = useLanguage();
     const navigate = useNavigate();
 
     // Force English on Login page load
