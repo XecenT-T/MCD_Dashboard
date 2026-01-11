@@ -79,6 +79,22 @@ const Dashboard = () => {
     const [deptAttendance, setDeptAttendance] = useState<string>('...'); // This will be Today's Attendance
     const [avgAttendance, setAvgAttendance] = useState<string>('...'); // This will be Monthly Average
     const [selectedGrievance, setSelectedGrievance] = useState<any | null>(null);
+    const [workerDashboardData, setWorkerDashboardData] = useState<any>(null);
+
+    // Fetch Worker Stats
+    useEffect(() => {
+        if (viewMode === 'personal' || !isOfficial) {
+            const fetchWorkerData = async () => {
+                try {
+                    const res = await api.get('/api/dashboard/worker-stats');
+                    setWorkerDashboardData(res.data);
+                } catch (err) {
+                    console.error("Failed to fetch worker stats", err);
+                }
+            };
+            fetchWorkerData();
+        }
+    }, [viewMode, isOfficial]);
 
     // Fetch Data for Department View
     useEffect(() => {
@@ -143,11 +159,40 @@ const Dashboard = () => {
     };
 
     // Stats Data
+    const currentMonth = new Date().toLocaleString('default', { month: 'short' });
     const workerStats = [
-        { label: t('days_present') + ' (Oct)', value: '18 / 22', icon: 'calendar_month', color: 'text-green-600', bg: 'bg-green-100', progress: 85 },
-        { label: t('leave_balance'), value: '5 ' + t('days_present').split(' ')[1], sub: t('expires_dec'), icon: 'beach_access', color: 'text-yellow-600', bg: 'bg-yellow-100' },
-        { label: t('next_pay_date'), value: 'Oct 31', sub: t('processing'), icon: 'payments', color: 'text-blue-600', bg: 'bg-blue-100' },
-        { label: t('salary_overview'), value: '₹ 28,500', sub: t('last_month_pay'), icon: 'account_balance_wallet', color: 'text-green-600', bg: 'bg-green-100' }
+        {
+            label: `${t('days_present')} (${currentMonth})`,
+            value: workerDashboardData ? `${workerDashboardData.daysPresent} / ${workerDashboardData.totalWorkingDays || 26}` : '...',
+            icon: 'calendar_month',
+            color: 'text-green-600',
+            bg: 'bg-green-100',
+            progress: workerDashboardData ? Math.round((workerDashboardData.daysPresent / (workerDashboardData.totalWorkingDays || 26)) * 100) : 0
+        },
+        {
+            label: t('leave_balance'),
+            value: workerDashboardData ? `${workerDashboardData.leaveBalance} Days` : '...',
+            sub: t('expires_dec'),
+            icon: 'beach_access',
+            color: 'text-yellow-600',
+            bg: 'bg-yellow-100'
+        },
+        {
+            label: t('next_pay_date'),
+            value: workerDashboardData ? workerDashboardData.nextPayDate : '...',
+            sub: t('processing'),
+            icon: 'payments',
+            color: 'text-blue-600',
+            bg: 'bg-blue-100'
+        },
+        {
+            label: t('salary_overview'),
+            value: workerDashboardData ? workerDashboardData.lastSalary : '...',
+            sub: t('last_month_pay'),
+            icon: 'account_balance_wallet',
+            color: 'text-green-600',
+            bg: 'bg-green-100'
+        }
     ];
 
     const departmentStats = [
@@ -261,7 +306,7 @@ const Dashboard = () => {
                                 <button className="text-sm font-medium text-primary">{t('view_report')}</button>
                             </div>
                             <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg p-2">
-                                <AttendanceChart isOfficial={isOfficial} />
+                                <AttendanceChart isOfficial={isOfficial} data={workerDashboardData?.graphData} />
                             </div>
                         </div>
 

@@ -25,6 +25,7 @@ app.use('/api/documents', require('./routes/documents'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/wards', require('./routes/wards'));
 app.use('/api/leaves', require('./routes/leaves'));
+app.use('/api/dashboard', require('./routes/dashboard'));
 
 
 
