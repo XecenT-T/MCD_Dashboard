@@ -87,7 +87,7 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                                     Administration
                                 </div>
                                 <NavItem icon="grid_view" label="Overview" onClick={() => navigate('/hr-dashboard')} active={window.location.pathname === '/hr-dashboard'} />
-                                <NavItem icon="domain" label="Departments" onClick={() => handleWIP('Departments')} />
+
                                 <NavItem icon="payments" label="Payroll" onClick={() => handleWIP('Payroll Master')} />
                                 <NavItem icon="inbox" label="Requests" onClick={() => handleWIP('Requests')} />
                                 <NavItem icon="report" label="Grievances" onClick={() => navigate('/grievances')} active={window.location.pathname === '/grievances'} />
