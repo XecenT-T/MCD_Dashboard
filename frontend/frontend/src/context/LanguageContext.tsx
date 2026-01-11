@@ -13,6 +13,11 @@ const translations: Translations = {
         "dashboard_title_official": "Official Dashboard",
         "dashboard_title_worker": "Worker Dashboard",
         "welcome_back": "Welcome back",
+        "mcd_digital_portal": "MCD Digital Portal",
+        "unified_efficient_transparent": "Unified. Efficient. Transparent.",
+        "landing_hero_desc": "The single digital gateway for all MCD officials and workers to manage attendance, payroll, and administrative services efficiently.",
+        "access_portal": "Access Portal",
+        "learn_more": "Learn More",
         "what_happening": "Here's what's happening with your account today.",
         "reports": "Reports",
 
@@ -329,6 +334,11 @@ const translations: Translations = {
         "dashboard_title_official": "अधिकारी डैशबोर्ड",
         "dashboard_title_worker": "कर्मी डैशबोर्ड",
         "welcome_back": "वापसी पर स्वागत है",
+        "mcd_digital_portal": "एमसीडी डिजिटल पोर्टल",
+        "unified_efficient_transparent": "एकीकृत। कुशल। पारदर्शी।",
+        "landing_hero_desc": "उपस्थिति, वेतन और प्रशासनिक सेवाओं को कुशलतापूर्वक प्रबंधित करने के लिए सभी एमसीडी अधिकारियों और कर्मचारियों के लिए एकल डिजिटल गेटवे।",
+        "access_portal": "पोर्टल पर जाएं",
+        "learn_more": "अधिक जानें",
         "what_happening": "आज आपके खाते में क्या हो रहा है, यहां देखें।",
         "reports": "रिपोर्ट्स",
 
