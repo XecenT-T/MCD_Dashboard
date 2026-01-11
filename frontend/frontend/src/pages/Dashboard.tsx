@@ -111,10 +111,10 @@ const Dashboard = () => {
 
     const handleResolveGrievance = async (id: string) => {
         try {
-            await api.patch(`/api/grievances/${id}/status`, { status: "Resolved" });
+            await api.patch(`/api/grievances/${id}/status`, { status: "resolved" });
             // Update local state
             setPendingGrievances(prev => prev.filter(g => g._id !== id)); // Remove resolved from pending list
-            setSelectedGrievance((prev: any) => prev ? { ...prev, status: 'Resolved' } : null);
+            setSelectedGrievance((prev: any) => prev ? { ...prev, status: 'resolved' } : null);
             // Verify if user wants it removed from list immediately or just updated. Usually "Pending" list implies only pending items.
         } catch (error) {
             console.error("Failed to resolve", error);
