@@ -1,5 +1,6 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../context/AuthContext';
 import { useHRData } from '../hooks/useHRData';
@@ -29,6 +30,15 @@ const HRDashboard = () => {
     const [viewMode, setViewMode] = useState<'overall' | 'department'>('overall');
     const [selectedDept, setSelectedDept] = useState('Health'); // Default to first
     const [activeTab, setActiveTab] = useState('overview');
+    const [searchParams] = useSearchParams();
+
+    useEffect(() => {
+        const tab = searchParams.get('tab');
+        if (tab) {
+            setActiveTab(tab);
+            setViewMode('department');
+        }
+    }, [searchParams]);
 
     const departments = ['Health', 'Education', 'Engineering', 'Sanitation', 'General'];
 
@@ -49,7 +59,9 @@ const HRDashboard = () => {
     }
 
     return (
-        <DashboardLayout title={viewMode === 'overall' ? "Admin Console" : `${selectedDept} Department`}>
+        <DashboardLayout
+            title={viewMode === 'overall' ? "Admin Console" : `${selectedDept} Department`}
+        >
             <div className="max-w-7xl mx-auto space-y-6">
 
                 {/* Header Control Bar */}

@@ -29,13 +29,17 @@ router.post('/mark', auth, async (req, res) => {
             checkInTime: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
             location: location || { lat: 0, lng: 0, address: 'Office Location' },
             status: 'Present',
-            method: 'Face'
+            method: 'Face',
+            dateKey: new Date().toISOString().split('T')[0] // YYYY-MM-DD for uniqueness
         });
 
         await newAttendance.save();
 
         res.json({ msg: 'Attendance marked successfully', attendance: newAttendance });
     } catch (err) {
+        if (err.code === 11000) {
+            return res.status(400).json({ msg: 'Attendance already marked for today' });
+        }
         console.error(err.message);
         res.status(500).send('Server Error');
     }
