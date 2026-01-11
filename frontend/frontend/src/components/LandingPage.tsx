@@ -2,10 +2,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import mcdWorkersImage from '../assets/mcd-workers.jpg';
 
 const LandingPage: React.FC = () => {
     const { user, logout } = useAuth();
+    const { t, language, setLanguage } = useLanguage();
 
     return (
         <div className="bg-background-light dark:bg-background-dark text-text-main dark:text-white min-h-screen flex flex-col overflow-x-hidden font-display">
@@ -16,7 +18,7 @@ const LandingPage: React.FC = () => {
                         <div className="flex items-center justify-center text-primary size-8">
                             <span className="material-symbols-outlined text-3xl">account_balance</span>
                         </div>
-                        <h2 className="text-text-main dark:text-white text-lg font-bold leading-tight tracking-tight">MCD Digital Portal</h2>
+                        <h2 className="text-text-main dark:text-white text-lg font-bold leading-tight tracking-tight">{t('mcd_digital_portal')}</h2>
                     </div>
                     <div className="hidden md:flex items-center gap-8">
                         <nav className="flex items-center gap-6">
@@ -24,6 +26,23 @@ const LandingPage: React.FC = () => {
                             <a className="text-text-main dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Notifications</a>
                         </nav>
                         <div className="flex items-center gap-4">
+                            {/* Language Switcher */}
+                            <div className="hidden sm:flex items-center gap-2 text-sm font-medium mr-2">
+                                <button
+                                    onClick={() => setLanguage('en')}
+                                    className={`${language === 'en' ? 'text-primary font-bold' : 'text-text-main dark:text-gray-300 hover:text-primary'} transition-colors`}
+                                >
+                                    English
+                                </button>
+                                <span className="text-gray-300">|</span>
+                                <button
+                                    onClick={() => setLanguage('hi')}
+                                    className={`${language === 'hi' ? 'text-primary font-bold' : 'text-text-main dark:text-gray-300 hover:text-primary'} transition-colors`}
+                                >
+                                    Hindi
+                                </button>
+                            </div>
+
                             {user ? (
                                 <div className="flex items-center gap-4">
                                     <span className="text-sm font-semibold text-text-main dark:text-white">Welcome, {user.name}</span>
@@ -72,18 +91,18 @@ const LandingPage: React.FC = () => {
                             <div className="flex flex-col gap-6 lg:w-1/2 items-start text-left">
                                 <div className="flex flex-col gap-4">
                                     <h1 className="text-text-main dark:text-white text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
-                                        Unified. <span className="text-primary">Efficient.</span> Transparent.
+                                        {t('unified_efficient_transparent')}
                                     </h1>
                                     <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
-                                        The single digital gateway for all MCD officials and workers to manage attendance, payroll, and administrative services efficiently.
+                                        {t('landing_hero_desc')}
                                     </p>
                                 </div>
                                 <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                                     <Link to="/login" className="flex items-center justify-center rounded-lg h-12 px-8 bg-primary hover:bg-primary-dark text-white text-base font-bold shadow-md transition-all w-full sm:w-auto">
-                                        Access Portal
+                                        {t('access_portal')}
                                     </Link>
                                     <button onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="flex items-center justify-center rounded-lg h-12 px-8 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 text-text-main dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-base font-bold shadow-sm transition-all w-full sm:w-auto">
-                                        Learn More
+                                        {t('learn_more')}
                                     </button>
                                 </div>
                                 <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mt-2">

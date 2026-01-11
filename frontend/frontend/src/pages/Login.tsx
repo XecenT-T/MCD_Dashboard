@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -9,8 +9,14 @@ const Login = () => {
         password: ''
     });
     const { login, error, clearError, loginAsHR } = useAuth();
-    const { t } = useLanguage();
+    const { t, language, setLanguage } = useLanguage();
     const navigate = useNavigate();
+
+    // Force English on Login page load
+    useEffect(() => {
+        setLanguage('en');
+    }, [setLanguage]);
+
     const { username, password } = formData;
 
 
@@ -57,9 +63,19 @@ const Login = () => {
                         <span>Help / Support</span>
                     </a>
                     <div className="hidden sm:flex items-center gap-2 text-sm font-medium">
-                        <a className="text-primary" href="#">English</a>
+                        <button
+                            onClick={() => setLanguage('en')}
+                            className={`${language === 'en' ? 'text-primary font-bold' : 'text-text-main dark:text-gray-300 hover:text-primary'} transition-colors`}
+                        >
+                            English
+                        </button>
                         <span className="text-gray-300">|</span>
-                        <a className="text-text-main dark:text-gray-300 hover:text-primary transition-colors" href="#">Hindi</a>
+                        <button
+                            onClick={() => setLanguage('hi')}
+                            className={`${language === 'hi' ? 'text-primary font-bold' : 'text-text-main dark:text-gray-300 hover:text-primary'} transition-colors`}
+                        >
+                            Hindi
+                        </button>
                     </div>
                 </div>
             </header>
