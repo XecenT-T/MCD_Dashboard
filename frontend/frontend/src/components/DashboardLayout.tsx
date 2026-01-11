@@ -79,7 +79,7 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
                         {viewMode === 'department' && user?.role === 'official' && (
                             <div className="px-4 py-4 mt-4 bg-blue-50 dark:bg-primary/10 rounded-xl border border-blue-100 dark:border-primary/20">
                                 <p className="text-xs font-bold text-blue-600 dark:text-primary uppercase tracking-wider mb-2">{t('management_mode')}</p>
-                                <NavItem icon="swap_horiz" label={t('nav_transfers')} onClick={() => handleWIP('Transfers')} />
+                                <NavItem icon="swap_horiz" label={t('nav_transfers')} onClick={() => navigate('/transfers')} active={window.location.pathname === '/transfers'} />
                                 <NavItem icon="map" label={t('live_location')} onClick={() => navigate('/heatmap')} active={window.location.pathname === '/heatmap'} />
                                 <NavItem icon="report" label={t('dept_grievances')} onClick={() => navigate('/department-grievances')} active={window.location.pathname === '/department-grievances'} />
                                 <NavItem icon="description" label={t('dept_leaves')} onClick={() => navigate('/hr-dashboard?tab=leaves')} active={window.location.search.includes('tab=leaves')} />
