@@ -51,6 +51,30 @@
 - **Utilities:** PDFKit (Reports), Multer (Uploads), JWT (Auth)
 
 ---
+## 📂 Folder Structure
+
+```
+MCD_Dashboard/
+├── backend/                # Node.js API Server
+│   ├── controllers/        # Request handlers
+│   ├── models/             # Mongoose schemas
+│   ├── routes/             # API endpoints
+│   ├── middleware/         # Auth & error handling
+│   └── index.js            # Entry point
+│
+├── frontend/               # Frontend Container
+│   └── frontend/           # React Application (Vite)
+│       ├── public/         # Static assets
+│       ├── src/
+│       │   ├── components/ # Reusable UI components
+│       │   ├── pages/      # Route pages (Dashboard, Login, etc.)
+│       │   ├── App.jsx     # Main App component
+│       │   └── main.tsx    # Entry point
+│       └── vite.config.ts  # Vite configuration
+│
+└── README.md               # Project Documentation
+```
+---
 
 ## 🚀 Getting Started
 
