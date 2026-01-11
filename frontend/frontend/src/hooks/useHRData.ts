@@ -51,6 +51,15 @@ export interface Official {
     department: string;
     status: 'Active' | 'On Leave';
 }
+// ... (previous imports)
+
+export interface AttendanceRecord {
+    _id: string;
+    checkInTime: string;
+    location: { lat: number; lng: number, address: string };
+    user: { _id: string, name: string, role: string, department: string };
+    status: string;
+}
 
 export const useHRData = () => {
     const [loading, setLoading] = useState(true);
@@ -61,6 +70,7 @@ export const useHRData = () => {
     const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
     const [payrollData, setPayrollData] = useState<PayrollData[]>([]);
     const [officials, setOfficials] = useState<Official[]>([]);
+    const [liveAttendanceRecords, setLiveAttendanceRecords] = useState<AttendanceRecord[]>([]);
 
     useEffect(() => {
         // Simulate API fetch delay
@@ -96,6 +106,13 @@ export const useHRData = () => {
                 { id: '3', name: 'Mrs. K. Sharma', department: 'Education', status: 'On Leave' },
             ]);
 
+            setLiveAttendanceRecords([
+                { _id: '1', checkInTime: '09:00 AM', location: { lat: 28.6139, lng: 77.2090, address: 'Connaught Place' }, user: { _id: 'u1', name: 'Rohan Gupta', role: 'Official', department: 'Education' }, status: 'Present' },
+                { _id: '2', checkInTime: '09:15 AM', location: { lat: 28.5355, lng: 77.3910, address: 'Noida Sector 18' }, user: { _id: 'u2', name: 'Amit Kumar', role: 'Worker', department: 'Health' }, status: 'Present' },
+                { _id: '3', checkInTime: '09:30 AM', location: { lat: 28.7041, lng: 77.1025, address: 'Pitampura' }, user: { _id: 'u3', name: 'Priya Singh', role: 'Worker', department: 'Engineering' }, status: 'Present' },
+                { _id: '4', checkInTime: '09:45 AM', location: { lat: 28.6219, lng: 77.0878, address: 'Janakpuri' }, user: { _id: 'u4', name: 'Vikram M', role: 'Worker', department: 'Health' }, status: 'Present' },
+            ]);
+
             setLoading(false);
         }, 800);
 
@@ -126,6 +143,7 @@ export const useHRData = () => {
         leaveRequests,
         payrollData,
         officials,
+        liveAttendanceRecords,
         releasePayroll,
         updateGrievanceStatus,
         updateLeaveStatus
