@@ -66,7 +66,11 @@ const HRDashboard = () => {
                 {/* Middle Row: Approvals & Grievances */}
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 h-[500px]">
                     <LeaveManagementTable requests={leaveRequests} onUpdateStatus={updateLeaveStatus} />
-                    <GrievanceManagementSystem grievances={grievances} onUpdateStatus={updateGrievanceStatus} />
+                    <GrievanceManagementSystem
+                        grievances={grievances}
+                        onResolve={(id) => updateGrievanceStatus(id, 'Resolved')}
+                        onReply={async () => { }}
+                    />
                 </div>
 
                 {/* Bottom Row: Officials & Directory */}

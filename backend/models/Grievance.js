@@ -19,14 +19,25 @@ const GrievanceSchema = new mongoose.Schema({
         enum: ['pending', 'in-progress', 'resolved', 'rejected', 'forwarded-to-hr'],
         default: 'pending'
     },
-    supervisorApproval: {
-        type: Boolean,
-        default: null
-    },
-    hrApproval: {
-        type: Boolean,
-        default: null
-    },
+    replies: [{
+        senderId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
+        role: {
+            type: String,
+            required: true
+        },
+        message: {
+            type: String,
+            required: true
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now
+        }
+    }],
     department: {
         type: mongoose.Schema.Types.String,
         required: true

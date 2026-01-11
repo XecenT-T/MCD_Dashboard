@@ -8,7 +8,7 @@ const Grievance = require('../models/Grievance');
 // @access  Private
 router.post('/', auth, async (req, res) => {
     try {
-        const { title, description } = req.body;
+        const { title, description, department } = req.body;
 
         const user = await require('../models/User').findById(req.user.id);
 
@@ -16,7 +16,7 @@ router.post('/', auth, async (req, res) => {
             userId: req.user.id,
             title,
             description,
-            department: user.department || 'General'
+            department: department || user.department || 'General'
         });
 
         const grievance = await newGrievance.save();
@@ -32,7 +32,9 @@ router.post('/', auth, async (req, res) => {
 // @access  Private
 router.get('/', auth, async (req, res) => {
     try {
-        const grievances = await Grievance.find({ userId: req.user.id }).sort({ createdAt: -1 });
+        const grievances = await Grievance.find({ userId: req.user.id })
+            .populate('replies.senderId', 'name role')
+            .sort({ createdAt: -1 });
         res.json(grievances);
     } catch (err) {
         console.error(err.message);
@@ -55,6 +57,7 @@ router.get('/department', auth, async (req, res) => {
             department: { $regex: new RegExp(`^${user.department}$`, 'i') }
         })
             .populate('userId', 'name role department')
+            .populate('replies.senderId', 'name role')
             .sort({ createdAt: -1 });
 
         res.json(grievances);
@@ -74,13 +77,20 @@ router.get("/all", auth, async (req, res) => {
         // Check if user is official and belongs to HR/General/Administration
         const hrDepartments = ["General", "Administration", "HR"];
 
-        if (user.role !== "official" || !hrDepartments.includes(user.department)) {
+        if (user.role === 'hr' || (user.role === 'official' && hrDepartments.includes(user.department))) {
+            // Authorized
+        } else {
             return res.status(403).json({ msg: "Not authorized. HR Access Required." });
         }
 
-        // Return all grievances
-        const grievances = await Grievance.find()
+        // Return only grievances submitted to HR departments (Case Insensitive)
+        const regexDepts = hrDepartments.map(d => new RegExp(`^${d}$`, 'i'));
+
+        const grievances = await Grievance.find({
+            department: { $in: regexDepts }
+        })
             .populate("userId", "name role department")
+            .populate('replies.senderId', 'name role')
             .sort({ createdAt: -1 });
 
         res.json(grievances);
@@ -98,7 +108,7 @@ router.patch('/:id/status', auth, async (req, res) => {
         const { status } = req.body;
         const user = await require('../models/User').findById(req.user.id);
 
-        if (user.role !== 'official') {
+        if (user.role !== 'official' && user.role !== 'hr') {
             return res.status(403).json({ msg: 'Not authorized' });
         }
 
@@ -111,14 +121,22 @@ router.patch('/:id/status', auth, async (req, res) => {
         let grievance = await Grievance.findById(req.params.id);
         if (!grievance) return res.status(404).json({ msg: 'Grievance not found' });
 
-        // Check if official is from the same department
+        // STRICT RESOLVE PERMISSIONS
         const hrDepartments = ["general", "administration", "hr"];
-        const userDept = (user.department || '').toLowerCase(); // Normalized user department
+        const userDept = (user.department || '').toLowerCase();
+        const grievanceDept = (grievance.department || '').toLowerCase();
 
-        if (grievance.department !== user.department && !hrDepartments.includes(userDept)) {
-            // HR/General can edit any (simplified permission for this flow)
-            // or restrict strictly. For now, strict department check unless HR.
-            return res.status(403).json({ msg: 'Not authorized to manage this department' });
+        // 1. If Grievance is for HR/General -> Only HR/Admin/HR Role can resolve
+        if (hrDepartments.includes(grievanceDept)) {
+            if (user.role !== 'hr' && !hrDepartments.includes(userDept)) {
+                return res.status(403).json({ msg: 'Only HR can resolve this grievance' });
+            }
+        }
+        // 2. If Grievance is for specific department -> Only that department's Official OR HR can resolve
+        else {
+            if (user.role !== 'hr' && (grievanceDept !== userDept && !hrDepartments.includes(userDept))) {
+                return res.status(403).json({ msg: 'Not authorized to manage this department' });
+            }
         }
 
         grievance.status = status;
@@ -131,66 +149,48 @@ router.patch('/:id/status', auth, async (req, res) => {
     }
 });
 
-// @route   PATCH api/grievances/:id/approval
-// @desc    Update grievance approval (Supervisor/HR)
-// @access  Private (Official only)
-router.patch('/:id/approval', auth, async (req, res) => {
+
+// @route   POST api/grievances/:id/reply
+// @desc    Add a reply to a grievance
+// @access  Private (Official/HR/Submitter)
+router.post('/:id/reply', auth, async (req, res) => {
     try {
-        const { role, approved } = req.body; // role: 'supervisor' | 'hr', approved: boolean
+        const { message } = req.body;
         const user = await require('../models/User').findById(req.user.id);
+        const grievance = await Grievance.findById(req.params.id);
 
-        if (user.role !== 'official') {
-            return res.status(403).json({ msg: 'Not authorized' });
-        }
-
-        let grievance = await Grievance.findById(req.params.id);
         if (!grievance) return res.status(404).json({ msg: 'Grievance not found' });
 
-        // Update specific approval flag
-        if (role === 'supervisor') {
-            grievance.supervisorApproval = approved;
-        } else if (role === 'hr') {
-            grievance.hrApproval = approved;
-        } else {
-            return res.status(400).json({ msg: 'Invalid role for approval' });
+        // Authorization: Submitter, or Official, or HR
+        const isSubmitter = grievance.userId.toString() === req.user.id;
+        const isOfficial = user.role === 'official';
+        const isHR = user.role === 'hr';
+
+        // Allow submitter, official, or HR to reply
+        if (!isSubmitter && !isOfficial && !isHR) {
+            return res.status(403).json({ msg: 'Not authorized to reply' });
         }
 
-        // Calculate Status based on rules
-        // 1. If supervisor marks FALSE -> Denied (Independent of HR)
-        // 2. If HR marks FALSE -> Denied
-        // 3. If Both TRUE -> Approved
-        // 4. Otherwise -> Pending
-
-        // Fetch the submitter's role to determine approval logic
-        const submitter = await require('../models/User').findById(grievance.userId);
-        const isOfficialSubmitter = submitter && submitter.role === 'official';
-
-        // Logic Refinement:
-        // 1. Rejected if ANY active approval is set to FALSE
-        if (grievance.supervisorApproval === false) {
-            grievance.status = 'rejected';
-        } else if (grievance.hrApproval === false) {
-            grievance.status = 'rejected';
-        }
-        // 2. Resolved (Approved) Condition
-        else if (isOfficialSubmitter) {
-            // Officials only need HR Approval (Supervisor approval is null/irrelevant)
-            if (grievance.hrApproval === true) {
-                grievance.status = 'resolved';
-            } else {
-                grievance.status = 'pending';
-            }
-        } else {
-            // Workers need BOTH Supervisor AND HR Approval
-            if (grievance.supervisorApproval === true && grievance.hrApproval === true) {
-                grievance.status = 'resolved';
-            } else {
-                grievance.status = 'pending';
-            }
+        if (grievance.status === 'resolved' || grievance.status === 'rejected') {
+            return res.status(400).json({ msg: 'Cannot reply to a closed grievance' });
         }
 
+        const newReply = {
+            senderId: req.user.id,
+            role: user.role,
+            message,
+            createdAt: new Date()
+        };
+
+        grievance.replies.push(newReply);
         await grievance.save();
-        res.json(grievance);
+
+        // Return just the new reply or refreshed grievance.
+        // We'll return fresh grievance with populated names
+        const updatedGrievance = await Grievance.findById(req.params.id)
+            .populate('replies.senderId', 'name role');
+
+        res.json(updatedGrievance);
 
     } catch (err) {
         console.error(err.message);

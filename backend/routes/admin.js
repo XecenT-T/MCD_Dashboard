@@ -33,8 +33,9 @@ router.post('/create-user', auth, async (req, res) => {
         const loggedInUser = await User.findById(req.user.id);
 
         // Basic check - in real app, might strict check 'admin' role
-        if (loggedInUser.role !== 'official') {
-            return res.status(403).json({ msg: 'Not authorized. Only Officials/Admins can create users.' });
+        // Basic check - in real app, might strict check 'admin' role
+        if (loggedInUser.role !== 'official' && loggedInUser.role !== 'hr') {
+            return res.status(403).json({ msg: 'Not authorized. Only Officials/Admins/HR can create users.' });
         }
 
         const { name, aadharCardNo, dob, email, phoneNo, post, department, role } = req.body;

@@ -52,7 +52,7 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                             active={window.location.pathname === '/dashboard' || window.location.pathname === '/hr-dashboard'}
                         />
 
-                        {viewMode === 'personal' && (
+                        {viewMode === 'personal' && !isHR && (
                             <>
                                 <NavItem icon="calendar_month" label={t('nav_attendance')} onClick={() => navigate('/attendance')} active={window.location.pathname === '/attendance'} />
                                 <NavItem icon="payments" label={t('nav_payroll')} onClick={() => navigate('/payroll')} active={window.location.pathname === '/payroll'} />
@@ -90,6 +90,7 @@ const DashboardLayout = ({ children, title }: { children: React.ReactNode, title
                                 <NavItem icon="domain" label="Departments" onClick={() => handleWIP('Departments')} />
                                 <NavItem icon="payments" label="Payroll" onClick={() => handleWIP('Payroll Master')} />
                                 <NavItem icon="inbox" label="Requests" onClick={() => handleWIP('Requests')} />
+                                <NavItem icon="report" label="Grievances" onClick={() => navigate('/grievances')} active={window.location.pathname === '/grievances'} />
                             </>
                         )}
                     </nav>
