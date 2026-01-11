@@ -115,6 +115,12 @@ Follow these steps to set up the project locally.
 
 ## 📸 Screenshots
 
+![WhatsApp Image 2026-01-12 at 1 04 34 AM](https://github.com/user-attachments/assets/5889cc05-0257-401e-b195-a385cd66e859)
+![WhatsApp Image 2026-01-12 at 1 04 32 AM (1)](https://github.com/user-attachments/assets/56f160b5-49f1-45fd-9e7c-d6b8b0b2d538)
+![WhatsApp Image 2026-01-12 at 1 04 32 AM](https://github.com/user-attachments/assets/0589828f-64bc-46df-b814-c4ddaa51f9e2)
+![WhatsApp Image 2026-01-12 at 1 04 31 AM](https://github.com/user-attachments/assets/3cf22964-1c0e-495e-83fd-9af9d9c0e4ad)
+<img width="1896" height="906" alt="Screenshot 2026-01-12 000314" src="https://github.com/user-attachments/assets/bb118fef-e2aa-4f81-bbe3-431794b75ba1" />
+<img width="1919" height="907" alt="Screenshot 2026-01-12 000331" src="https://github.com/user-attachments/assets/de9327f2-39b8-4003-b134-7aecdf62cfe8" />
 
 
 ---
