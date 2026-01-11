@@ -29,6 +29,10 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
         navigate('/login');
     };
 
+    const handleWIP = (feature: string) => {
+        alert(`${feature} is currently Work In Progress`);
+    };
+
 
 
     return (

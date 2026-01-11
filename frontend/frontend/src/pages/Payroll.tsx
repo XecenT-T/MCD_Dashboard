@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { getUsersForPayroll, getPayrollByUser, getAllPayrolls, createPayroll, updatePayroll, downloadPayslip } from '../api/payroll';
+import { getUsersForPayroll, getPayrollByUser, getAllPayrolls, createPayroll, updatePayroll } from '../api/payroll';
 
 const Payroll = () => {
     const { user } = useAuth();
@@ -19,7 +19,7 @@ const Payroll = () => {
 
     // States
     const [users, setUsers] = useState<any[]>([]);
-    const [payrolls, setPayrolls] = useState<any[]>([]); // History for HR
+    // const [payrolls, setPayrolls] = useState<any[]>([]); // History for HR - UNUSED
     const [myPayrolls, setMyPayrolls] = useState<any[]>([]); // For Worker
     const [selectedUser, setSelectedUser] = useState<any>(null); // For Create/Edit Modal
     const [showModal, setShowModal] = useState(false);
@@ -39,9 +39,9 @@ const Payroll = () => {
         setLoading(true);
         try {
             if (isHR) {
-                const [usersData, historyData] = await Promise.all([getUsersForPayroll(), getAllPayrolls()]);
+                const [usersData] = await Promise.all([getUsersForPayroll(), getAllPayrolls()]);
                 setUsers(usersData);
-                setPayrolls(historyData);
+                // setPayrolls(historyData);
             } else {
                 const myData = await getPayrollByUser(user.id);
                 setMyPayrolls(myData);
@@ -63,6 +63,7 @@ const Payroll = () => {
         ? users.filter(u => (u.department || '').toLowerCase() === deptFilter.toLowerCase())
         : users;
 
+    /*
     const handleEdit = (payroll: any) => {
         // Hydrate form for editing
         setFormData({
@@ -82,6 +83,7 @@ const Payroll = () => {
         setSelectedUser({ ...payroll.user, payrollId: payroll._id }); // Hack to pass ID
         setShowModal(true);
     };
+    */
 
     const handleCreate = (userObj: any) => {
         // Reset form for new entry

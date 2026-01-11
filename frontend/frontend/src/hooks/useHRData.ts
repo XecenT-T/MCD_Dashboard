@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { getDepartmentLeaves, updateLeaveStatus as apiUpdateLeaveStatus } from '../api/leaves';
+import { updateLeaveStatus as apiUpdateLeaveStatus } from '../api/leaves';
 
 // Types
 export interface DepartmentStats {
