@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import DashboardLayout from '../components/DashboardLayout';
-import GrievanceManagementSystem from '../components/hr/GrievanceManagementSystem';
-import type { Grievance } from '../hooks/useHRData';
+
+
 
 interface SentGrievance {
     _id: string;
@@ -17,55 +17,19 @@ interface SentGrievance {
 }
 
 const Grievances = () => {
-    const { user, token } = useAuth();
+    const { token } = useAuth();
     const navigate = useNavigate();
 
-    // Helper to check HR role.
-    // We prioritize role === 'hr'. Legacy fallback: official in HR department.
-    const isHRCheck = (u: any) => u?.role === 'hr' || (u?.role === 'official' && ['general', 'administration', 'hr'].includes((u?.department || '').toLowerCase()));
-
-    // Default HR to department view, managing grievances. Others to personal.
-    const [officialViewMode, setOfficialViewMode] = useState<'personal' | 'department'>(isHRCheck(user) ? 'department' : 'personal');
-    const [selectedDepartment, setSelectedDepartment] = useState<string>('All');
     const [loading, setLoading] = useState(true);
     const [sentGrievances, setSentGrievances] = useState<SentGrievance[]>([]);
-    const [receivedGrievances, setReceivedGrievances] = useState<Grievance[]>([]);
-
-    const isHR = isHRCheck(user);
-    const isOfficial = user?.role === 'official' || isHR; // HR implies official privileges for view logic
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                // 1. Fetch Sent Grievances (For everyone)
+                // Fetch Sent Grievances (For everyone)
                 const sentRes = await api.get('/api/grievances');
                 setSentGrievances(sentRes.data);
-
-                // 2. Fetch Received Grievances (For Officials/HR)
-                if (isOfficial || isHR) {
-                    let endpoint = '/api/grievances/department';
-                    if (isHR) {
-                        endpoint = '/api/grievances/all';
-                    }
-                    const receivedRes = await api.get(endpoint);
-
-                    // Transform data to match Grievance interface
-                    const transformed = receivedRes.data.map((g: any) => ({
-                        id: g._id,
-                        submittedBy: g.userId?.name || 'Unknown',
-                        submitterId: g.userId?._id, // Added for filtering
-                        submitterProfile: g.userId, // Full profile for modal
-                        role: g.userId?.role || 'worker',
-                        department: g.department,
-                        subject: g.title,
-                        description: g.description,
-                        date: new Date(g.createdAt).toLocaleDateString(),
-                        status: g.status.charAt(0).toUpperCase() + g.status.slice(1), // Capitalize
-                        replies: g.replies || []
-                    }));
-                    setReceivedGrievances(transformed);
-                }
             } catch (err) {
                 console.error("Error fetching grievances:", err);
             } finally {
@@ -74,36 +38,14 @@ const Grievances = () => {
         };
 
         if (token) fetchData();
-    }, [token, isOfficial, isHR]);
-
-    const handleResolve = async (id: string) => {
-        try {
-            await api.patch(`/api/grievances/${id}/status`, { status: 'resolved' });
-            setReceivedGrievances(prev => prev.map(g =>
-                g.id === id ? { ...g, status: 'Resolved' } : g
-            ));
-        } catch (err) {
-            console.error("Failed to resolve grievance", err);
-            alert("Failed to resolve grievance. You might not have permission.");
-        }
-    };
+    }, [token]);
 
     const handleReply = async (id: string, message: string) => {
         try {
             const res = await api.post(`/api/grievances/${id}/reply`, { message });
             const updatedGrievance = res.data;
 
-            setReceivedGrievances(prev => prev.map(g => {
-                if (g.id === id) {
-                    return {
-                        ...g,
-                        replies: updatedGrievance.replies
-                    };
-                }
-                return g;
-            }));
-
-            // Allow Sent Grievances to update too if view is personal
+            // Update Sent Grievances
             setSentGrievances(prev => prev.map(g => {
                 if (g._id === id) {
                     return {
@@ -127,115 +69,23 @@ const Grievances = () => {
             <div className="max-w-7xl mx-auto space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Grievance Portal</h2>
-                        <p className="text-text-muted mt-1">Manage and track issues</p>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">my Grievances</h2>
+                        <p className="text-text-muted mt-1">Manage and track your reported issues</p>
                     </div>
                 </div>
 
-                {isOfficial ? (
-                    <div className="flex flex-col gap-6">
-                        {/* Official View Switcher */}
-                        <div className="flex gap-4 border-b border-gray-200 dark:border-gray-700">
-                            <button
-                                onClick={() => setOfficialViewMode('department')}
-                                className={`pb-2 text-sm font-medium transition-colors ${officialViewMode === 'department' ? 'border-b-2 border-primary text-primary' : 'text-text-muted hover:text-gray-700 dark:hover:text-gray-300'}`}
-                            >
-                                Review Department Grievances
-                            </button>
-                            {/* HR Role users don't need 'My Grievances' toggle in this view, effectively hiding it */}
-                            {!isHR && (
-                                <button
-                                    onClick={() => setOfficialViewMode('personal')}
-                                    className={`pb-2 text-sm font-medium transition-colors ${officialViewMode === 'personal' ? 'border-b-2 border-primary text-primary' : 'text-text-muted hover:text-gray-700 dark:hover:text-gray-300'}`}
-                                >
-                                    My Grievances
-                                </button>
-                            )}
-                        </div>
-
-                        {officialViewMode === 'department' ? (
-                            <div className="space-y-4">
-                                {isHR && (
-                                    <div className="flex items-center gap-2 bg-white dark:bg-surface-dark p-3 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm w-fit">
-                                        <span className="material-symbols-outlined text-gray-500">filter_list</span>
-                                        <select
-                                            value={selectedDepartment}
-                                            onChange={(e) => setSelectedDepartment(e.target.value)}
-                                            className="bg-transparent border-none focus:ring-0 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
-                                        >
-                                            <option value="All">All Departments</option>
-                                            {Array.from(new Set(receivedGrievances.map(g => g.department))).sort().map(dept => (
-                                                <option key={dept} value={dept}>{dept}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                )}
-
-                                <GrievanceManagementSystem
-                                    // Filter Logic:
-                                    // 1. Exclude own grievances (submitterId !== user.id)
-                                    // 2. Department Filter (if active)
-                                    // 3. Officials/HR see all in their scope
-                                    // 3. Officials/HR see all in their scope
-                                    // 4. Update: Officials (non-HR) ONLY see Worker grievances
-                                    // 5. Update: HR ONLY sees grievances sent to HR/General/Admin
-                                    grievances={receivedGrievances.filter((g: any) => {
-                                        const isSelf = g.submitterId === user?.id;
-                                        if (isSelf) return false;
-
-                                        const grievanceDept = g.department.toLowerCase();
-                                        const hrDepts = ['hr', 'general', 'administration'];
-
-                                        // HR RESTRICTION: Only see grievances for HR/General/Admin
-                                        if (isHR) {
-                                            if (!hrDepts.includes(grievanceDept)) return false;
-                                            // Additional check: Ensure specific dept filter is respected
-                                            if (selectedDepartment !== 'All' && g.department !== selectedDepartment) return false;
-                                            return true;
-                                        }
-
-                                        // NON-HR RESTRICTION:
-                                        // 1. Should NOT see HR grievances (backend ensures this via /department route but good to double check)
-                                        if (hrDepts.includes(grievanceDept)) return false;
-
-                                        // 2. Only see Worker grievances
-                                        if (g.role !== 'worker') return false;
-
-                                        return true;
-                                    })}
-                                    onResolve={handleResolve}
-                                    onReply={handleReply}
-                                />
-                            </div>
-                        ) : (
-                            <div className="space-y-6">
-                                <div className="flex justify-end">
-                                    <button
-                                        onClick={() => navigate('/grievance-submission')}
-                                        className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg font-bold transition-colors shadow-sm"
-                                    >
-                                        <span className="material-symbols-outlined">add_circle</span>
-                                        Submit Grievance
-                                    </button>
-                                </div>
-                                <SentGrievancesTable grievances={sentGrievances} onReply={handleReply} />
-                            </div>
-                        )}
+                <div className="space-y-6">
+                    <div className="flex justify-end">
+                        <button
+                            onClick={() => navigate('/grievance-submission')}
+                            className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg font-bold transition-colors shadow-sm"
+                        >
+                            <span className="material-symbols-outlined">add_circle</span>
+                            Submit Grievance
+                        </button>
                     </div>
-                ) : (
-                    <div className="space-y-6">
-                        <div className="flex justify-end">
-                            <button
-                                onClick={() => navigate('/grievance-submission')}
-                                className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg font-bold transition-colors shadow-sm"
-                            >
-                                <span className="material-symbols-outlined">add_circle</span>
-                                Submit Grievance
-                            </button>
-                        </div>
-                        <SentGrievancesTable grievances={sentGrievances} onReply={handleReply} />
-                    </div>
-                )}
+                    <SentGrievancesTable grievances={sentGrievances} onReply={handleReply} />
+                </div>
             </div>
         </DashboardLayout>
     );

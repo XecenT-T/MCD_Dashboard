@@ -28,7 +28,14 @@ const attendanceSchema = new mongoose.Schema({
         type: String,
         enum: ['Face', 'Manual'],
         default: 'Face'
+    },
+    dateKey: {
+        type: String,
+        required: true
     }
 });
+
+// Ensure one attendance record per user per day
+attendanceSchema.index({ user: 1, dateKey: 1 }, { unique: true });
 
 module.exports = mongoose.model('Attendance', attendanceSchema);
