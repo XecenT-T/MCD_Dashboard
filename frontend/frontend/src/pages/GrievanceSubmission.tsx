@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 
 const GrievanceSubmission = () => {
-    const { token } = useAuth();
+    const { token, user } = useAuth(); // Destructure user
     const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState(''); // Stores text notes
@@ -13,11 +13,60 @@ const GrievanceSubmission = () => {
     const [loading, setLoading] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState('en');
     const [timer, setTimer] = useState(0);
+    // Officials default to HR and locked. Workers default to Official.
+    const [recipient, setRecipient] = useState<'HR' | 'Official'>('Official');
+
+    // Effect to enforce Official -> HR rule
+    useEffect(() => {
+        if (user?.role === 'official') {
+            setRecipient('HR');
+        }
+    }, [user]);
+
+    const [aiConfidence, setAiConfidence] = useState(false); // To show if AI made the choice
+    const [isClassifying, setIsClassifying] = useState(false);
+
     const [recognition, setRecognition] = useState<any>(null);
     const [interimTranscript, setInterimTranscript] = useState('');
     const [isSupported, setIsSupported] = useState(true);
     const [isRefining, setIsRefining] = useState(false); // New state for refinement loading
     const [audioLevels, setAudioLevels] = useState<number[]>(new Array(12).fill(10)); // Visualizer data
+
+    // AI Classification logic using Backend API
+    const classifyGrievance = async (currentTitle: string, currentDesc: string) => {
+        if (!currentTitle && !currentDesc) return;
+
+        setIsClassifying(true);
+        try {
+            const res = await api.post('/api/chat/classify', { title: currentTitle, description: currentDesc });
+            const { role } = res.data;
+
+            if (role === 'HR') {
+                setRecipient('HR');
+                setAiConfidence(true);
+            } else {
+                setRecipient('Official');
+                setAiConfidence(true);
+            }
+        } catch (error) {
+            console.error("Classification failed:", error);
+            // Fallback default
+            setRecipient('Official');
+        } finally {
+            setIsClassifying(false);
+        }
+    };
+
+    // Auto-classify effect
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (title || description) {
+                classifyGrievance(title, description);
+            }
+        }, 1200); // 1.2s debounce for API call
+
+        return () => clearTimeout(timer);
+    }, [title, description]);
 
     // Refs for control
     const shouldKeepRecording = useRef(false);
@@ -260,11 +309,15 @@ const GrievanceSubmission = () => {
                     'x-auth-token': token
                 }
             };
-            // For now verify strictly just the text data submission as voice blob handling would need AWS S3/Cloudinary
-            // We use a dummy title since the new design focuses on voice
+
+            // Map 'HR' to 'General' (or keeping it simply HR if backend handles it, but backend defaults to 'General' or user dept)
+            // 'Official' means we send empty department so backend uses user's department
+            // If 'HR', we explicitly send 'HR' (or 'General' if that is the target department name)
+
             const payload = {
                 title: title || "Voice Grievance",
-                description: description || "[Voice Recording Attached]"
+                description: description || "[No description]",
+                department: recipient === 'HR' ? 'HR' : undefined // If undefined, backend uses user.department (Official)
             };
 
             await api.post('/api/grievances', payload, config);
@@ -414,6 +467,50 @@ const GrievanceSubmission = () => {
                                     type="text"
                                 />
                             </label>
+
+                            {/* Department Recipient Selection - Hide for Officials (Always HR) */}
+                            {user?.role !== 'official' && (
+                                <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Recipient</span>
+                                        {aiConfidence && !isClassifying && (
+                                            <span className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 animate-in fade-in zoom-in">
+                                                <span className="material-symbols-outlined text-[14px]">auto_awesome</span>
+                                                AI Selected
+                                            </span>
+                                        )}
+                                        {isClassifying && (
+                                            <span className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 animate-pulse">
+                                                <span className="material-symbols-outlined text-[14px] animate-spin">refresh</span>
+                                                Analyzing...
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className={`grid grid-cols-2 gap-3 transition-opacity ${isClassifying ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
+                                        <button
+                                            onClick={() => { setRecipient('Official'); setAiConfidence(false); }}
+                                            className={`flex flex-col items-center justify-center gap-1 p-3 rounded-lg border transition-all ${recipient === 'Official'
+                                                ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300 ring-1 ring-blue-500'
+                                                : 'bg-white dark:bg-surface-dark border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'}`}
+                                        >
+                                            <span className="material-symbols-outlined mb-1">admin_panel_settings</span>
+                                            <span className="text-sm font-bold">Official</span>
+                                            <span className="text-sm opacity-75">My Department</span>
+                                        </button>
+                                        <button
+                                            onClick={() => { setRecipient('HR'); setAiConfidence(false); }}
+                                            className={`flex flex-col items-center justify-center gap-1 p-3 rounded-lg border transition-all ${recipient === 'HR'
+                                                ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300 ring-1 ring-blue-500'
+                                                : 'bg-white dark:bg-surface-dark border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'}`}
+                                        >
+                                            <span className="material-symbols-outlined mb-1">badge</span>
+                                            <span className="text-sm font-bold">HR Dept</span>
+                                            <span className="text-sm opacity-75">General/Admin</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
                             <label className="flex flex-col gap-2">
                                 <span className="text-slate-700 dark:text-slate-300 text-sm font-medium">Additional Notes</span>
                                 <textarea
@@ -447,7 +544,7 @@ const GrievanceSubmission = () => {
                     <div className="pt-2">
                         <button
                             onClick={handleSubmit}
-                            disabled={loading}
+                            disabled={loading || isClassifying}
                             className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary/90 text-white h-14 text-base font-bold shadow-md shadow-primary/20 transition-all hover:-translate-y-0.5 disabled:opacity-50"
                         >
                             <span>{loading ? 'Sending...' : 'Submit Grievance'}</span>

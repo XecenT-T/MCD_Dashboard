@@ -44,12 +44,7 @@ const AdminUserCreation = () => {
         try {
             const config = { headers: { 'x-auth-token': token } };
 
-            // Map HR role to backend format
             const submissionData = { ...formData };
-            if (formData.role === 'hr') {
-                submissionData.role = 'official';
-                submissionData.department = 'HR';
-            }
 
             const res = await api.post('/api/admin/create-user', submissionData, config);
 
@@ -168,11 +163,15 @@ const AdminUserCreation = () => {
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
-                                            <select name="role" value={role} onChange={onChange}
-                                                className="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary focus:border-primary">
+                                            <select
+                                                name="role"
+                                                value={formData.role}
+                                                onChange={onChange}
+                                                className="w-full px-4 py-2 border border-border-light dark:border-border-dark rounded-lg bg-white dark:bg-surface-dark focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                            >
                                                 <option value="worker">Worker</option>
                                                 <option value="official">Official</option>
-                                                <option value="hr">HR (Human Resources)</option>
+                                                <option value="hr">HR / Admin</option>
                                             </select>
                                         </div>
                                     </div>

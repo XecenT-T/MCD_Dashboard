@@ -18,8 +18,12 @@ export interface Grievance {
     description: string;
     date: string;
     status: 'Pending' | 'Resolved' | 'Under Review' | 'Rejected';
-    supervisorApproval?: boolean;
-    hrApproval?: boolean;
+    replies?: {
+        senderId: any;
+        role: string;
+        message: string;
+        createdAt: string;
+    }[];
 }
 
 export interface LeaveRequest {

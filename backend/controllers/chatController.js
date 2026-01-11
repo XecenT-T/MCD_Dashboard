@@ -82,7 +82,7 @@ exports.refineText = async (req, res) => {
             return res.json({ refinedText: text });
         }
 
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
         const prompt = `
         You are an expert editor. 
         Input Text (${language || 'en'}): "${text}"
@@ -104,5 +104,91 @@ exports.refineText = async (req, res) => {
         console.error("Gemini Refine Error:", err);
         // Fallback to original text if error
         res.json({ refinedText: req.body.text });
+    }
+};
+
+exports.classifyGrievance = async (req, res) => {
+    try {
+        const { title, description } = req.body;
+
+        // Input validation
+        if (!title && !description) {
+            return res.status(400).json({ msg: "Title or description required" });
+        }
+
+        const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+
+        const prompt = `
+        You are an intelligent classification system for Municipal Corporation grievances.
+        
+        Context:
+        - "HR": Issues related to:
+            - Salary
+            - Attendance
+            - Leave
+            - Pension
+            - Promotion
+            - Transfer (paperwork)
+            - Medical claims
+            - Service book
+            - Contract payments
+            - Disciplinary letters
+
+        - "Official": Issues related to:
+            - Duty allocation
+            - Safety gear
+            - Tools & equipment
+            - Harassment by supervisor
+            - Overtime assignment
+            - Workplace conditions
+            - Injury in field
+            - Staffing problems
+            - Transfer (placement)
+            - Target/pressure issues
+
+        Task:
+        Analyze the provided "Title" and "Description" and classify the grievance into 'HR' or 'Official'.
+        
+        Rules:
+        1. If the text contains keywords from the "HR" list (e.g., Salary, Leave, Pension), it MUST be classified as "HR".
+        2. If the text contains keywords from the "Official" list, it MUST be classified as "Official".
+        3. Output MUST be valid JSON. Do not include markdown formatting.
+        
+        Title: "${title || ''}"
+        Description: "${description || ''}"
+
+        Output Format:
+        { "role": "HR", "confidence": 0.9 }
+        OR
+        { "role": "official", "confidence": 0.9 }
+        `;
+
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        // Clean the text to ensure it's valid JSON
+        const text = response.text().replace(/```json/g, '').replace(/```/g, '').trim();
+
+        console.log("Gemini Raw Response:", text); // Debug Log
+
+        try {
+            const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+            const jsonResponse = JSON.parse(cleanText);
+            res.json(jsonResponse);
+        } catch (e) {
+            console.error("JSON Parse Error:", e);
+            console.error("Failed Text:", text);
+
+            // Manual fallback parsing
+            if (text.includes('"role": "HR"') || text.includes("'role': 'HR'")) {
+                res.json({ role: 'HR', confidence: 0.8 });
+            } else {
+                // Default to official if ambiguous, but log it
+                res.json({ role: 'official', confidence: 0 });
+            }
+        }
+
+    } catch (err) {
+        console.error("Grievance Classification Error:", err);
+        res.status(500).json({ msg: "Classification failed" });
     }
 };

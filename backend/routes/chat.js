@@ -13,4 +13,8 @@ router.post('/', auth, chatWithGemini);
 // @desc    Refine text with AI
 router.post('/refine', auth, refineText);
 
+// @route   POST api/chat/classify
+// @desc    Classify grievance with AI
+router.post('/classify', auth, require('../controllers/chatController').classifyGrievance);
+
 module.exports = router;

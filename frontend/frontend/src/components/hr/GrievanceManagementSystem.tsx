@@ -1,16 +1,27 @@
 import { useState, useEffect } from 'react';
 import type { Grievance } from '../../hooks/useHRData';
 import ProfileModal from '../ProfileModal';
+import { useAuth } from '../../context/AuthContext';
 
 interface GrievanceManagementSystemProps {
     grievances: Grievance[];
-    onToggleApproval?: (id: string, role: 'supervisor' | 'hr', approved: boolean) => void;
+    onResolve: (id: string) => void;
+    onReply: (id: string, message: string) => Promise<void>;
+    // onToggleApproval invalid now
 }
 
-const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ grievances, onToggleApproval }) => {
+const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ grievances, onResolve, onReply }) => {
     const [filter, setFilter] = useState<'All' | 'official' | 'worker'>('All');
     const [selectedGrievance, setSelectedGrievance] = useState<Grievance | null>(null);
     const [viewProfileUser, setViewProfileUser] = useState<any | null>(null);
+    const [replyText, setReplyText] = useState('');
+    const [replying, setReplying] = useState(false);
+
+    const { user } = useAuth();
+    const department = (user?.department || '').toLowerCase();
+    // Prioritize 'hr' role. Legacy fallback: Official + HR department
+    const isHR = user?.role === 'hr' || (user?.role === 'official' && ['general', 'administration', 'hr'].includes(department));
+    const userDept = (user?.department || '').toLowerCase();
 
     // Derived state for filtered grievances
     const filteredGrievances = grievances.filter(g => filter === 'All' || g.role === filter);
@@ -36,6 +47,37 @@ const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ g
             id: 'unknown'
         });
     };
+
+    const handleSendReply = async () => {
+        if (!replyText.trim() || !selectedGrievance || !onReply) return;
+        setReplying(true);
+        try {
+            await onReply(selectedGrievance.id, replyText);
+            setReplyText('');
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setReplying(false);
+        }
+    };
+
+    // Check if user can resolve the selected grievance
+    const canResolve = (grievance: Grievance) => {
+        if (!user || (user.role !== 'official' && user.role !== 'hr')) return false;
+
+        const grievanceDept = (grievance.department || '').toLowerCase();
+        const hrDepartments = ["general", "administration", "hr"];
+
+        // If grievance is for HR, only HR resolves
+        if (hrDepartments.includes(grievanceDept)) {
+            return isHR;
+        }
+
+        // If grievance is for Dept X, only Dept X official (or HR admin) resolves
+        return grievanceDept === userDept || isHR;
+    };
+
+    const isClosed = (g: Grievance) => g.status === 'Resolved' || g.status === 'Rejected';
 
     return (
         <div className="bg-white dark:bg-surface-dark rounded-2xl border border-gray-100 dark:border-border-dark shadow-sm flex flex-col h-full">
@@ -104,9 +146,10 @@ const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ g
             {/* Detail Modal */}
             {selectedGrievance && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in" onClick={() => setSelectedGrievance(null)}>
-                    <div className="bg-white dark:bg-surface-dark rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
-                        {/* Profile Section - TOP PRIORITY */}
-                        <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/10 p-4 border-b border-gray-100 dark:border-gray-800">
+                    <div className="bg-white dark:bg-surface-dark rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
+
+                        {/* Header */}
+                        <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/10 p-4 border-b border-gray-100 dark:border-gray-800 shrink-0">
                             <div className="flex items-center gap-3">
                                 <div className="size-10 rounded-full bg-blue-200 dark:bg-blue-800 flex items-center justify-center font-bold text-blue-700 dark:text-blue-200">
                                     {selectedGrievance.submittedBy.charAt(0)}
@@ -124,8 +167,8 @@ const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ g
                             </button>
                         </div>
 
-                        {/* Title & Info Header */}
-                        <div className="p-6 border-b border-gray-100 dark:border-border-dark flex justify-between items-start">
+                        {/* Title & Actions Header */}
+                        <div className="p-6 border-b border-gray-100 dark:border-border-dark flex justify-between items-start shrink-0">
                             <div>
                                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">{selectedGrievance.subject}</h3>
                                 <div className="flex items-center gap-2 mt-2">
@@ -136,79 +179,87 @@ const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ g
                                         {selectedGrievance.role}
                                     </span>
                                     <span className="text-sm text-text-muted">{selectedGrievance.date}</span>
+                                    <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border ml-2 ${selectedGrievance.status === 'Resolved'
+                                        ? 'bg-green-100 text-green-700 border-green-200'
+                                        : selectedGrievance.status === 'Rejected'
+                                            ? 'bg-red-100 text-red-700 border-red-200'
+                                            : 'bg-yellow-100 text-yellow-700 border-yellow-200'
+                                        }`}>
+                                        {selectedGrievance.status}
+                                    </span>
                                 </div>
                             </div>
-                            <button onClick={() => setSelectedGrievance(null)} className="text-gray-400 hover:text-gray-600">
-                                <span className="material-symbols-outlined">close</span>
-                            </button>
+
+                            <div className="flex gap-2">
+                                {/* Resolve Button */}
+                                {selectedGrievance.status !== 'Resolved' && canResolve(selectedGrievance) && onResolve && (
+                                    <button
+                                        onClick={() => onResolve(selectedGrievance.id)}
+                                        className="px-3 py-1.5 bg-green-600 text-white text-xs font-bold rounded-lg shadow-sm hover:bg-green-700 transition-colors flex items-center gap-1"
+                                    >
+                                        <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                                        Mark Resolved
+                                    </button>
+                                )}
+                                <button onClick={() => setSelectedGrievance(null)} className="text-gray-400 hover:text-gray-600">
+                                    <span className="material-symbols-outlined">close</span>
+                                </button>
+                            </div>
                         </div>
 
-                        <div className="p-6 space-y-6">
+                        {/* Scrollable Content */}
+                        <div className="p-6 space-y-6 overflow-y-auto">
                             {/* Grievance Description */}
                             <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl text-sm text-gray-700 dark:text-gray-300">
-                                {selectedGrievance.description}
+                                {selectedGrievance.description === "[Voice Recording Attached]" || !selectedGrievance.description ? "No description" : selectedGrievance.description}
                             </div>
 
-                            {/* Approval Actions */}
-                            <div className="border-t border-gray-100 dark:border-gray-700 pt-6">
-                                <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-4">Approval Action</h4>
-                                <div className="flex flex-col gap-4">
-                                    {/* Show Official (Supervisor) Approval only if submitter is NOT an official */}
-                                    {selectedGrievance.role !== 'official' && (
-                                        <div className="flex items-center justify-between p-3 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-                                            <div>
-                                                <span className="block text-sm font-bold text-gray-900 dark:text-white">Official Recommendation</span>
-                                                <span className="text-xs text-text-muted">Is this valid?</span>
-                                            </div>
-                                            <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => onToggleApproval && onToggleApproval(selectedGrievance.id, 'supervisor', false)}
-                                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${selectedGrievance.supervisorApproval === false
-                                                        ? 'bg-red-100 text-red-700 border-red-200'
-                                                        : 'bg-white dark:bg-surface-dark text-gray-500 border-gray-200 hover:border-red-200 hover:text-red-600'
-                                                        }`}
-                                                >
-                                                    Reject
-                                                </button>
-                                                <button
-                                                    onClick={() => onToggleApproval && onToggleApproval(selectedGrievance.id, 'supervisor', true)}
-                                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${selectedGrievance.supervisorApproval === true
-                                                        ? 'bg-blue-100 text-blue-700 border-blue-200'
-                                                        : 'bg-white dark:bg-surface-dark text-gray-500 border-gray-200 hover:border-blue-200 hover:text-blue-600'
-                                                        }`}
-                                                >
-                                                    Approve
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
+                            {/* Discussion Section */}
+                            <div className="space-y-4">
+                                <h4 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-gray-400 text-lg">forum</span>
+                                    Discussion
+                                </h4>
 
-                                    <div className="flex items-center justify-between p-3 rounded-xl border border-gray-100 dark:border-gray-700 bg-purple-50 dark:bg-purple-900/10">
-                                        <div>
-                                            <span className="block text-sm font-bold text-gray-900 dark:text-white">HR Final Approval</span>
-                                            <span className="text-xs text-text-muted">Final decision</span>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <button
-                                                onClick={() => onToggleApproval && onToggleApproval(selectedGrievance.id, 'hr', false)}
-                                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${selectedGrievance.hrApproval === false
-                                                    ? 'bg-red-100 text-red-700 border-red-200'
-                                                    : 'bg-white dark:bg-surface-dark text-gray-500 border-gray-200 hover:border-red-200 hover:text-red-600'
-                                                    }`}
-                                            >
-                                                Reject
-                                            </button>
-                                            <button
-                                                onClick={() => onToggleApproval && onToggleApproval(selectedGrievance.id, 'hr', true)}
-                                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${selectedGrievance.hrApproval === true
-                                                    ? 'bg-green-100 text-green-700 border-green-200'
-                                                    : 'bg-white dark:bg-surface-dark text-gray-500 border-gray-200 hover:border-green-200 hover:text-green-600'
-                                                    }`}
-                                            >
-                                                Approve
-                                            </button>
-                                        </div>
-                                    </div>
+                                <div className="space-y-3 pl-2 border-l-2 border-gray-100 dark:border-gray-800">
+                                    {selectedGrievance.replies && selectedGrievance.replies.length > 0 ? (
+                                        selectedGrievance.replies.map((reply, idx) => (
+                                            <div key={idx} className="bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 p-3 rounded-lg shadow-sm">
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-xs font-bold text-gray-900 dark:text-white">
+                                                            {reply.senderId?.name || reply.role}
+                                                        </span>
+                                                        <span className='text-[10px] text-gray-400 capitalize'>({reply.role})</span>
+                                                    </div>
+                                                    <span className="text-[10px] text-gray-400">{new Date(reply.createdAt).toLocaleString()}</span>
+                                                </div>
+                                                <p className="text-sm text-gray-600 dark:text-gray-300">{reply.message}</p>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-xs text-text-muted italic">No replies yet.</p>
+                                    )}
+                                </div>
+
+                                {/* Reply Input */}
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={replyText}
+                                        onChange={(e) => setReplyText(e.target.value)}
+                                        placeholder={isClosed(selectedGrievance) ? "Discussion Closed" : "Type your reply..."}
+                                        className="flex-1 px-4 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                                        onKeyDown={(e) => e.key === 'Enter' && handleSendReply()}
+                                        disabled={isClosed(selectedGrievance)}
+                                    />
+                                    <button
+                                        onClick={handleSendReply}
+                                        disabled={replying || !replyText.trim() || isClosed(selectedGrievance)}
+                                        className="px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg shadow-sm hover:bg-primary-dark disabled:opacity-50 disabled:grayscale transition-colors"
+                                    >
+                                        {replying ? 'Sending...' : 'Reply'}
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -220,5 +271,7 @@ const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ g
         </div>
     );
 };
+
+
 
 export default GrievanceManagementSystem;
