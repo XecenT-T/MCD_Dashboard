@@ -1,16 +1,16 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import api from '../api/axios';
 
-interface User {
+export interface User {
     id: string;
     name: string;
     username: string;
     role: 'official' | 'worker' | 'hr';
     department?: string;
     faceDescriptor?: number[];
-    isFaceRegistered?: boolean;
-    isOnboarded?: boolean;
-    preferredLanguage?: 'en' | 'hi';
+    isFaceRegistered: boolean;
+    isOnboarded: boolean;
+    preferredLanguage: 'en' | 'hi';
     profileImage?: string;
     phoneNo?: string;
     email?: string;

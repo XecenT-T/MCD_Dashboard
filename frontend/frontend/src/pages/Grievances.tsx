@@ -215,7 +215,7 @@ const Grievances = () => {
                                         Submit Grievance
                                     </button>
                                 </div>
-                                <SentGrievancesTable grievances={sentGrievances} isOfficial={isOfficial} onReply={handleReply} />
+                                <SentGrievancesTable grievances={sentGrievances} onReply={handleReply} />
                             </div>
                         )}
                     </div>
@@ -230,7 +230,7 @@ const Grievances = () => {
                                 Submit Grievance
                             </button>
                         </div>
-                        <SentGrievancesTable grievances={sentGrievances} isOfficial={isOfficial} onReply={handleReply} />
+                        <SentGrievancesTable grievances={sentGrievances} onReply={handleReply} />
                     </div>
                 )}
             </div>
@@ -239,7 +239,7 @@ const Grievances = () => {
 };
 
 // Sub-component for Sent Grievances Table
-const SentGrievancesTable = ({ grievances, isOfficial, onReply }: { grievances: SentGrievance[], isOfficial: boolean, onReply: (id: string, msg: string) => void }) => {
+const SentGrievancesTable = ({ grievances, onReply }: { grievances: SentGrievance[], onReply: (id: string, msg: string) => void }) => {
     const [selectedGrievance, setSelectedGrievance] = useState<SentGrievance | null>(null);
     const [replyText, setReplyText] = useState('');
 
