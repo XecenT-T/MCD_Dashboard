@@ -195,6 +195,61 @@ router.post('/enroll-face', auth, async (req, res) => {
     }
 });
 
+// @route   GET api/auth/department-stats
+// @desc    Get stats for the official's department (e.g. Total Workers)
+// @access  Private (Official/HR)
+router.get('/department-stats', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ msg: 'User not found' });
+
+        if (user.role !== 'official' && user.role !== 'hr') {
+            return res.status(403).json({ msg: 'Not authorized' });
+        }
+
+        // Count workers in this department
+        // Regex for case-insensitive match on department
+        const count = await User.countDocuments({
+            role: 'worker',
+            department: { $regex: new RegExp(`^${user.department}$`, 'i') }
+        });
+
+        res.json({
+            totalWorkers: count
+        });
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// @route   GET api/auth/department-workers
+// @desc    Get list of workers for the official's department
+// @access  Private (Official/HR)
+router.get('/department-workers', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ msg: 'User not found' });
+
+        if (user.role !== 'official' && user.role !== 'hr') {
+            return res.status(403).json({ msg: 'Not authorized' });
+        }
+
+        // Find workers in this department
+        const workers = await User.find({
+            role: 'worker',
+            department: { $regex: new RegExp(`^${user.department}$`, 'i') }
+        }).select('-password'); // Exclude password
+
+        res.json(workers);
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;
 
 // Complete Onboarding

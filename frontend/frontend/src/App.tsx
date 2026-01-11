@@ -13,6 +13,9 @@ import LandingPage from './components/LandingPage';
 import Onboarding from './pages/Onboarding';
 import Heatmap from './pages/Heatmap';
 import DepartmentDocuments from './pages/DepartmentDocuments';
+import DepartmentWorkers from './pages/DepartmentWorkers';
+import DepartmentAttendance from './pages/DepartmentAttendance';
+import WorkerAttendanceHistory from './pages/WorkerAttendanceHistory';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { DashboardViewProvider } from './context/DashboardViewContext';
@@ -134,6 +137,30 @@ function App() {
                   element={
                     <PrivateRoute>
                       <DepartmentDocuments />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/department-workers"
+                  element={
+                    <PrivateRoute>
+                      <DepartmentWorkers />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/department-attendance"
+                  element={
+                    <PrivateRoute>
+                      <DepartmentAttendance />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/department-attendance/:userId"
+                  element={
+                    <PrivateRoute>
+                      <WorkerAttendanceHistory />
                     </PrivateRoute>
                   }
                 />

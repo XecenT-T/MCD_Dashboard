@@ -1,13 +1,16 @@
+
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const data = [
-    { name: 'Week 1', present: 5, absent: 0 },
-    { name: 'Week 2', present: 4, absent: 1 },
-    { name: 'Week 3', present: 5, absent: 0 },
-    { name: 'Week 4', present: 3, absent: 2 },
-];
-
-const AttendanceChart = ({ isOfficial }: { isOfficial: boolean }) => {
+const AttendanceChart = ({ isOfficial, data }: { isOfficial: boolean, data?: any[] }) => {
+    // Check if data exists
+    if (!data || data.length === 0) {
+        return (
+            <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm italic">
+                No attendance data available for graph
+            </div>
+        );
+    }
+    const chartData = data;
     // Customize colors based on role or theme if needed
     const presentColor = isOfficial ? "#82ca9d" : "#2563eb"; // Green for official/team, Primary blue for worker
 
@@ -15,7 +18,7 @@ const AttendanceChart = ({ isOfficial }: { isOfficial: boolean }) => {
         <div className="w-full h-full">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                    data={data}
+                    data={chartData}
                     margin={{
                         top: 10,
                         right: 10,

@@ -5,6 +5,7 @@ import { useDashboardView } from '../context/DashboardViewContext';
 import FaceEnrollment from '../components/FaceEnrollment';
 import FaceAuthentication from '../components/FaceAuthentication';
 import GrievanceModal from '../components/GrievanceModal';
+import GrievanceDetailsModal from '../components/GrievanceDetailsModal';
 import { useNavigate } from 'react-router-dom';
 import AttendanceChart from '../components/AttendanceChart';
 import DashboardLayout from '../components/DashboardLayout';
@@ -72,6 +73,73 @@ const Dashboard = () => {
         alert(`${feature} ${t('wip')}!`);
     };
 
+    const [pendingGrievances, setPendingGrievances] = useState<any[]>([]);
+    const [loadingGrievances, setLoadingGrievances] = useState(false);
+    const [totalWorkers, setTotalWorkers] = useState<string>('...');
+    const [deptAttendance, setDeptAttendance] = useState<string>('...');
+    const [selectedGrievance, setSelectedGrievance] = useState<any | null>(null);
+
+    // Fetch Data for Department View
+    useEffect(() => {
+        if (viewMode === 'department' && isOfficial) {
+            const fetchData = async () => {
+                setLoadingGrievances(true);
+                try {
+                    // Fetch Grievances
+                    const resGrievances = await api.get('/api/grievances/department');
+                    // Filter for strictly 'Pending' grievances (check both cases for robustness)
+                    const active = resGrievances.data.filter((g: any) => (g.status || '').toLowerCase() === 'pending');
+                    setPendingGrievances(active);
+
+                    // Fetch Department Stats (Worker Count)
+                    const resStats = await api.get('/api/auth/department-stats');
+                    setTotalWorkers(resStats.data.totalWorkers.toString());
+
+                    // Fetch Department Attendance Average
+                    const resAtt = await api.get('/api/attendance/department-stats');
+                    setDeptAttendance((resAtt.data.averageAttendance || 0) + '%');
+
+                } catch (err) {
+                    console.error("Failed to fetch dashboard data", err);
+                } finally {
+                    setLoadingGrievances(false);
+                }
+            };
+            fetchData();
+        }
+    }, [viewMode, isOfficial]);
+
+    const handleResolveGrievance = async (id: string) => {
+        try {
+            await api.patch(`/api/grievances/${id}/status`, { status: "Resolved" });
+            // Update local state
+            setPendingGrievances(prev => prev.filter(g => g._id !== id)); // Remove resolved from pending list
+            setSelectedGrievance((prev: any) => prev ? { ...prev, status: 'Resolved' } : null);
+            // Verify if user wants it removed from list immediately or just updated. Usually "Pending" list implies only pending items.
+        } catch (error) {
+            console.error("Failed to resolve", error);
+        }
+    };
+
+    const handleReplyGrievance = async (id: string, message: string) => {
+        try {
+            const res = await api.post(`/api/grievances/${id}/reply`, { message });
+            // Update local state for replies
+            setSelectedGrievance((prev: any) => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    replies: res.data // Assuming API returns updated replies array
+                };
+            });
+            // Re-fetch or update list if necessary? Mostly deeply nested.
+            // A simple re-fetch of the specific grievance or trusting response is okay.
+            // For dashboard list, replies don't show.
+        } catch (error) {
+            console.error("Failed to reply", error);
+        }
+    };
+
     // Stats Data
     const workerStats = [
         { label: 'Days Present (Oct)', value: '18 / 22', icon: 'calendar_month', color: 'text-green-600', bg: 'bg-green-100', progress: 85 },
@@ -81,9 +149,26 @@ const Dashboard = () => {
     ];
 
     const departmentStats = [
-        { label: 'Total Workers', value: '45', sub: 'Active in Dept', icon: 'groups', color: 'text-blue-600', bg: 'bg-blue-100' },
-        { label: 'Dept. Attendance', value: '92%', sub: 'Today', icon: 'fact_check', color: 'text-green-600', bg: 'bg-green-100', progress: 92 },
-        { label: 'Pending Grievances', value: '7', sub: 'Action Required', icon: 'report_problem', color: 'text-red-600', bg: 'bg-red-100' },
+        {
+            label: 'Total Workers',
+            value: totalWorkers,
+            sub: 'Active in Dept',
+            icon: 'groups',
+            color: 'text-blue-600',
+            bg: 'bg-blue-100',
+            action: () => navigate('/department-workers') // Open in same view
+        },
+        {
+            label: 'Dept. Attendance',
+            value: deptAttendance,
+            sub: 'Today',
+            icon: 'fact_check',
+            color: 'text-green-600',
+            bg: 'bg-green-100',
+            progress: parseInt(deptAttendance) || 0,
+            action: () => navigate('/department-attendance')
+        },
+        { label: 'Pending Grievances', value: loadingGrievances ? '...' : pendingGrievances.length.toString(), sub: 'Action Required', icon: 'report_problem', color: 'text-red-600', bg: 'bg-red-100' },
         { label: 'Total Payroll', value: '₹ 12.5L', sub: 'This Month', icon: 'payments', color: 'text-purple-600', bg: 'bg-purple-100' }
     ];
 
@@ -131,8 +216,12 @@ const Dashboard = () => {
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {currentStats.map((stat, index) => (
-                        <div key={index} className="bg-white dark:bg-surface-dark p-5 rounded-xl border border-gray-100 dark:border-border-dark shadow-sm hover:shadow-md transition-shadow">
+                    {currentStats.map((stat: any, index) => (
+                        <div
+                            key={index}
+                            onClick={() => stat.action && stat.action()}
+                            className={`bg-white dark:bg-surface-dark p-5 rounded-xl border border-gray-100 dark:border-border-dark shadow-sm hover:shadow-md transition-shadow ${stat.action ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800' : ''}`}
+                        >
                             <div className="flex justify-between items-start mb-4">
                                 <div className={`p-3 rounded-lg ${stat.bg} ${stat.color}`}>
                                     <span className="material-symbols-outlined text-2xl">{stat.icon}</span>
@@ -204,11 +293,44 @@ const Dashboard = () => {
                             <div className="bg-white dark:bg-surface-dark rounded-2xl border border-gray-100 dark:border-border-dark shadow-sm overflow-hidden">
                                 <div className="p-6 border-b border-gray-100 dark:border-border-dark flex items-center justify-between">
                                     <h3 className="text-lg font-bold text-gray-900 dark:text-white">Pending Grievances</h3>
-                                    <span className="bg-orange-100 text-orange-600 text-xs font-bold px-2 py-1 rounded-full">3 New</span>
+                                    <span className="bg-orange-100 text-orange-600 text-xs font-bold px-2 py-1 rounded-full">
+                                        {loadingGrievances ? '...' : `${pendingGrievances.length} Active`}
+                                    </span>
                                 </div>
-                                <div className="divide-y divide-gray-100 dark:divide-gray-800">
-                                    <GrievanceRow title="Salary Discrepancy" user="Rohit Sharma" date="Today" />
-                                    <GrievanceRow title="Leave Request" user="Virat Kohli" date="Yesterday" />
+                                <div className="divide-y divide-gray-100 dark:divide-gray-800 max-h-[300px] overflow-y-auto">
+                                    {loadingGrievances ? (
+                                        [1, 2, 3].map(i => (
+                                            <div key={i} className="p-4 flex items-center justify-between animate-pulse">
+                                                <div className="flex items-center gap-3 w-full">
+                                                    <div className="size-10 bg-gray-200 rounded-lg"></div>
+                                                    <div className="space-y-2 flex-1 max-w-[200px]">
+                                                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                                                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : pendingGrievances.length === 0 ? (
+                                        <div className="p-8 text-center text-text-muted">No pending grievances</div>
+                                    ) : (
+                                        pendingGrievances.slice(0, 5).map(g => (
+                                            <GrievanceRow
+                                                key={g._id}
+                                                title={g.title}
+                                                user={g.userId?.name || 'Unknown'}
+                                                date={new Date(g.createdAt).toLocaleDateString()}
+                                                status={g.status}
+                                                onClick={() => setSelectedGrievance(g)}
+                                            />
+                                        ))
+                                    )}
+                                    {pendingGrievances.length > 5 && (
+                                        <div className="p-3 text-center border-t border-gray-100 dark:border-gray-800">
+                                            <button onClick={() => navigate('/grievances')} className="text-sm font-bold text-primary hover:underline">
+                                                View All ({pendingGrievances.length})
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -245,11 +367,28 @@ const Dashboard = () => {
                     </div>
                 )}
 
+
                 {/* Modals */}
                 {showEnrollment && <FaceEnrollment onSuccess={handleEnrollmentSuccess} onClose={() => setShowEnrollment(false)} />}
                 {showAuth && <FaceAuthentication onSuccess={handleAttendanceSuccess} onClose={() => setShowAuth(false)} />}
                 {showGrievance && <GrievanceModal onClose={() => setShowGrievance(false)} />}
                 {showNoticeModal && <NoticeModal onClose={() => setShowNoticeModal(false)} />}
+
+                {selectedGrievance && (
+                    <GrievanceDetailsModal
+                        grievance={{
+                            ...selectedGrievance,
+                            id: selectedGrievance._id, // Adapt _id to id
+                            submittedBy: selectedGrievance.userId?.name || 'Unknown',
+                            date: new Date(selectedGrievance.createdAt).toLocaleDateString(),
+                            submitterProfile: selectedGrievance.userId // Pass full profile
+                        }}
+                        onClose={() => setSelectedGrievance(null)}
+                        onResolve={handleResolveGrievance}
+                        onReply={handleReplyGrievance}
+                        canResolve={true} // Official on their dashboard can usually resolve their dept grievances
+                    />
+                )}
             </div>
         </DashboardLayout>
     );
@@ -266,21 +405,23 @@ const QuickAction = ({ icon, label, color, bg, onClick, primary }: { icon: strin
 );
 
 
-const GrievanceRow = ({ title, user, date }: any) => (
-    <div className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+const GrievanceRow = ({ title, user, date, status, onClick }: any) => (
+    <div className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer" onClick={onClick}>
         <div className="flex items-center gap-3">
             <div className="p-2 bg-red-50 text-red-600 rounded-lg">
                 <span className="material-symbols-outlined text-xl">report_problem</span>
             </div>
             <div>
-                <h4 className="font-bold text-sm text-gray-900 dark:text-white">{title}</h4>
+                <h4 className="font-bold text-sm text-gray-900 dark:text-white line-clamp-1">{title}</h4>
                 <p className="text-xs text-text-muted">By {user} • {date}</p>
             </div>
         </div>
-        <div className="flex gap-2">
-            <button className="p-1 text-green-600 hover:bg-green-50 rounded"><span className="material-symbols-outlined">check</span></button>
-            <button className="p-1 text-red-600 hover:bg-red-50 rounded"><span className="material-symbols-outlined">close</span></button>
-        </div>
+        <span className={`px-2 py-1 rounded text-[10px] uppercase font-bold
+            ${status === 'resolved' ? 'bg-green-100 text-green-700' :
+                status === 'rejected' ? 'bg-red-100 text-red-700' :
+                    'bg-yellow-100 text-yellow-700'}`}>
+            {status}
+        </span>
     </div>
 );
 
