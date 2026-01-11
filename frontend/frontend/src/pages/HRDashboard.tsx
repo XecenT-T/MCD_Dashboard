@@ -54,7 +54,7 @@ const HRDashboard = () => {
     const filteredGrievances = grievances;
 
     const filteredPayroll = payrollData.filter(p => p.department === selectedDept);
-    const filteredLiveRecords = liveAttendanceRecords.filter(r => r.user.department === selectedDept);
+    const filteredLiveRecords = liveAttendanceRecords.filter(r => r.user?.department === selectedDept);
 
     if (loading) {
         return (
