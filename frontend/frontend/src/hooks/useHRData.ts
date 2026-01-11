@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
+import { getDepartmentLeaves, updateLeaveStatus as apiUpdateLeaveStatus } from '../api/leaves';
 
 // Types
 export interface DepartmentStats {
@@ -174,8 +175,13 @@ export const useHRData = (department?: string) => {
         setGrievances(prev => prev.map(g => g.id === id ? { ...g, status } : g));
     };
 
-    const updateLeaveStatus = (id: string, status: LeaveRequest['status']) => {
-        setLeaveRequests(prev => prev.map(l => l.id === id ? { ...l, status } : l));
+    const updateLeaveStatus = async (id: string, status: LeaveRequest['status']) => {
+        try {
+            await apiUpdateLeaveStatus(id, status);
+            setLeaveRequests(prev => prev.map(l => l.id === id ? { ...l, status } : l));
+        } catch (error) {
+            console.error("Failed to update leave status", error);
+        }
     };
 
     return {
