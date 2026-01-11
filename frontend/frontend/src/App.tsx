@@ -18,6 +18,7 @@ import DepartmentWorkers from './pages/DepartmentWorkers';
 import DepartmentAttendance from './pages/DepartmentAttendance';
 import WorkerAttendanceHistory from './pages/WorkerAttendanceHistory';
 import Transfers from './pages/Transfers';
+import IDCardPrint from './pages/IDCardPrint';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { DashboardViewProvider } from './context/DashboardViewContext';
@@ -85,7 +86,6 @@ function App() {
                     </PrivateRoute>
                   }
                 />
-                {/* Register removed - Admin only */}
                 <Route
                   path="/dashboard"
                   element={
@@ -179,6 +179,14 @@ function App() {
                   element={
                     <PrivateRoute>
                       <Heatmap />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/id-card-print"
+                  element={
+                    <PrivateRoute>
+                      <IDCardPrint />
                     </PrivateRoute>
                   }
                 />

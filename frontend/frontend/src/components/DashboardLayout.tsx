@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ProfileModal from './ProfileModal';
+import IDCardModal from './IDCardModal';
 
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -12,6 +13,7 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [showProfileModal, setShowProfileModal] = useState(false);
+    const [showIDCard, setShowIDCard] = useState(false);
     const isOfficial = user?.role === 'official';
 
     // HR Detection
@@ -62,7 +64,7 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
                                 <NavItem icon="payments" label={t('nav_payroll')} onClick={() => navigate('/payroll')} active={window.location.pathname === '/payroll'} />
 
                                 <NavDropdown icon="description" label="Service Request">
-                                    <NavItem icon="badge" label="ID Card Generator" onClick={() => handleWIP('ID Card Generator')} />
+                                    <NavItem icon="badge" label="ID Card Generator" onClick={() => setShowIDCard(true)} />
                                     <NavItem icon="folder_shared" label="Dept. Document" onClick={() => navigate('/department-documents')} />
                                 </NavDropdown>
 
@@ -89,7 +91,7 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
                                 </div>
                                 <NavItem icon="grid_view" label="Overview" onClick={() => navigate('/hr-dashboard')} active={window.location.pathname === '/hr-dashboard'} />
 
-                                <NavItem icon="payments" label="Payroll" onClick={() => handleWIP('Payroll Master')} />
+                                <NavItem icon="payments" label="Payroll" onClick={() => navigate('/payroll')} active={window.location.pathname === '/payroll'} />
                                 <NavItem icon="inbox" label="Requests" onClick={() => handleWIP('Requests')} />
                                 <NavItem icon="report" label="Grievances" onClick={() => navigate('/grievances')} active={window.location.pathname === '/grievances'} />
                             </>
@@ -181,6 +183,7 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
                     {children}
                 </main>
                 {showProfileModal && <ProfileModal onClose={() => setShowProfileModal(false)} />}
+                {showIDCard && user && <IDCardModal user={user} onClose={() => setShowIDCard(false)} />}
             </div>
         </div>
     );

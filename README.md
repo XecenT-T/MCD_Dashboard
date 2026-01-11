@@ -1,20 +1,100 @@
-# MCD Digital Portal
-MCD Digital Portal is a modern, unified web-based dashboard designed to streamline administrative operations for Municipal Corporation of Delhi (MCD) officials and workers. The platform acts as a single digital gateway for managing essential services such as attendance, payroll, transfers, and grievance redressal with transparency and efficiency.
+# 🏙️ CivicForce AI (MCD Dashboard)
 
-Built with a focus on usability, performance, and security, the portal provides a centralized system that reduces paperwork, improves accountability, and enables real-time access to critical information. The intuitive interface ensures that users across different departments can easily navigate and access services without technical complexity.
+> **Next-Gen Smart Workforce Management for Municipal Corporations**
 
-## Key highlight
+![Status](https://img.shields.io/badge/status-Active-success.svg)
+![Stack](https://img.shields.io/badge/stack-MERN-informational.svg)
 
-- Unified Platform – One portal for multiple administrative services
+**CivicForce AI** is a comprehensive, intelligent dashboard designed to modernize workforce management for municipal bodies. By leveraging biometric authentication, geo-spatial intelligence, and AI-powered support, we tackle the challenges of ghost workers, inefficient deployment, and grievance redressal in the public sector.
 
-- Smart Attendance – Geo-fenced attendance marking with real-time tracking
+---
 
-- Seamless Payroll – Access salary slips, Form-16, and tax details instantly
+## ✨ Key Features
 
-- Transparent Transfers – Policy-driven transfer requests with live status updates
+### 🛡️ Secure & Smart Attendance
+- **Biometric Verification:** Integrated `face-api.js` for fraud-proof, client-side face recognition.
+- **Geo-Fencing:** Ensures workers are physically present at their assigned wards.
 
-- Grievance Redressal – Direct channel for lodging and tracking complaints
+### 📊 Real-Time Analytics Dashboard
+- **Live Insights:** Track attendance trends, payroll status, and grievance resolution rates.
+- **Interactive Visualizations:** Powered by `Recharts` for actionable data interpretation.
 
-- Secure & Scalable – Designed to run on secure government-grade infrastructure
+### 🗺️ Geo-Spatial Intelligence
+- **Deployment Heatmaps:** Visualize workforce density against reported civic issues using `Leaflet`.
+- **Live Tracking:** Monitor departmental coverage in real-time.
 
-- The MCD Digital Portal demonstrates how digital transformation can enhance governance by making public service administration more efficient, transparent, and accessible.
+### 🤖 AI-Powered Support
+- **Gemini Chatbot:** A 24/7 AI assistant built with Google Gemini to help workers checks payroll, file grievances, and answer queries in their native language.
+- **Multi-Language Support:** Inclusive design for a diverse workforce.
+
+### 📝 Grievance & Payroll Management
+- **Digital Redressal:** Transparent filing and tracking of worker complaints.
+- **Automated Payroll:** Seamless calculation and history tracking for administrative efficiency.
+
+---
+
+## 🛠️ Technology Stack
+
+### Frontend
+- **Framework:** React 19 + Vite (TypeScript)
+- **Styling:** Tailwind CSS v4
+- **Maps:** Leaflet & React-Leaflet
+- **AI/ML:** Face-API.js
+- **State/Context:** React Context API
+
+### Backend
+- **Runtime:** Node.js
+- **Framework:** Express.js
+- **Database:** MongoDB (Mongoose)
+- **Caching:** Redis
+- **AI Engine:** Google Gemini Generative AI
+- **Utilities:** PDFKit (Reports), Multer (Uploads), JWT (Auth)
+
+---
+
+## 🚀 Getting Started
+
+Follow these steps to set up the project locally.
+
+### Prerequisites
+- Node.js (v18+)
+- MongoDB (Local or Atlas URI)
+- Redis Server
+
+### Installation
+
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/your-username/MCD_Dashboard.git
+    cd MCD_Dashboard
+    ```
+
+2.  **Backend Setup**
+    ```bash
+    cd backend
+    npm install
+    # Create a .env file with your credentials (MONGO_URI, GEMINI_API_KEY, etc.)
+    npm run dev
+    ```
+
+3.  **Frontend Setup**
+    ```bash
+    cd ../frontend/frontend
+    npm install
+    npm run dev
+    ```
+
+4.  **Access the App**
+    Open your browser and navigate to `http://localhost:5173`
+
+---
+
+## 📸 Screenshots
+
+*(Add screenshots of your Dashboard, Heatmap, and Chatbot here)*
+
+---
+
+## 🏆 Hack4Delhi 2026
+
+A civic-tech solution developed for Hack4Delhi 2026, a nationwide hackathon organized by IEEE NSUT and HN, aimed at building technology-driven solutions for governance and public systems.
