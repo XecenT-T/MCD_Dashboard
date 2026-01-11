@@ -47,7 +47,7 @@ const HRDashboard = () => {
 
     const filteredAttendance = attendanceData.filter(d => d.department === selectedDept);
     const filteredGrievances = grievances.filter(g => g.department === selectedDept);
-    const filteredLeaveRequests = leaveRequests.filter(l => l.department === selectedDept);
+
     const filteredPayroll = payrollData.filter(p => p.department === selectedDept);
     const filteredLiveRecords = liveAttendanceRecords.filter(r => r.user.department === selectedDept);
 
@@ -156,7 +156,6 @@ const HRDashboard = () => {
                                 { id: 'overview', label: t('tab_overview') },
                                 { id: 'payroll', label: t('tab_payroll') },
                                 { id: 'grievances', label: t('tab_grievances') },
-                                { id: 'leaves', label: t('tab_leaves') },
                                 { id: 'livemap', label: t('tab_livemap') }
                             ].map((tab) => {
                                 return (
@@ -207,9 +206,7 @@ const HRDashboard = () => {
                                 />
                             )}
 
-                            {activeTab === 'leaves' && (
-                                <LeaveManagementTable requests={filteredLeaveRequests} onUpdateStatus={updateLeaveStatus} />
-                            )}
+
 
                             {activeTab === 'livemap' && (
                                 <LiveLocationMap attendanceData={filteredLiveRecords} loading={loading} />

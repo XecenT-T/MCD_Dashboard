@@ -329,6 +329,10 @@ const translations: Translations = {
         "legend_present": "Present",
         "legend_absent": "Absent",
         "legend_on_leave": "On Leave",
+        "avg_attendance": "Avg. Attendance",
+        "this_month": "This Month",
+        "salary_overview": "Salary Overview",
+        "last_month_pay": "Last Month Pay",
     },
     hi: {
         "dashboard_title_official": "अधिकारी डैशबोर्ड",
@@ -651,6 +655,10 @@ const translations: Translations = {
         "department_notices": "विभाग नोटिस",
         "manage_notices": "नोटिस प्रबंधित करें",
         "notices_posted_text": "आपने इस महीने {count} नोटिस पोस्ट किए हैं।",
+        "avg_attendance": "औसत उपस्थिति",
+        "this_month": "इस महीने",
+        "salary_overview": "वेतन अवलोकन",
+        "last_month_pay": "पिछले महीने का वेतन",
     },
     pa: {
         "dashboard_title_official": "ਅਧਿਕਾਰੀ ਡੈਸ਼ਬੋਰਡ",
@@ -789,6 +797,10 @@ const translations: Translations = {
         "department_notices": "ਵਿਭਾਗ ਨੋਟਿਸ",
         "manage_notices": "ਨੋਟਿਸ ਪ੍ਰਬੰਧਿਤ ਕਰੋ",
         "notices_posted_text": "ਤੁਸੀਂ ਇਸ ਮਹੀਨੇ {count} ਨੋਟਿਸ ਪੋਸਟ ਕੀਤੇ ਹਨ।",
+        "avg_attendance": "ਔਸਤ ਹਾਜ਼ਰੀ",
+        "this_month": "ਇਸ ਮਹੀਨੇ",
+        "salary_overview": "ਤਨਖਾਹ ਝਲਕ",
+        "last_month_pay": "ਪਿਛਲੇ ਮਹੀਨੇ ਦੀ ਤਨਖਾਹ",
     },
     mr: {
         "dashboard_title_official": "अधिकारी डॅशबोर्ड",
@@ -927,6 +939,10 @@ const translations: Translations = {
         "department_notices": "विभाग सूचना",
         "manage_notices": "सूचना व्यवस्थापित करा",
         "notices_posted_text": "तुम्ही या महिन्यात {count} सूचना पोस्ट केल्या आहेत.",
+        "avg_attendance": "सरासरी उपस्थिती",
+        "this_month": "या महिन्यात",
+        "salary_overview": "पगार आढावा",
+        "last_month_pay": "मागील महिन्याचा पगार",
     },
     ta: {
         "dashboard_title_official": "அதிகாரி டாஷ்போர்டு",
@@ -1065,6 +1081,10 @@ const translations: Translations = {
         "department_notices": "துறை அறிவிப்புகள்",
         "manage_notices": "அறிவிப்புகளை நிர்வகிக்கவும்",
         "notices_posted_text": "இந்த மாதம் நீங்கள் {count} அறிவிப்புகளை இடுகையிட்டுள்ளீர்கள்.",
+        "avg_attendance": "சராசரி வருகை",
+        "this_month": "இந்த மாதம்",
+        "salary_overview": "சம்பள கண்ணோட்டம்",
+        "last_month_pay": "கடந்த மாத சம்பளம்",
     },
     te: {
         "dashboard_title_official": "అధికారి డాష్‌బోర్డ్",
@@ -1203,6 +1223,10 @@ const translations: Translations = {
         "department_notices": "శాఖ నోటీసులు",
         "manage_notices": "నోటీసులను నిర్వహించండి",
         "notices_posted_text": "మీరు ఈ నెలలో {count} నోటీసులను పోస్ట్ చేశారు.",
+        "avg_attendance": "సగటు హాజరు",
+        "this_month": "ఈ నెల",
+        "salary_overview": "జీతం అవలోకనం",
+        "last_month_pay": "గత నెల జీతం",
     },
     bn: {
         "dashboard_title_official": "অফিসিয়াল ড্যাশবোর্ড",
@@ -1341,6 +1365,10 @@ const translations: Translations = {
         "department_notices": "বিভাগীয় নোটিশ",
         "manage_notices": "নোটিশ পরিচালনা করুন",
         "notices_posted_text": "আপনি এই মাসে {count} টি নোটিশ পোস্ট করেছেন।",
+        "avg_attendance": "গড় উপস্থিতি",
+        "this_month": "এই মাসে",
+        "salary_overview": "বেতন ওভারভিউ",
+        "last_month_pay": "গত মাসের বেতন",
     }
 };
 
