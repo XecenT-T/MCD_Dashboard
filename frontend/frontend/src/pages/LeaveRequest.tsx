@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import { createLeaveRequest, getMyLeaves } from '../api/leaves';
-import { useLanguage } from '../context/LanguageContext';
 
 interface LeaveRequest {
     _id: string;
@@ -11,9 +10,7 @@ interface LeaveRequest {
     status: string;
     createdAt: string;
 }
-
 const LeaveRequest = () => {
-    const { t } = useLanguage();
     const [requests, setRequests] = useState<LeaveRequest[]>([]);
     const [formData, setFormData] = useState({
         type: 'Sick Leave',
@@ -149,8 +146,8 @@ const LeaveRequest = () => {
                                             <td className="px-4 py-3 text-gray-500 truncate max-w-[200px]" title={req.reason}>{req.reason}</td>
                                             <td className="px-4 py-3">
                                                 <span className={`px-2 py-1 rounded-full text-xs font-bold ${req.status === 'Approved' ? 'bg-green-100 text-green-700' :
-                                                        req.status === 'Rejected' ? 'bg-red-100 text-red-700' :
-                                                            'bg-yellow-100 text-yellow-700'
+                                                    req.status === 'Rejected' ? 'bg-red-100 text-red-700' :
+                                                        'bg-yellow-100 text-yellow-700'
                                                     }`}>
                                                     {req.status}
                                                 </span>
