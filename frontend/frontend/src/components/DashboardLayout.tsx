@@ -91,11 +91,10 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
                                 <div className="px-4 mt-6 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
                                     {t('administration')}
                                 </div>
-                                <NavItem icon="grid_view" label={t('overview')} onClick={() => navigate('/hr-dashboard')} active={window.location.pathname === '/hr-dashboard'} />
-
-                                <NavItem icon="payments" label={t('nav_payroll')} onClick={() => navigate('/payroll')} active={window.location.pathname === '/payroll'} />
+                                <NavItem icon="grid_view" label={t('overview')} onClick={() => { navigate('/hr-dashboard'); setSidebarOpen(false); }} active={window.location.pathname === '/hr-dashboard'} />
+                                <NavItem icon="payments" label={t('nav_payroll')} onClick={() => { navigate('/payroll'); setSidebarOpen(false); }} active={window.location.pathname === '/payroll'} />
                                 <NavItem icon="inbox" label={t('requests')} onClick={() => handleWIP('Requests')} />
-                                <NavItem icon="report" label={t('nav_grievances')} onClick={() => navigate('/grievances')} active={window.location.pathname === '/grievances'} />
+                                <NavItem icon="report" label={t('nav_grievances')} onClick={() => { navigate('/department-grievances'); setSidebarOpen(false); }} active={window.location.pathname === '/department-grievances'} />
                             </>
                         )}
                     </nav>

@@ -83,12 +83,14 @@ router.get("/all", auth, async (req, res) => {
             return res.status(403).json({ msg: "Not authorized. HR Access Required." });
         }
 
-        // Return only grievances submitted to HR departments (Case Insensitive)
-        const regexDepts = hrDepartments.map(d => new RegExp(`^${d}$`, 'i'));
+        // Return ALL grievances or Filter by Department if specified
+        let query = {};
+        if (req.query.department) {
+            // Case insensitive match for department
+            query.department = new RegExp(`^${req.query.department}$`, 'i');
+        }
 
-        const grievances = await Grievance.find({
-            department: { $in: regexDepts }
-        })
+        const grievances = await Grievance.find(query)
             .populate("userId", "name role department email phoneNo aadharCardNo dob profileImage isFaceRegistered")
             .populate('replies.senderId', 'name role')
             .sort({ createdAt: -1 });
@@ -97,6 +99,52 @@ router.get("/all", auth, async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).send("Server Error");
+    }
+});
+
+// @route   GET api/grievances/by-department-sender
+// @desc    Get grievances where the SENDER is from a specific department
+// @access  Private (HR Only)
+router.get('/by-department-sender', auth, async (req, res) => {
+    try {
+        const { department } = req.query;
+        if (!department) {
+            return res.status(400).json({ msg: 'Department query parameter is required' });
+        }
+
+        const user = await require('../models/User').findById(req.user.id);
+        const hrDepartments = ["General", "Administration", "HR"];
+
+        // Authorization check: Only HR or HR-department officials can view this
+        if (user.role !== 'hr' && !(user.role === 'official' && hrDepartments.includes(user.department))) {
+            return res.status(403).json({ msg: 'Not authorized. HR Access Required.' });
+        }
+
+        // 1. Find all users (Officials/Workers) in the target department
+        const DepartmentUsers = await require('../models/User').find({
+            department: new RegExp(`^${department}$`, 'i'),
+            role: { $in: ['official', 'worker'] }
+        }).select('_id');
+
+        const userIds = DepartmentUsers.map(u => u._id);
+
+        if (userIds.length === 0) {
+            return res.json([]); // No users found in that department, so no grievances
+        }
+
+        // 2. Find grievances submitted by these users
+        const grievances = await Grievance.find({
+            userId: { $in: userIds }
+        })
+            .populate('userId', 'name role department email phoneNo aadharCardNo dob profileImage isFaceRegistered')
+            .populate('replies.senderId', 'name role')
+            .sort({ createdAt: -1 });
+
+        res.json(grievances);
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
     }
 });
 

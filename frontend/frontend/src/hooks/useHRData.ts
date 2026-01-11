@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import api from '../api/axios';
 
 // Types
 export interface DepartmentStats {
@@ -61,7 +62,7 @@ export interface AttendanceRecord {
     status: string;
 }
 
-export const useHRData = () => {
+export const useHRData = (department?: string) => {
     const [loading, setLoading] = useState(true);
 
     // Mock Data State
@@ -72,22 +73,70 @@ export const useHRData = () => {
     const [officials, setOfficials] = useState<Official[]>([]);
     const [liveAttendanceRecords, setLiveAttendanceRecords] = useState<AttendanceRecord[]>([]);
 
+    // New State for Department Payroll
+    const [departmentPayroll, setDepartmentPayroll] = useState<any[]>([]);
+
     useEffect(() => {
-        // Simulate API fetch delay
-        const timer = setTimeout(() => {
-            setAttendanceData([
-                { department: 'Education', present: 45, absent: 5, leave: 2, total: 52 },
-                { department: 'Health', present: 38, absent: 8, leave: 4, total: 50 },
-                { department: 'Engineering', present: 42, absent: 3, leave: 1, total: 46 },
-            ]);
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                // Fetch Real Grievances
+                let endpoint = '/api/grievances/all';
+                let params: any = {};
 
-            setGrievances([
-                { id: '1', submittedBy: 'Rohan Gupta', role: 'official', department: 'Education', subject: 'Staff Shortage', description: 'Urgent need for more math teachers.', date: '2023-10-25', status: 'Pending' },
-                { id: '2', submittedBy: 'Amit Kumar', role: 'worker', department: 'Health', subject: 'Salary Delay', description: 'September salary not received yet.', date: '2023-10-26', status: 'Under Review' },
-                { id: '3', submittedBy: 'Priya Singh', role: 'worker', department: 'Engineering', subject: 'Safety Gear', description: 'Helmets are damaged.', date: '2023-10-24', status: 'Pending' },
-                { id: '4', submittedBy: 'Vikram Malhotra', role: 'official', department: 'Health', subject: 'Equipment Malfunction', description: 'X-Ray machine needs repair.', date: '2023-10-22', status: 'Resolved' },
-            ]);
+                if (department) {
+                    endpoint = '/api/grievances/by-department-sender';
+                    params.department = department;
 
+                    // Fetch Department Payroll
+                    try {
+                        const payRes = await api.get('/api/payroll/by-department', { params: { department } });
+                        setDepartmentPayroll(payRes.data);
+                    } catch (e) {
+                        console.error("Failed to fetch department payroll", e);
+                    }
+                }
+
+                const griRes = await api.get(endpoint, { params });
+
+                // ... (transform grievances logic)
+                const transformedGrievances = griRes.data.map((g: any) => ({
+                    id: g._id,
+                    submittedBy: g.userId?.name || 'Unknown',
+                    role: g.userId?.role || 'worker',
+                    department: g.department,
+                    subject: g.title,
+                    description: g.description,
+                    date: new Date(g.createdAt).toISOString().split('T')[0],
+                    status: g.status.charAt(0).toUpperCase() + g.status.slice(1),
+                    replies: g.replies,
+                    submitterProfile: g.userId
+                }));
+                setGrievances(transformedGrievances);
+
+            } catch (err) {
+                console.error("Failed to fetch HR data", err);
+            }
+
+            // Fetch Real Attendance Stats
+            try {
+                const statsRes = await api.get('/api/attendance/stats');
+                setAttendanceData(statsRes.data);
+            } catch (e) {
+                console.error("Failed to fetch attendance stats", e);
+            }
+
+            // Fetch Real Live Location
+            try {
+                const liveEndpoint = '/api/attendance/live';
+                const liveParams = department ? { department } : {};
+                const liveRes = await api.get(liveEndpoint, { params: liveParams });
+                setLiveAttendanceRecords(liveRes.data);
+            } catch (e) {
+                console.error("Failed to fetch live location", e);
+            }
+
+            // Keep other mocks for now (Payroll Summary, Officials, Leave Requests) until backend integrated
             setLeaveRequests([
                 { id: '1', applicant: 'Suresh Raina', role: 'worker', department: 'Education', type: 'Sick Leave', dates: 'Oct 28 - Oct 30', reason: 'Viral Fever', status: 'Pending' },
                 { id: '2', applicant: 'Ajay Jadeja', role: 'official', department: 'Engineering', type: 'Casual Leave', dates: 'Nov 1 - Nov 5', reason: 'Family Wedding', status: 'Pending' },
@@ -106,18 +155,11 @@ export const useHRData = () => {
                 { id: '3', name: 'Mrs. K. Sharma', department: 'Education', status: 'On Leave' },
             ]);
 
-            setLiveAttendanceRecords([
-                { _id: '1', checkInTime: '09:00 AM', location: { lat: 28.6139, lng: 77.2090, address: 'Connaught Place' }, user: { _id: 'u1', name: 'Rohan Gupta', role: 'Official', department: 'Education' }, status: 'Present' },
-                { _id: '2', checkInTime: '09:15 AM', location: { lat: 28.5355, lng: 77.3910, address: 'Noida Sector 18' }, user: { _id: 'u2', name: 'Amit Kumar', role: 'Worker', department: 'Health' }, status: 'Present' },
-                { _id: '3', checkInTime: '09:30 AM', location: { lat: 28.7041, lng: 77.1025, address: 'Pitampura' }, user: { _id: 'u3', name: 'Priya Singh', role: 'Worker', department: 'Engineering' }, status: 'Present' },
-                { _id: '4', checkInTime: '09:45 AM', location: { lat: 28.6219, lng: 77.0878, address: 'Janakpuri' }, user: { _id: 'u4', name: 'Vikram M', role: 'Worker', department: 'Health' }, status: 'Present' },
-            ]);
-
             setLoading(false);
-        }, 800);
+        };
 
-        return () => clearTimeout(timer);
-    }, []);
+        fetchData();
+    }, [department]);
 
     // Action Handlers
     const releasePayroll = (departmentName?: string) => {
@@ -146,6 +188,7 @@ export const useHRData = () => {
         liveAttendanceRecords,
         releasePayroll,
         updateGrievanceStatus,
-        updateLeaveStatus
+        updateLeaveStatus,
+        departmentPayroll
     };
 };

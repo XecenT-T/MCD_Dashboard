@@ -170,6 +170,49 @@ exports.downloadPayslip = async (req, res) => {
 
 const fs = require('fs');
 
+// @desc    Get payrolls for a specific department
+// @route   GET /api/payroll/by-department
+// @access  Private (HR only)
+exports.getDepartmentPayroll = async (req, res) => {
+    try {
+        const { department } = req.query;
+        if (!department) {
+            return res.status(400).json({ msg: 'Department is required' });
+        }
+
+        // 1. Find Users in Department
+        const users = await User.find({
+            department: new RegExp(`^${department}$`, 'i'),
+            role: { $in: ['official', 'worker'] }
+        }).select('name role post profileImage');
+
+        if (users.length === 0) {
+            return res.json([]);
+        }
+
+        const userIds = users.map(u => u._id);
+
+        // 2. Find Latest Payroll for each user (Assuming one active payroll per month, basically we fetch the latest one)
+        // Ideally we filter by month, but for now we'll take the latest created one.
+        // We can optimize this with aggregation, but loop is simpler for now.
+        const payrolls = [];
+
+        for (const user of users) {
+            const payroll = await Payroll.findOne({ user: user._id }).sort({ createdAt: -1 });
+            payrolls.push({
+                user, // Full user object (details)
+                payroll: payroll || null // Payroll details or null if not yet generated
+            });
+        }
+
+        res.json(payrolls);
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
 // @desc    Get all users (workers & officials) for payroll creation
 // @route   GET /api/payroll/users
 // @access  Private (HR only)
@@ -181,9 +224,6 @@ exports.getUsers = async (req, res) => {
         // Log to debug file
         const logData = `[${new Date().toISOString()}] Queries users. Found: ${users.length} users. Content: ${JSON.stringify(users.map(u => u.role))}\n`;
         fs.appendFileSync('debug_log.txt', logData);
-
-        // Filter in memory for now if needed, or just return all to see
-        // const filtered = users.filter(u => ['worker', 'official'].includes(u.role));
 
         res.json(users);
     } catch (err) {
