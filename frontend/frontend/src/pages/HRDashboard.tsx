@@ -11,8 +11,11 @@ import PayrollCommandCenter from '../components/hr/PayrollCommandCenter';
 import OfficialList from '../components/hr/OfficialList';
 import LiveLocationMap from '../components/LiveLocationMap';
 
+import { useLanguage } from '../context/LanguageContext';
+
 const HRDashboard = () => {
     const { user } = useAuth();
+    const { t } = useLanguage();
     const {
         loading,
         attendanceData,
@@ -60,7 +63,7 @@ const HRDashboard = () => {
 
     return (
         <DashboardLayout
-            title={viewMode === 'overall' ? "Admin Console" : `${selectedDept} Department`}
+            title={viewMode === 'overall' ? t('admin_console') : `${selectedDept} ${t('department')}`}
         >
             <div className="max-w-7xl mx-auto space-y-6">
 
@@ -68,10 +71,10 @@ const HRDashboard = () => {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-gray-100 dark:border-border-dark">
                     <div>
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                            {viewMode === 'overall' ? `Welcome, ${user?.name}` : `${selectedDept} Management`}
+                            {viewMode === 'overall' ? `${t('welcome_back')}, ${user?.name}` : `${selectedDept} ${t('dept_management')}`}
                         </h2>
                         <p className="text-sm text-text-muted">
-                            {viewMode === 'overall' ? 'Central Administration Hub' : 'Department Specific Controls'}
+                            {viewMode === 'overall' ? t('central_hub') : t('department_specific')}
                         </p>
                     </div>
 
@@ -85,7 +88,9 @@ const HRDashboard = () => {
                                     className="appearance-none bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-200 py-2 pl-4 pr-10 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none cursor-pointer font-medium"
                                 >
                                     {departments.map(dept => (
-                                        <option key={dept} value={dept}>{dept}</option>
+                                        <option key={dept} value={dept}>
+                                            {t(`dept_${dept.toLowerCase()}`) || dept}
+                                        </option>
                                     ))}
                                 </select>
                                 <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
@@ -100,13 +105,13 @@ const HRDashboard = () => {
                                 onClick={() => setViewMode('overall')}
                                 className={`px-4 py-1.5 rounded-md text-sm font-bold transition-all ${viewMode === 'overall' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}
                             >
-                                Overall
+                                {t('overall')}
                             </button>
                             <button
                                 onClick={() => { setViewMode('department'); setActiveTab('overview'); }}
                                 className={`px-4 py-1.5 rounded-md text-sm font-bold transition-all ${viewMode === 'department' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}
                             >
-                                Department
+                                {t('department')}
                             </button>
                         </div>
                     </div>
@@ -147,17 +152,22 @@ const HRDashboard = () => {
                     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
                         {/* Tabs */}
                         <div className="flex gap-2 border-b border-gray-200 dark:border-gray-700 pb-1 overflow-x-auto">
-                            {['Overview', 'Payroll', 'Grievances', 'Leaves', 'Live Map'].map((tab) => {
-                                const key = tab.toLowerCase().replace(' ', '');
+                            {[
+                                { id: 'overview', label: t('tab_overview') },
+                                { id: 'payroll', label: t('tab_payroll') },
+                                { id: 'grievances', label: t('tab_grievances') },
+                                { id: 'leaves', label: t('tab_leaves') },
+                                { id: 'livemap', label: t('tab_livemap') }
+                            ].map((tab) => {
                                 return (
                                     <button
-                                        key={key}
-                                        onClick={() => setActiveTab(key)}
-                                        className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${activeTab === key
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${activeTab === tab.id
                                             ? 'border-primary text-primary'
                                             : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}`}
                                     >
-                                        {tab}
+                                        {tab.label}
                                     </button>
                                 );
                             })}
@@ -170,13 +180,13 @@ const HRDashboard = () => {
                                     <AttendanceAnalyticsHub data={filteredAttendance} />
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="bg-blue-50 dark:bg-blue-900/10 p-6 rounded-xl border border-blue-100 dark:border-blue-800">
-                                            <h3 className="text-blue-800 dark:text-blue-300 font-bold mb-2">Budget Status</h3>
+                                            <h3 className="text-blue-800 dark:text-blue-300 font-bold mb-2">{t('budget_status')}</h3>
                                             <p className="text-3xl font-black text-blue-600 dark:text-blue-400">
                                                 ₹{(filteredPayroll[0]?.actuals || 0).toLocaleString()} / ₹{(filteredPayroll[0]?.budget || 0).toLocaleString()}
                                             </p>
                                         </div>
                                         <div className="bg-purple-50 dark:bg-purple-900/10 p-6 rounded-xl border border-purple-100 dark:border-purple-800">
-                                            <h3 className="text-purple-800 dark:text-purple-300 font-bold mb-2">Active Grievances</h3>
+                                            <h3 className="text-purple-800 dark:text-purple-300 font-bold mb-2">{t('active_grievances_label')}</h3>
                                             <p className="text-3xl font-black text-purple-600 dark:text-purple-400">
                                                 {filteredGrievances.filter(g => g.status !== 'Resolved').length}
                                             </p>

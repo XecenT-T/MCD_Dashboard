@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import api from '../api/axios';
 import DashboardLayout from '../components/DashboardLayout';
 
@@ -18,6 +19,7 @@ interface SentGrievance {
 
 const Grievances = () => {
     const { token } = useAuth();
+    const { t } = useLanguage();
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(true);
@@ -69,8 +71,8 @@ const Grievances = () => {
             <div className="max-w-7xl mx-auto space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">my Grievances</h2>
-                        <p className="text-text-muted mt-1">Manage and track your reported issues</p>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('my_grievances')}</h2>
+                        <p className="text-text-muted mt-1">{t('grievances_desc')}</p>
                     </div>
                 </div>
 
@@ -81,7 +83,7 @@ const Grievances = () => {
                             className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg font-bold transition-colors shadow-sm"
                         >
                             <span className="material-symbols-outlined">add_circle</span>
-                            Submit Grievance
+                            {t('submit_grievance')}
                         </button>
                     </div>
                     <SentGrievancesTable grievances={sentGrievances} onReply={handleReply} />
@@ -93,6 +95,7 @@ const Grievances = () => {
 
 // Sub-component for Sent Grievances Table
 const SentGrievancesTable = ({ grievances, onReply }: { grievances: SentGrievance[], onReply: (id: string, msg: string) => void }) => {
+    const { t } = useLanguage();
     const [selectedGrievance, setSelectedGrievance] = useState<SentGrievance | null>(null);
     const [replyText, setReplyText] = useState('');
 
@@ -120,19 +123,19 @@ const SentGrievancesTable = ({ grievances, onReply }: { grievances: SentGrievanc
     return (
         <div className="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="p-5 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="font-bold text-gray-900 dark:text-white">My Submitted Grievances</h3>
+                <h3 className="font-bold text-gray-900 dark:text-white">{t('my_submitted_grievances')}</h3>
             </div>
             {grievances.length === 0 ? (
-                <div className="p-8 text-center text-text-muted">No grievances submitted.</div>
+                <div className="p-8 text-center text-text-muted">{t('no_grievances')}</div>
             ) : (
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
                         <thead className="bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-medium">
                             <tr>
-                                <th className="px-6 py-4">Topic</th>
-                                <th className="px-6 py-4">Date</th>
-                                <th className="px-6 py-4">Status</th>
-                                <th className="px-6 py-4 text-center">Action</th>
+                                <th className="px-6 py-4">{t('topic')}</th>
+                                <th className="px-6 py-4">{t('date')}</th>
+                                <th className="px-6 py-4">{t('status')}</th>
+                                <th className="px-6 py-4 text-center">{t('action')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -151,7 +154,7 @@ const SentGrievancesTable = ({ grievances, onReply }: { grievances: SentGrievanc
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                                            <button className="text-primary hover:underline text-xs font-bold">View</button>
+                                            <button className="text-primary hover:underline text-xs font-bold">{t('view')}</button>
                                         </td>
                                     </tr>
                                 );
@@ -169,7 +172,7 @@ const SentGrievancesTable = ({ grievances, onReply }: { grievances: SentGrievanc
                             <div>
                                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">{selectedGrievance.title}</h3>
                                 <p className="text-sm text-text-muted mt-1">
-                                    Submitted on {new Date(selectedGrievance.createdAt).toLocaleDateString()} • {selectedGrievance.department}
+                                    {t('submitted_on')} {new Date(selectedGrievance.createdAt).toLocaleDateString()} • {selectedGrievance.department}
                                 </p>
                             </div>
                             <button onClick={closeDetails} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
@@ -179,14 +182,14 @@ const SentGrievancesTable = ({ grievances, onReply }: { grievances: SentGrievanc
 
                         <div className="p-6 overflow-y-auto flex-1 space-y-6">
                             <div className="prose dark:prose-invert max-w-none">
-                                <h4 className='text-sm font-bold uppercase text-gray-500'>Description</h4>
+                                <h4 className='text-sm font-bold uppercase text-gray-500'>{t('description')}</h4>
                                 <p>{selectedGrievance.description === "[Voice Recording Attached]" || !selectedGrievance.description ? "No description" : selectedGrievance.description}</p>
                             </div>
 
                             <div className="border-t border-gray-100 dark:border-border-dark pt-6">
                                 <h4 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                                     <span className="material-symbols-outlined">forum</span>
-                                    Discussion
+                                    {t('discussion')}
                                 </h4>
 
                                 <div className="space-y-4 mb-6">
@@ -220,7 +223,7 @@ const SentGrievancesTable = ({ grievances, onReply }: { grievances: SentGrievanc
                                         );
                                     })}
                                     {sortedReplies.length === 0 && (
-                                        <p className="text-center text-text-muted italic text-sm">No replies yet.</p>
+                                        <p className="text-center text-text-muted italic text-sm">{t('no_replies')}</p>
                                     )}
                                 </div>
 
@@ -229,7 +232,7 @@ const SentGrievancesTable = ({ grievances, onReply }: { grievances: SentGrievanc
                                     <input
                                         type="text"
                                         className="flex-1 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                        placeholder={selectedGrievance.status === 'resolved' || selectedGrievance.status === 'rejected' ? "This grievance is closed" : "Type a reply..."}
+                                        placeholder={selectedGrievance.status === 'resolved' || selectedGrievance.status === 'rejected' ? t('grievance_closed') : t('type_reply')}
                                         value={replyText}
                                         onChange={e => setReplyText(e.target.value)}
                                         onKeyPress={e => e.key === 'Enter' && handleSendReply()}

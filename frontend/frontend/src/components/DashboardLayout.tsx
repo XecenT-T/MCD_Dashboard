@@ -6,9 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useDashboardView } from '../context/DashboardViewContext';
+import { updateLanguage } from '../api/user';
+
 
 const DashboardLayout = ({ children, title, forceCollapsed = false }: { children: React.ReactNode, title?: string, forceCollapsed?: boolean }) => {
-    const { user, logout } = useAuth();
+    const { user, logout, reloadUser } = useAuth();
     const { t, language, setLanguage } = useLanguage();
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -45,8 +47,8 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
                             <span className="material-symbols-outlined">account_balance</span>
                         </div>
                         <div>
-                            <h1 className="font-bold text-lg leading-tight text-primary">MCD Portal</h1>
-                            <p className="text-xs text-text-muted">MCD Official Portal</p>
+                            <h1 className="font-bold text-lg leading-tight text-primary">{t('mcd_portal')}</h1>
+                            <p className="text-xs text-text-muted">{t('official_portal')}</p>
                         </div>
                     </div>
 
@@ -63,9 +65,9 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
                                 <NavItem icon="calendar_month" label={t('nav_attendance')} onClick={() => navigate('/attendance')} active={window.location.pathname === '/attendance'} />
                                 <NavItem icon="payments" label={t('nav_payroll')} onClick={() => navigate('/payroll')} active={window.location.pathname === '/payroll'} />
 
-                                <NavDropdown icon="description" label="Service Request">
-                                    <NavItem icon="badge" label="ID Card Generator" onClick={() => setShowIDCard(true)} />
-                                    <NavItem icon="folder_shared" label="Dept. Document" onClick={() => navigate('/department-documents')} />
+                                <NavDropdown icon="description" label={t('service_request')}>
+                                    <NavItem icon="badge" label={t('id_card_generator')} onClick={() => handleWIP('ID Card Generator')} />
+                                    <NavItem icon="folder_shared" label={t('dept_document_nav')} onClick={() => navigate('/department-documents')} />
                                 </NavDropdown>
 
 
@@ -76,24 +78,24 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
 
                         {viewMode === 'department' && user?.role === 'official' && (
                             <div className="px-4 py-4 mt-4 bg-blue-50 dark:bg-primary/10 rounded-xl border border-blue-100 dark:border-primary/20">
-                                <p className="text-xs font-bold text-blue-600 dark:text-primary uppercase tracking-wider mb-2">Management Mode</p>
-                                <NavItem icon="swap_horiz" label={t('nav_transfers')} onClick={() => navigate('/transfers')} active={window.location.pathname === '/transfers'} />
-                                <NavItem icon="map" label="Live Location" onClick={() => navigate('/heatmap')} active={window.location.pathname === '/heatmap'} />
-                                <NavItem icon="report" label="Dept. Grievances" onClick={() => navigate('/department-grievances')} active={window.location.pathname === '/department-grievances'} />
-                                <NavItem icon="description" label="Dept. Leaves" onClick={() => navigate('/hr-dashboard?tab=leaves')} active={window.location.search.includes('tab=leaves')} />
+                                <p className="text-xs font-bold text-blue-600 dark:text-primary uppercase tracking-wider mb-2">{t('management_mode')}</p>
+                                <NavItem icon="swap_horiz" label={t('nav_transfers')} onClick={() => handleWIP('Transfers')} />
+                                <NavItem icon="map" label={t('live_location')} onClick={() => navigate('/heatmap')} active={window.location.pathname === '/heatmap'} />
+                                <NavItem icon="report" label={t('dept_grievances')} onClick={() => navigate('/department-grievances')} active={window.location.pathname === '/department-grievances'} />
+                                <NavItem icon="description" label={t('dept_leaves')} onClick={() => navigate('/hr-dashboard?tab=leaves')} active={window.location.search.includes('tab=leaves')} />
                             </div>
                         )}
 
                         {isHR && (
                             <>
                                 <div className="px-4 mt-6 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
-                                    Administration
+                                    {t('administration')}
                                 </div>
-                                <NavItem icon="grid_view" label="Overview" onClick={() => navigate('/hr-dashboard')} active={window.location.pathname === '/hr-dashboard'} />
+                                <NavItem icon="grid_view" label={t('overview')} onClick={() => navigate('/hr-dashboard')} active={window.location.pathname === '/hr-dashboard'} />
 
-                                <NavItem icon="payments" label="Payroll" onClick={() => navigate('/payroll')} active={window.location.pathname === '/payroll'} />
-                                <NavItem icon="inbox" label="Requests" onClick={() => handleWIP('Requests')} />
-                                <NavItem icon="report" label="Grievances" onClick={() => navigate('/grievances')} active={window.location.pathname === '/grievances'} />
+                                <NavItem icon="payments" label={t('nav_payroll')} onClick={() => navigate('/payroll')} active={window.location.pathname === '/payroll'} />
+                                <NavItem icon="inbox" label={t('requests')} onClick={() => handleWIP('Requests')} />
+                                <NavItem icon="report" label={t('nav_grievances')} onClick={() => navigate('/grievances')} active={window.location.pathname === '/grievances'} />
                             </>
                         )}
                     </nav>
@@ -137,28 +139,39 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
 
                     <div className="flex items-center gap-2 sm:gap-6 flex-1 justify-end max-w-2xl">
                         {/* Language Toggle (Simple Cycle for now or Modal later) */}
-                        <button
-                            onClick={() => {
-                                // Simple cycle for demo purposes or redirect to settings
-                                const langs: any[] = ['en', 'hi', 'pa', 'mr', 'ta', 'te', 'bn'];
-                                const currentIndex = langs.indexOf(language);
-                                const nextIndex = (currentIndex + 1) % langs.length;
-                                setLanguage(langs[nextIndex]);
-                            }}
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-border-dark hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                        >
-                            <span className="material-symbols-outlined text-gray-500 text-[20px]">translate</span>
-                            <span className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase">{language}</span>
-                        </button>
 
-                        <div className="hidden md:flex items-center flex-1 max-w-md bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2">
-                            <span className="material-symbols-outlined text-gray-400 text-[20px]">search</span>
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                className="bg-transparent border-none focus:outline-none text-sm ml-2 w-full text-gray-700 dark:text-gray-200 placeholder:text-gray-400"
-                            />
+                        {/* Language Dropdown */}
+                        <div className="relative">
+                            <button
+                                onClick={() => setSidebarOpen(false) /* reusing close logic just in case, but mainly just toggle local state needed */}
+                                // Actually, we need a local state for this dropdown. 
+                                // Since I can't easily add state in this Replace block without changing the whole file to add useState at the top if it wasn't there, 
+                                // I will check if I can use the existing NavDropdown logic or just add a simple state.
+                                // DashboardLayout already has useState imported. I'll add a new state for langMenuOpen in a separate edit if needed, 
+                                // but wait, I can't add state inside the component body from here easily if I don't see the top.
+                                // Let's assume I will add `const [langMenuOpen, setLangMenuOpen] = useState(false);` in the next step.
+                                // For now, I'll write the JSX that uses `langMenuOpen`.
+                                onMouseEnter={() => { }} // No-op, we'll use click or simple hover css
+                            >
+                            </button>
                         </div>
+                        {/* RE-WRITING THE WHOLE DROPDOWN LOGIC PROPERLY */}
+                        <LanguageSelector
+                            currentLang={language}
+                            onSelect={async (newLang: any) => {
+                                setLanguage(newLang);
+                                if (user) {
+                                    try {
+                                        await updateLanguage(newLang);
+                                        await reloadUser();
+                                    } catch (err) {
+                                        console.error('Failed to persist language preference');
+                                    }
+                                }
+                            }}
+                        />
+
+
 
                         <div className="flex items-center gap-3 pl-2 sm:pl-6 border-l border-gray-200 dark:border-border-dark">
                             <div className="text-right hidden sm:block">
@@ -223,3 +236,53 @@ const NavDropdown = ({ icon, label, children }: { icon: string, label: string, c
 };
 
 export default DashboardLayout;
+
+const LanguageSelector = ({ currentLang, onSelect }: { currentLang: string, onSelect: (lang: string) => void }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const languages = [
+        { code: 'en', label: 'English' },
+        { code: 'hi', label: 'Hindi (हिंदी)' },
+        { code: 'pa', label: 'Punjabi (ਪੰਜਾਬੀ)' },
+        { code: 'mr', label: 'Marathi (मराठी)' },
+        { code: 'ta', label: 'Tamil (தமிழ்)' },
+        { code: 'te', label: 'Telugu (తెలుగు)' },
+        { code: 'bn', label: 'Bengali (বাংলা)' },
+    ];
+
+    return (
+        <div className="relative">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-border-dark hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >
+                <span className="material-symbols-outlined text-gray-500 text-[20px]">translate</span>
+                <span className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase">{currentLang}</span>
+                <span className="material-symbols-outlined text-[16px] text-gray-400">arrow_drop_down</span>
+            </button>
+
+            {isOpen && (
+                <>
+                    <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
+                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-surface-dark rounded-xl shadow-lg border border-gray-100 dark:border-border-dark py-2 z-20 animate-in fade-in zoom-in-95 duration-200">
+                        {languages.map((lang) => (
+                            <button
+                                key={lang.code}
+                                onClick={() => {
+                                    onSelect(lang.code);
+                                    setIsOpen(false);
+                                }}
+                                className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors
+                                    ${currentLang === lang.code ? 'text-primary font-bold bg-blue-50/50 dark:bg-primary/10' : 'text-gray-700 dark:text-gray-300'}
+                                `}
+                            >
+                                <span>{lang.label}</span>
+                                {currentLang === lang.code && <span className="material-symbols-outlined text-[16px]">check</span>}
+                            </button>
+                        ))}
+                    </div>
+                </>
+            )}
+        </div>
+    );
+};

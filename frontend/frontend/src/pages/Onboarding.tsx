@@ -165,11 +165,11 @@ const Onboarding = () => {
 
             setFaceEnrolled(true);
             setLoading(false);
-            alert("Face enrolled successfully!");
+            alert(t('face_enrolled_success'));
         } catch (err: any) {
             console.error("Enrollment Error:", err);
             setLoading(false);
-            alert(`Face enrollment failed: ${err.response?.data?.msg || err.message}`);
+            alert(`${t('error_creating')}: ${err.response?.data?.msg || err.message}`);
         }
     };
 
@@ -205,10 +205,10 @@ const Onboarding = () => {
                     </div>
 
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">
-                        {step === 1 ? "Choose Language / भाषा चुनें" : t('setup_face')}
+                        {step === 1 ? t('choose_language_title') : t('register_face_id')}
                     </h1>
                     <p className="text-text-muted text-center mb-8">
-                        {step === 1 ? "Select your preferred language for the portal." : "Register your face ID for secure attendance."}
+                        {step === 1 ? t('select_lang_desc') : t('register_face_id')}
                     </p>
 
                     {step === 1 && (
@@ -242,7 +242,7 @@ const Onboarding = () => {
                             {!captureVideo && !faceEnrolled && (
                                 <button onClick={startVideo} disabled={!modelsLoaded} className={`btn-primary w-full py-3 flex items-center justify-center gap-2 ${!modelsLoaded ? 'opacity-50 cursor-wait' : ''}`}>
                                     <span className="material-symbols-outlined">camera_alt</span>
-                                    {modelsLoaded ? 'Start Camera' : 'Loading AI Models...'}
+                                    {modelsLoaded ? t('start_camera') : t('loading_models')}
                                 </button>
                             )}
 
@@ -258,15 +258,15 @@ const Onboarding = () => {
                                     <div className="size-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
                                         <span className="material-symbols-outlined text-4xl">check</span>
                                     </div>
-                                    <p className="font-medium text-green-600">Face Captured!</p>
+                                    <p className="font-medium text-green-600">{t('face_captured')}</p>
                                     <button onClick={enrollFace} disabled={loading} className="btn-primary w-full">
-                                        {loading ? 'Registering...' : 'Confirm Enrollment'}
+                                        {loading ? t('registering') : t('confirm_enrollment')}
                                     </button>
                                     <button onClick={() => {
                                         cleanupCamera(); // Stop camera
                                         setCaptureVideo(false); // Go back to start state
                                         setFaceDescriptor(null);
-                                    }} className="text-text-muted hover:text-red-500 text-sm">Retake</button>
+                                    }} className="text-text-muted hover:text-red-500 text-sm">{t('retake')}</button>
                                 </div>
                             )}
 
@@ -275,8 +275,8 @@ const Onboarding = () => {
                                     <div className="size-24 bg-primary text-white rounded-full flex items-center justify-center mx-auto shadow-lg shadow-primary/30">
                                         <span className="material-symbols-outlined text-5xl">verified_user</span>
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">All Set!</h3>
-                                    <p className="text-text-muted">Your face ID has been registered.</p>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">{t('all_set')}</h3>
+                                    <p className="text-text-muted">{t('face_registered_msg')}</p>
                                 </div>
                             )}
                         </div>
@@ -291,7 +291,7 @@ const Onboarding = () => {
                                 : 'bg-primary text-white shadow-lg shadow-primary/30 hover:shadow-xl hover:-translate-y-0.5'
                                 }`}
                         >
-                            {step === 1 ? 'Next' : 'Finish Setup'}
+                            {step === 1 ? t('next') : t('finish_setup')}
                         </button>
                     </div>
                 </div>

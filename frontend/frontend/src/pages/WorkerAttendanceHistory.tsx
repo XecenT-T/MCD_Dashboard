@@ -4,11 +4,13 @@ import { useAuth } from '../context/AuthContext';
 import DashboardLayout from '../components/DashboardLayout';
 import api from '../api/axios';
 import AttendanceChart from '../components/AttendanceChart';
+import { useLanguage } from '../context/LanguageContext';
 
 const WorkerAttendanceHistory = () => {
     const { userId } = useParams();
     const navigate = useNavigate();
     const { user } = useAuth();
+    const { t } = useLanguage();
     const [records, setRecords] = useState<any[]>([]);
 
 
@@ -35,7 +37,7 @@ const WorkerAttendanceHistory = () => {
     }));
 
     if (!user || user.role !== 'official') {
-        return <div className="p-10 text-center">Access Denied</div>;
+        return <div className="p-10 text-center">{t('access_denied')}</div>;
     }
 
     return (
@@ -46,31 +48,31 @@ const WorkerAttendanceHistory = () => {
                         <span className="material-symbols-outlined">arrow_back</span>
                     </button>
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Attendance History</h2>
-                        <p className="text-text-muted">Viewing records for ID: {userId}</p>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('attendance_history')}</h2>
+                        <p className="text-text-muted">{t('viewing_records')} {userId}</p>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Chart Section */}
                     <div className="lg:col-span-3 bg-white dark:bg-surface-dark p-6 rounded-2xl border border-gray-100 dark:border-border-dark shadow-sm h-80">
-                        <h3 className="font-bold mb-4">Recent Activity</h3>
+                        <h3 className="font-bold mb-4">{t('recent_activity')}</h3>
                         <AttendanceChart isOfficial={true} data={chartData.length ? chartData : undefined} />
                     </div>
 
                     {/* Table Section */}
                     <div className="lg:col-span-3 bg-white dark:bg-surface-dark rounded-xl border border-gray-100 dark:border-border-dark shadow-sm overflow-hidden">
                         <div className="p-6 border-b border-gray-100 dark:border-border-dark">
-                            <h3 className="font-bold">Detailed Records</h3>
+                            <h3 className="font-bold">{t('detailed_records')}</h3>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-sm">
                                 <thead className="bg-gray-50 dark:bg-gray-800/50">
                                     <tr>
-                                        <th className="p-4">Date</th>
-                                        <th className="p-4">Time</th>
-                                        <th className="p-4">Status</th>
-                                        <th className="p-4">Location</th>
+                                        <th className="p-4">{t('doc_date')}</th>
+                                        <th className="p-4">{t('time_header')}</th>
+                                        <th className="p-4">{t('status_header')}</th>
+                                        <th className="p-4">{t('location_header')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -89,7 +91,7 @@ const WorkerAttendanceHistory = () => {
                                     ))}
                                     {records.length === 0 && (
                                         <tr>
-                                            <td colSpan={4} className="p-8 text-center text-text-muted">No records found.</td>
+                                            <td colSpan={4} className="p-8 text-center text-text-muted">{t('no_records')}</td>
                                         </tr>
                                     )}
                                 </tbody>

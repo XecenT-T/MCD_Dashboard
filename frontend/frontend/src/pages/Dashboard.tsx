@@ -142,34 +142,34 @@ const Dashboard = () => {
 
     // Stats Data
     const workerStats = [
-        { label: 'Days Present (Oct)', value: '18 / 22', icon: 'calendar_month', color: 'text-green-600', bg: 'bg-green-100', progress: 85 },
-        { label: 'Leave Balance', value: '5 Days', sub: 'Expires Dec 31', icon: 'beach_access', color: 'text-yellow-600', bg: 'bg-yellow-100' },
-        { label: 'Next Pay Date', value: 'Oct 31', sub: 'Payroll processing...', icon: 'payments', color: 'text-blue-600', bg: 'bg-blue-100' },
-        { label: 'Pending Actions', value: '2 Items', sub: 'View details', icon: 'pending_actions', color: 'text-red-600', bg: 'bg-red-100' }
+        { label: t('days_present') + ' (Oct)', value: '18 / 22', icon: 'calendar_month', color: 'text-green-600', bg: 'bg-green-100', progress: 85 },
+        { label: t('leave_balance'), value: '5 ' + t('days_present').split(' ')[1], sub: t('expires_dec'), icon: 'beach_access', color: 'text-yellow-600', bg: 'bg-yellow-100' },
+        { label: t('next_pay_date'), value: 'Oct 31', sub: t('processing'), icon: 'payments', color: 'text-blue-600', bg: 'bg-blue-100' },
+        { label: t('pending_actions'), value: '2 Items', sub: t('view_details'), icon: 'pending_actions', color: 'text-red-600', bg: 'bg-red-100' }
     ];
 
     const departmentStats = [
         {
-            label: 'Total Workers',
+            label: t('total_workers'),
             value: totalWorkers,
-            sub: 'Active in Dept',
+            sub: t('active_in_dept'),
             icon: 'groups',
             color: 'text-blue-600',
             bg: 'bg-blue-100',
             action: () => navigate('/department-workers') // Open in same view
         },
         {
-            label: 'Dept. Attendance',
+            label: t('dept_attendance'),
             value: deptAttendance,
-            sub: 'Today',
+            sub: t('today'),
             icon: 'fact_check',
             color: 'text-green-600',
             bg: 'bg-green-100',
             progress: parseInt(deptAttendance) || 0,
             action: () => navigate('/department-attendance')
         },
-        { label: 'Pending Grievances', value: loadingGrievances ? '...' : pendingGrievances.length.toString(), sub: 'Action Required', icon: 'report_problem', color: 'text-red-600', bg: 'bg-red-100' },
-        { label: 'Total Payroll', value: '₹ 12.5L', sub: 'This Month', icon: 'payments', color: 'text-purple-600', bg: 'bg-purple-100' }
+        { label: t('pending_grievances'), value: loadingGrievances ? '...' : pendingGrievances.length.toString(), sub: t('action_required'), icon: 'report_problem', color: 'text-red-600', bg: 'bg-red-100' },
+        { label: t('total_payroll'), value: '₹ 12.5L', sub: t('this_month'), icon: 'payments', color: 'text-purple-600', bg: 'bg-purple-100' }
     ];
 
     const currentStats = (viewMode === 'department' && isOfficial) ? departmentStats : workerStats;
@@ -198,7 +198,7 @@ const Dashboard = () => {
                             >
                                 <div className="flex items-center gap-2">
                                     <span className="material-symbols-outlined text-[18px]">person</span>
-                                    My Profile
+                                    {t('my_profile')}
                                 </div>
                             </button>
                             <button
@@ -207,7 +207,7 @@ const Dashboard = () => {
                             >
                                 <div className="flex items-center gap-2">
                                     <span className="material-symbols-outlined text-[18px]">domain</span>
-                                    Dept. Management
+                                    {t('dept_management')}
                                 </div>
                             </button>
                         </div>
@@ -292,9 +292,9 @@ const Dashboard = () => {
                             {/* Grievance Approvals */}
                             <div className="bg-white dark:bg-surface-dark rounded-2xl border border-gray-100 dark:border-border-dark shadow-sm overflow-hidden">
                                 <div className="p-6 border-b border-gray-100 dark:border-border-dark flex items-center justify-between">
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Pending Grievances</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t('pending_grievances')}</h3>
                                     <span className="bg-orange-100 text-orange-600 text-xs font-bold px-2 py-1 rounded-full">
-                                        {loadingGrievances ? '...' : `${pendingGrievances.length} Active`}
+                                        {loadingGrievances ? '...' : `${pendingGrievances.length} ${t('grievance_active_count')}`}
                                     </span>
                                 </div>
                                 <div className="divide-y divide-gray-100 dark:divide-gray-800 max-h-[300px] overflow-y-auto">
@@ -338,29 +338,29 @@ const Dashboard = () => {
                         <div className="space-y-6">
                             {/* Official Actions */}
                             <div className="bg-white dark:bg-surface-dark p-6 rounded-2xl border border-gray-100 dark:border-border-dark shadow-sm">
-                                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Management Actions</h3>
+                                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">{t('management_actions')}</h3>
                                 <div className="grid grid-cols-2 gap-4">
                                     <QuickAction
                                         icon="campaign"
-                                        label="Post Notice"
+                                        label={t('post_notice')}
                                         color="text-blue-600"
                                         bg="bg-blue-50"
                                         onClick={() => setShowNoticeModal(true)}
                                         primary
                                     />
                                     <QuickAction icon="how_to_reg" label={t('approve_leave')} color="text-green-600" bg="bg-green-50" onClick={() => handleWIP('Approve Leave')} />
-                                    <QuickAction icon="transfer_within_a_station" label={t('transfers')} color="text-purple-600" bg="bg-purple-50" onClick={() => navigate('/transfers')} />
-                                    <QuickAction icon="summarize" label={t('team_reports')} color="text-orange-600" bg="bg-orange-50" onClick={() => handleWIP('Team Reports')} />
-                                    <QuickAction icon="person_add" label="Add User" color="text-indigo-600" bg="bg-indigo-50" onClick={() => navigate('/admin/create-user')} />
+                                    <QuickAction icon="transfer_within_a_station" label={t('transfers')} color="text-purple-600" bg="bg-purple-50" onClick={() => handleWIP('Transfers')} />
+                                    <QuickAction icon="summarize" label={t('team_reports_label')} color="text-orange-600" bg="bg-orange-50" onClick={() => handleWIP('Team Reports')} />
+                                    <QuickAction icon="person_add" label={t('add_user')} color="text-indigo-600" bg="bg-indigo-50" onClick={() => navigate('/admin/create-user')} />
                                 </div>
                             </div>
 
                             {/* Budget/Notices Summary */}
                             <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-2xl text-white shadow-lg">
-                                <h3 className="font-bold text-lg mb-2">Department Notices</h3>
-                                <p className="text-blue-100 text-sm mb-4">You have posted 5 notices this month.</p>
+                                <h3 className="font-bold text-lg mb-2">{t('department_notices')}</h3>
+                                <p className="text-blue-100 text-sm mb-4">{t('notices_posted_text').replace('{count}', '5')}</p>
                                 <button onClick={() => setShowNoticeModal(true)} className="w-full py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-bold transition-colors">
-                                    Manage Notices
+                                    {t('manage_notices')}
                                 </button>
                             </div>
                         </div>
@@ -426,6 +426,7 @@ const GrievanceRow = ({ title, user, date, status, onClick }: any) => (
 );
 
 const NoticeModal = ({ onClose }: { onClose: () => void }) => {
+    const { t } = useLanguage();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [loading, setLoading] = useState(false);
@@ -447,10 +448,10 @@ const NoticeModal = ({ onClose }: { onClose: () => void }) => {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
             <div className="bg-white dark:bg-surface-dark rounded-xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
-                <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Post Department Notice</h3>
+                <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">{t('post_notice')}</h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Title</label>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">{t('grievance_title')}</label>
                         <input
                             type="text"
                             required
@@ -460,7 +461,7 @@ const NoticeModal = ({ onClose }: { onClose: () => void }) => {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Content</label>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">{t('grievance_desc')}</label>
                         <textarea
                             required
                             className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent dark:text-white h-32"
@@ -469,9 +470,9 @@ const NoticeModal = ({ onClose }: { onClose: () => void }) => {
                         />
                     </div>
                     <div className="flex gap-3 pt-2">
-                        <button type="button" onClick={onClose} className="flex-1 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">Cancel</button>
+                        <button type="button" onClick={onClose} className="flex-1 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">{t('cancel')}</button>
                         <button type="submit" disabled={loading} className="flex-1 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-dark">
-                            {loading ? 'Posting...' : 'Post Notice'}
+                            {loading ? t('status_processing') : t('post_notice')}
                         </button>
                     </div>
                 </form>

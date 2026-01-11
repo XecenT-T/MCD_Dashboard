@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -8,6 +9,7 @@ const Login = () => {
         password: ''
     });
     const { login, error, clearError, loginAsHR } = useAuth();
+    const { t } = useLanguage();
     const navigate = useNavigate();
     const { username, password } = formData;
 
@@ -80,10 +82,10 @@ const Login = () => {
                                 Official Portal v2.0
                             </span>
                             <h1 className="text-4xl lg:text-5xl font-black leading-tight tracking-tight mb-6">
-                                Unified Management System
+                                {t('unified_sys')}
                             </h1>
                             <p className="text-lg text-blue-100 font-medium leading-relaxed mb-8">
-                                Streamlined access for all Municipal Corporation users. Manage attendance, payroll, transfers, and grievances in one secure location.
+                                {t('streamlined_access')}
                             </p>
                         </div>
                         {/* Feature List */}
@@ -93,8 +95,8 @@ const Login = () => {
                                     <span className="material-symbols-outlined text-white">badge</span>
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-lg">Employee Services</h3>
-                                    <p className="text-blue-100 text-sm opacity-80">Access payroll slips and leave records instantly.</p>
+                                    <h3 className="font-bold text-lg">{t('employee_services_title')}</h3>
+                                    <p className="text-blue-100 text-sm opacity-80">{t('employee_services_desc')}</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
@@ -102,8 +104,8 @@ const Login = () => {
                                     <span className="material-symbols-outlined text-white">how_to_reg</span>
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-lg">Attendance Tracking</h3>
-                                    <p className="text-blue-100 text-sm opacity-80">Real-time biometric and geo-tagged attendance logs.</p>
+                                    <h3 className="font-bold text-lg">{t('attendance_tracking_title')}</h3>
+                                    <p className="text-blue-100 text-sm opacity-80">{t('attendance_tracking_desc')}</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
@@ -111,15 +113,15 @@ const Login = () => {
                                     <span className="material-symbols-outlined text-white">support_agent</span>
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-lg">Grievance Redressal</h3>
-                                    <p className="text-blue-100 text-sm opacity-80">Direct channel for internal complaints and resolution.</p>
+                                    <h3 className="font-bold text-lg">{t('grievance_redressal_title')}</h3>
+                                    <p className="text-blue-100 text-sm opacity-80">{t('grievance_redressal_desc')}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     {/* Footer for Left Panel */}
                     <div className="relative z-20 mt-auto pt-10">
-                        <p className="text-xs text-blue-200">© 2026 Municipal Corporation. All rights reserved.</p>
+                        <p className="text-xs text-blue-200">{t('copyright')}</p>
                     </div>
                 </div>
 
@@ -128,18 +130,18 @@ const Login = () => {
                     <div className="w-full max-w-[480px] flex flex-col gap-8">
                         {/* Mobile Only Header (Visible on small screens) */}
                         <div className="md:hidden flex flex-col gap-2 mb-4">
-                            <h1 className="text-3xl font-bold text-text-main dark:text-white">Welcome Back</h1>
-                            <p className="text-text-muted dark:text-gray-400">Unified MCD Official Portal</p>
+                            <h1 className="text-3xl font-bold text-text-main dark:text-white">{t('welcome_back')}</h1>
+                            <p className="text-text-muted dark:text-gray-400">{t('official_portal')}</p>
                         </div>
                         {/* Form Heading */}
                         <div className="flex flex-col gap-3">
                             <div className="flex items-center gap-2 text-primary mb-2">
                                 <span className="material-symbols-outlined">lock</span>
-                                <span className="text-xs font-bold uppercase tracking-wider">Secure Login</span>
+                                <span className="text-xs font-bold uppercase tracking-wider">{t('secure_login')}</span>
                             </div>
-                            <h2 className="text-text-main dark:text-white tracking-tight text-[32px] font-bold leading-tight">Sign in to your account</h2>
+                            <h2 className="text-text-main dark:text-white tracking-tight text-[32px] font-bold leading-tight">{t('sign_in_title')}</h2>
                             <p className="text-text-muted dark:text-gray-400 text-sm font-normal leading-normal">
-                                Please enter your credentials to access the dashboard.
+                                {t('enter_creds')}
                             </p>
                             {error && (
                                 <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm border border-red-200">
@@ -151,7 +153,7 @@ const Login = () => {
                         <form className="flex flex-col gap-6" onSubmit={onSubmit}>
                             {/* Username Field */}
                             <label className="flex flex-col w-full gap-2">
-                                <span className="text-text-main dark:text-gray-200 text-sm font-medium leading-normal">User ID / Username</span>
+                                <span className="text-text-main dark:text-gray-200 text-sm font-medium leading-normal">{t('user_id')} / Username</span>
                                 <div className="relative group">
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary">
                                         <span className="material-symbols-outlined text-[20px]">person</span>
@@ -169,7 +171,7 @@ const Login = () => {
                             {/* Password Field */}
                             <label className="flex flex-col w-full gap-2">
                                 <div className="flex justify-between items-center">
-                                    <span className="text-text-main dark:text-gray-200 text-sm font-medium leading-normal">Password</span>
+                                    <span className="text-text-main dark:text-gray-200 text-sm font-medium leading-normal">{t('password')}</span>
                                 </div>
                                 <div className="relative group flex items-stretch">
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary z-10">
@@ -188,14 +190,14 @@ const Login = () => {
                                     </button>
                                 </div>
                                 <div className="flex justify-end mt-1">
-                                    <a className="text-primary text-sm font-semibold hover:underline" href="#">Forgot Password?</a>
+                                    <a className="text-primary text-sm font-semibold hover:underline" href="#">{t('forgot_password')}</a>
                                 </div>
                             </label>
                             {/* CAPTCHA Section Removed */}
                             {/* Actions */}
                             <div className="pt-2">
                                 <button className="w-full flex items-center justify-center gap-2 h-12 bg-primary hover:bg-primary-dark text-white text-base font-bold rounded-lg shadow-lg shadow-primary/30 transition-all hover:scale-[1.01] active:scale-[0.99]">
-                                    <span>Secure Login</span>
+                                    <span>{t('secure_login')}</span>
                                     <span className="material-symbols-outlined text-[20px]">login</span>
                                 </button>
 
@@ -210,22 +212,22 @@ const Login = () => {
                                 </div>
 
                                 <button type="button" onClick={handleDevLogin} className="w-full mt-4 flex items-center justify-center gap-2 h-10 border-2 border-dashed border-indigo-300 dark:border-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 text-sm font-bold rounded-lg transition-colors">
-                                    <span>Demo Login (HR Admin)</span>
+                                    <span>{t('demo_login')}</span>
                                     <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
                                 </button>
                             </div>
                             {/* Register Link Removed - Admin Only Creation */}
                             <div className="text-center mt-4">
                                 <p className="text-text-muted dark:text-gray-400 text-sm">
-                                    Don't have an account? <span className="text-gray-500">Contact your Department Head.</span>
+                                    {t('no_account')} <span className="text-gray-500">{t('contact_dept_head')}</span>
                                 </p>
                             </div>
                         </form>
                         {/* Footer Links inside Form Area */}
                         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-text-muted dark:text-gray-500 mt-auto pt-6 border-t border-dashed border-border-light dark:border-border-dark">
-                            <a className="hover:text-primary transition-colors" href="#">Privacy Policy</a>
-                            <a className="hover:text-primary transition-colors" href="#">Terms of Service</a>
-                            <a className="hover:text-primary transition-colors" href="#">Security Guidelines</a>
+                            <a className="hover:text-primary transition-colors" href="#">{t('privacy_policy')}</a>
+                            <a className="hover:text-primary transition-colors" href="#">{t('terms_service')}</a>
+                            <a className="hover:text-primary transition-colors" href="#">{t('security_guidelines')}</a>
                         </div>
                     </div>
                 </div>
