@@ -10,8 +10,7 @@ const WorkerAttendanceHistory = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
     const [records, setRecords] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [workerName, setWorkerName] = useState('Worker');
+
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -22,8 +21,6 @@ const WorkerAttendanceHistory = () => {
                 // For MVP, just showing list.
             } catch (err) {
                 console.error("Failed to fetch worker history", err);
-            } finally {
-                setLoading(false);
             }
         };
         if (userId) fetchHistory();
