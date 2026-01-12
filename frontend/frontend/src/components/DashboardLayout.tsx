@@ -29,9 +29,7 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
         navigate('/login');
     };
 
-    const handleWIP = (feature: string) => {
-        alert(`${feature} is currently Work In Progress`);
-    };
+
 
 
 
@@ -97,7 +95,7 @@ const DashboardLayout = ({ children, title, forceCollapsed = false }: { children
                                 </div>
                                 <NavItem icon="grid_view" label={t('overview')} onClick={() => { navigate('/hr-dashboard'); setSidebarOpen(false); }} active={window.location.pathname === '/hr-dashboard'} />
                                 <NavItem icon="payments" label={t('nav_payroll')} onClick={() => { navigate('/payroll'); setSidebarOpen(false); }} active={window.location.pathname === '/payroll'} />
-                                <NavItem icon="inbox" label={t('requests')} onClick={() => handleWIP('Requests')} />
+
                                 <NavItem icon="report" label={t('nav_grievances')} onClick={() => { navigate('/department-grievances'); setSidebarOpen(false); }} active={window.location.pathname === '/department-grievances'} />
                             </>
                         )}
