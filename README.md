@@ -5,7 +5,7 @@
 ![Status](https://img.shields.io/badge/status-Active-success.svg)
 ![Stack](https://img.shields.io/badge/stack-MERN-informational.svg)
 
-**CivicForce AI** is a comprehensive, intelligent dashboard designed to modernize workforce management for municipal bodies. By leveraging biometric authentication, geo-spatial intelligence, and AI-powered support, we tackle the challenges of ghost workers, inefficient deployment, and grievance redressal in the public sector.
+**MCD Portal** is a comprehensive, intelligent dashboard designed to modernize workforce management for municipal bodies. By leveraging biometric authentication, geo-spatial intelligence, and AI-powered support, we tackle the challenges of ghost workers, inefficient deployment, and grievance redressal in the public sector.
 
 ---
 
