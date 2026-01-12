@@ -46,26 +46,44 @@ const PayrollCommandCenter: React.FC<PayrollCommandCenterProps> = ({ data, onRel
                     <p className="text-2xl font-bold mt-1 text-white">{formatCurrency(totalBudget)}</p>
                 </div>
                 <div className="bg-white/5 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
-                    <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">{t('actual_disbursal')}</p>
-                    <p className="text-2xl font-bold mt-1 text-green-400">{formatCurrency(totalActuals)}</p>
+                    <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">{t('total_balance')}</p>
+                    <p className={`text-2xl font-bold mt-1 ${totalBudget - totalActuals < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+                        {formatCurrency(totalBudget - totalActuals)}
+                    </p>
                 </div>
             </div>
 
-            <div className="space-y-3 mb-8 flex-1 relative z-10 overflow-y-auto">
-                {data.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors border border-transparent hover:border-white/10">
-                        <div className="flex items-center gap-3">
-                            <div className={`size-2 rounded-full ${item.status === 'Released' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-yellow-500 animate-pulse'}`}></div>
-                            <div>
-                                <p className="font-bold text-sm">{t(`dept_${item.department.toLowerCase()}`) || item.department}</p>
-                                <p className="text-xs text-gray-400">{item.status}</p>
+            <div className="space-y-3 mb-8 flex-1 relative z-10 overflow-y-auto pr-2">
+                {data.map((item, idx) => {
+                    const utilization = (item.actuals / item.budget) * 100;
+                    const isOverBudget = item.actuals > item.budget;
+
+                    return (
+                        <div key={idx} className="p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors border border-transparent hover:border-white/10">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-3">
+                                    <div className={`size-2 rounded-full ${item.status === 'Released' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-yellow-500 animate-pulse'}`}></div>
+                                    <div>
+                                        <p className="font-bold text-sm">{t(`dept_${item.department.toLowerCase()}`) || item.department}</p>
+                                        <p className="text-[10px] text-gray-400 uppercase tracking-wider">{item.status}</p>
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <p className="font-mono text-sm font-bold">{formatCurrency(item.actuals)}</p>
+                                    <p className="text-[10px] text-gray-400">of {formatCurrency(item.budget)}</p>
+                                </div>
+                            </div>
+
+                            {/* Progress Bar */}
+                            <div className="w-full bg-black/20 h-1.5 rounded-full overflow-hidden flex">
+                                <div
+                                    className={`h-full rounded-full transition-all duration-500 ${isOverBudget ? 'bg-red-500' : 'bg-blue-500'}`}
+                                    style={{ width: `${Math.min(utilization, 100)}%` }}
+                                ></div>
                             </div>
                         </div>
-                        <div className="text-right">
-                            <p className="font-mono text-sm font-bold">{formatCurrency(item.actuals)}</p>
-                        </div>
-                    </div>
-                ))}
+                    )
+                })}
             </div>
 
             <button

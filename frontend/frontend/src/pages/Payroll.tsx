@@ -4,11 +4,14 @@ import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { getUsersForPayroll, getPayrollByUser, getAllPayrolls, createPayroll, updatePayroll } from '../api/payroll';
+import { useHRData } from '../hooks/useHRData';
+import PayrollCommandCenter from '../components/hr/PayrollCommandCenter';
 
 const Payroll = () => {
     const { user } = useAuth();
     const { t } = useLanguage();
     const [searchParams] = useSearchParams();
+    const { payrollData, releasePayroll } = useHRData();
 
     // View state with Priority to URL params
     const [view, setView] = useState<'overview' | 'manage'>((searchParams.get('mode') as 'manage') || 'overview');
@@ -156,18 +159,25 @@ const Payroll = () => {
                 {view === 'overview' && (
                     <div className="space-y-6">
                         {/* Summary Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                                <h3 className="text-sm font-medium text-gray-500 mb-1">{t('latest_pay')}</h3>
-                                <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                                    {latestPayslip ? `₹${parseFloat(latestPayslip.netPay).toLocaleString()}` : '-'}
-                                </p>
-                                <p className="text-xs text-green-500 mt-2 flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-xs">check_circle</span>
-                                    {latestPayslip?.status || 'No Data'}
-                                </p>
+                        {/* Summary Cards */}
+                        {isHR ? (
+                            <div className="mb-6 h-[500px]">
+                                <PayrollCommandCenter data={payrollData} onRelease={releasePayroll} />
                             </div>
-                        </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                                    <h3 className="text-sm font-medium text-gray-500 mb-1">{t('latest_pay')}</h3>
+                                    <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                                        {latestPayslip ? `₹${parseFloat(latestPayslip.netPay).toLocaleString()}` : '-'}
+                                    </p>
+                                    <p className="text-xs text-green-500 mt-2 flex items-center gap-1">
+                                        <span className="material-symbols-outlined text-xs">check_circle</span>
+                                        {latestPayslip?.status || 'No Data'}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Recent Payrolls List */}
                         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
