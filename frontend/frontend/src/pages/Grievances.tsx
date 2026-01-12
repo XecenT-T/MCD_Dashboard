@@ -64,8 +64,6 @@ const Grievances = () => {
         }
     };
 
-    if (loading) return <div>Loading...</div>;
-
     return (
         <DashboardLayout title="Grievances">
             <div className="max-w-7xl mx-auto space-y-6">
@@ -76,18 +74,24 @@ const Grievances = () => {
                     </div>
                 </div>
 
-                <div className="space-y-6">
-                    <div className="flex justify-end">
-                        <button
-                            onClick={() => navigate('/grievance-submission')}
-                            className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg font-bold transition-colors shadow-sm"
-                        >
-                            <span className="material-symbols-outlined">add_circle</span>
-                            {t('submit_grievance')}
-                        </button>
+                {loading ? (
+                    <div className="flex items-center justify-center h-64">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                     </div>
-                    <SentGrievancesTable grievances={sentGrievances} onReply={handleReply} />
-                </div>
+                ) : (
+                    <div className="space-y-6">
+                        <div className="flex justify-end">
+                            <button
+                                onClick={() => navigate('/grievance-submission')}
+                                className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg font-bold transition-colors shadow-sm"
+                            >
+                                <span className="material-symbols-outlined">add_circle</span>
+                                {t('submit_grievance')}
+                            </button>
+                        </div>
+                        <SentGrievancesTable grievances={sentGrievances} onReply={handleReply} />
+                    </div>
+                )}
             </div>
         </DashboardLayout>
     );

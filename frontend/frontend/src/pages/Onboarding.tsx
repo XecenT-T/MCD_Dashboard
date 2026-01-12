@@ -240,8 +240,8 @@ const Onboarding = () => {
                     {step === 2 && (
                         <div className="flex flex-col items-center gap-4">
                             {!captureVideo && !faceEnrolled && (
-                                <button onClick={startVideo} disabled={!modelsLoaded} className={`btn-primary w-full py-3 flex items-center justify-center gap-2 ${!modelsLoaded ? 'opacity-50 cursor-wait' : ''}`}>
-                                    <span className="material-symbols-outlined">camera_alt</span>
+                                <button onClick={startVideo} disabled={!modelsLoaded} className={`w-full py-4 rounded-xl flex items-center justify-center gap-3 font-bold text-lg transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 ${!modelsLoaded ? 'bg-gray-200 text-gray-400 cursor-wait' : 'bg-gradient-to-r from-primary to-blue-600 text-white shadow-primary/30'}`}>
+                                    <span className="material-symbols-outlined text-2xl">camera_alt</span>
                                     {modelsLoaded ? t('start_camera') : t('loading_models')}
                                 </button>
                             )}
@@ -259,14 +259,27 @@ const Onboarding = () => {
                                         <span className="material-symbols-outlined text-4xl">check</span>
                                     </div>
                                     <p className="font-medium text-green-600">{t('face_captured')}</p>
-                                    <button onClick={enrollFace} disabled={loading} className="btn-primary w-full">
-                                        {loading ? t('registering') : t('confirm_enrollment')}
+                                    <button onClick={enrollFace} disabled={loading} className="px-12 py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold text-lg shadow-lg shadow-green-600/30 hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
+                                        {loading ? (
+                                            <>
+                                                <div className="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                {t('registering')}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span className="material-symbols-outlined">how_to_reg</span>
+                                                {t('confirm_enrollment')}
+                                            </>
+                                        )}
                                     </button>
                                     <button onClick={() => {
                                         cleanupCamera(); // Stop camera
                                         setCaptureVideo(false); // Go back to start state
                                         setFaceDescriptor(null);
-                                    }} className="text-text-muted hover:text-red-500 text-sm">{t('retake')}</button>
+                                    }} className="px-6 py-2 text-text-muted hover:text-red-500 text-sm font-semibold transition-colors flex items-center justify-center gap-1 mx-auto">
+                                        <span className="material-symbols-outlined text-lg">replay</span>
+                                        {t('retake')}
+                                    </button>
                                 </div>
                             )}
 
