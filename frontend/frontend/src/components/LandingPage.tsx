@@ -1,13 +1,20 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import mcdWorkersImage from '../assets/mcd-workers.jpg';
 
 const LandingPage: React.FC = () => {
-    const { user, logout } = useAuth();
+    const { user, logout, loading } = useAuth();
+    const navigate = useNavigate();
     const { t, language, setLanguage } = useLanguage();
+
+    React.useEffect(() => {
+        if (!loading && user) {
+            navigate('/dashboard');
+        }
+    }, [user, loading, navigate]);
 
     return (
         <div className="bg-background-light dark:bg-background-dark text-text-main dark:text-white min-h-screen flex flex-col overflow-x-hidden font-display">

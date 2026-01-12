@@ -18,10 +18,8 @@ const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ g
     const [selectedGrievance, setSelectedGrievance] = useState<Grievance | null>(null);
 
     const { user } = useAuth();
-    const department = (user?.department || '').toLowerCase().trim();
     // Prioritize 'hr' role. Legacy fallback: Official + HR department
-    const isHR = user?.role === 'hr' || (user?.role === 'official' && ['general', 'administration', 'hr'].includes(department));
-    const userDept = (user?.department || '').toLowerCase().trim();
+    // const isHR = ... (Removed unused variables)
 
     // Derived state for filtered grievances
     const filteredGrievances = grievances.filter(g => filter === 'All' || g.role === filter);
@@ -37,21 +35,10 @@ const GrievanceManagementSystem: React.FC<GrievanceManagementSystemProps> = ({ g
     }, [grievances, selectedGrievance]);
 
     // Check if user can resolve the selected grievance
-    const canResolve = (grievance: Grievance) => {
-        if (!user || (user.role !== 'official' && user.role !== 'hr')) return false;
-
-        const grievanceDept = (grievance.department || '').toLowerCase().trim();
-        const hrDepartments = ["general", "administration", "hr"];
-
-        // If grievance is for HR logic
-        if (hrDepartments.includes(grievanceDept)) {
-            // Must be HR role OR Official in HR-related dept
-            return isHR;
-        }
-
-        // If grievance is for Dept X -> Only Dept X official resolves.
-        // STRICT: HR cannot resolve unrelated departments.
-        return grievanceDept === userDept;
+    const canResolve = (_grievance: Grievance) => {
+        if (!user) return false;
+        // Simplified Logic: Any Official or HR can resolve grievances they can see.
+        return user.role === 'official' || user.role === 'hr';
     };
 
     return (
